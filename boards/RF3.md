@@ -1,0 +1,1 @@
+The BananaPi F3 uses the SpaceMit K1 SOC with SpaceMit x60 cores.

@@ -1,6 +1,6 @@
 Overview of result of HPL runs, based on march targets on each of the boards.
 
-Toolchain: GCC 14.3.0, FlexiBLAS 3.4.5 and HPL 2.3.0
+Toolchain: GCC 14.3.0, OpenBLAS 0.3.30 and HPL 2.3.0
 
 | board | EESSI (rv64gc) | native arch | rv64imafd |
 | ----- | -------------- | ----------- | --------- |

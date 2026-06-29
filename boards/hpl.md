@@ -1,7 +1,9 @@
 Overview of result of HPL runs, based on march targets on each of the boards.
 
+Toolchain: GCC 14.3.0, FlexiBLAS 3.4.5 and HPL 2.3.0
+
 | board | EESSI (rv64gc) | native arch | rv64imafd |
 | ----- | -------------- | ----------- | --------- |
-| visionfive2 (u74) | 3.28 Gf | | |
-| OPi RV2 (x60) | DNF | 7.36Gf | 7.34 Gf |
-| BPi F3 (x60) | DNF | | |
+| SF VF2 (4x u74) | 3.28 Gf | | |
+| OPi RV2 (8x x60) | DNF | 7.36Gf | 7.34 Gf |
+| BPi F3 (8x x60) | DNF | | |

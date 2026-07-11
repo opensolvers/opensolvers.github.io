@@ -1,3 +1,3 @@
 The OrangePi RV2 uses the Ky X1 SOC with SpaceMit x60 cores.
-!(rv2.png)
+![](rv2.png)
 

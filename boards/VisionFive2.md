@@ -1,3 +1,23 @@
-The StarFive VisionFive2 board is build around the StarFive JU7110 SOC.
+The StarFive VisionFive 2 board is built around the StarFive **JH7110** SoC: four **SiFive U74** cores at 1.5 GHz (`rv64gc`, scalar — no vector extension), 8 GB RAM, typically running Ubuntu 24.04.
+
 !(vf2.jpg)
 
+## HPL via EESSI
+
+End-to-end benchmark on real VisionFive 2 hardware using [EESSI](https://www.eessi.io/) `2025.06-001` on the RISC-V dev stack [`dev.eessi.io/riscv`](https://www.eessi.io/docs/repositories/dev.eessi.io-riscv/):
+
+| Configuration | HPL (N=10000, 4 cores, 2×2 grid) | Speedup |
+|---------------|----------------------------------|---------|
+| Stock OpenBLAS 0.3.30 (generic `rv64gc` kernel) | **3.13 GFLOP/s** (213 s) | 1.00× |
+| U74-optimized OpenBLAS ([easyconfigs#26436](https://github.com/easybuilders/easybuild-easyconfigs/pull/26436)) | **5.28 GFLOP/s** (126 s) | **1.69×** |
+
+Stock OpenBLAS falls back to the generic `RISCV64_GENERIC` C `2×2` GEMM kernel (~3 GFLOP/s on HPL). A hand-tuned scalar **4×4 DGEMM micro-kernel** for the U74 pipeline ([OpenBLAS#5903](https://github.com/OpenMathLib/OpenBLAS/pull/5903)) lifts single-core DGEMM from ~1.4 to **1.77 GFLOP/s** and 4-core DGEMM to **6.31 GFLOP/s**.
+
+### Reproducing the optimized run
+
+1. Set up CVMFS + EESSI on `riscv64` (`EESSI_VERSION_OVERRIDE=2025.06-001`).
+2. Baseline: `module load HPL/2.3-foss-2025b` → `OMP_NUM_THREADS=1 mpirun -np 4 xhpl`.
+3. Build tuned OpenBLAS from the easyconfig PR: `eb --from-pr 26436 --robot` (via `EESSI-extend` user install).
+4. Register the new backend with FlexiBLAS and re-run the same `xhpl` — no HPL rebuild.
+
+Full walkthrough: [EESSI/docs#818](https://github.com/EESSI/docs/pull/818) — *A 1.7× faster HPL on a RISC-V SiFive U74 via EESSI*.

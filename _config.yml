@@ -21,3 +21,7 @@ navigation_apps:
 navigation_scientific_libs:
   - title: BLAS
     url: /scientific-libs/blas.html
+  - title: LAPACK
+    url: /scientific-libs/lapack.html
+  - title: ELPA
+    url: /scientific-libs/elpa.html

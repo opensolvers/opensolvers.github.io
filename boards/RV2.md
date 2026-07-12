@@ -13,6 +13,8 @@ End-to-end on real Orange Pi RV2 hardware using [EESSI](https://www.eessi.io/) `
 | | Before | After |
 | --- | ------ | ----- |
 | HPL (8 cores, N=20000, 2×4) | ~8.5 GFLOP/s, **FAILED** (`nan`) | **10.53 GFLOP/s**, **PASSED** |
+
+With the fixed backend, scalar-vs-RVV A/B ([benchmarks/hpl](https://github.com/opensolvers/benchmarks/tree/main/hpl)): **6.41 → 11.55 GFLOP/s** (N=8000, 1×8) and **7.38 → 13.41 GFLOP/s** (N=28672, 1×8).
 | Residual (N=8000, 1×8) | `nan` | 4.04e-03 |
 
 **Before** — stock EESSI OpenBLAS 0.3.30 (RVV `gemv_n` bug). **After** — fixed OpenBLAS built with `TARGET=RISCV64_ZVL256B` and a backported `gemv_n` patch ([easyconfigs#26444](https://github.com/easybuilders/easybuild-easyconfigs/pull/26444)), swapped in via FlexiBLAS — no HPL rebuild.

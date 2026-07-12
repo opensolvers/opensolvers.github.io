@@ -11,6 +11,3 @@ navigation:
     url: /boards/RV2.html
   - title: BananaPi F3
     url: /boards/F3.html
-  - title: GitHub
-    url: https://github.com/opensolvers/opensolvers.github.io
-    external: true

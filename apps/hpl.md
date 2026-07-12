@@ -6,9 +6,9 @@ Cross-board summary of **High Performance Linpack (HPL)** runs on consumer RISC-
 
 | Board | Cores | Before | After |
 | ----- | ----- | ------ | ----- |
-| [StarFive VisionFive 2](VisionFive2.html) | 4× SiFive U74 | 3.13 GFLOP/s | **5.28 GFLOP/s** |
-| [Orange Pi RV2](RV2.html) | 8× SpacemiT X60 | FAILED (`nan`) | **10.53 GFLOP/s** |
-| [Banana Pi F3](F3.html) | 8× SpacemiT X60 | FAILED (`nan`) | — |
+| [StarFive VisionFive 2](../boards/VisionFive2.html) | 4× SiFive U74 | 3.13 GFLOP/s | **5.28 GFLOP/s** |
+| [Orange Pi RV2](../boards/RV2.html) | 8× SpacemiT X60 | FAILED (`nan`) | **10.53 GFLOP/s** |
+| [Banana Pi F3](../boards/F3.html) | 8× SpacemiT X60 | FAILED (`nan`) | — |
 
 **Before** — stock EESSI OpenBLAS 0.3.30 on each board.
 

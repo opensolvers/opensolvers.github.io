@@ -5,9 +5,15 @@ description: RISC-V learnings and fun
 navigation:
   - title: Home
     url: /
+
+navigation_boards:
   - title: VisionFive 2
     url: /boards/VisionFive2.html
   - title: OrangePi RV2
     url: /boards/RV2.html
   - title: BananaPi F3
     url: /boards/F3.html
+
+navigation_apps:
+  - title: HPL
+    url: /apps/hpl.html

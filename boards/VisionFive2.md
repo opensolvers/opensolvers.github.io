@@ -4,7 +4,7 @@ The StarFive VisionFive 2 board is built around the StarFive **JH7110** SoC: fou
 
 ## HPL via EESSI
 
-See also the [cross-board HPL overview](hpl.html).
+See also the [HPL app overview](../apps/hpl.html).
 
 End-to-end benchmark on real VisionFive 2 hardware using [EESSI](https://www.eessi.io/) `2025.06-001` on the RISC-V dev stack [`dev.eessi.io/riscv`](https://www.eessi.io/docs/repositories/dev.eessi.io-riscv/). Problem size **N=10000**, block size **NB=192**, **2×2** process grid (4 MPI ranks).
 

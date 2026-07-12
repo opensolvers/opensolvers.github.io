@@ -4,7 +4,7 @@ The Orange Pi RV2 is built on the SpaceMiT **K1** SoC: eight **SpacemiT X60** co
 
 ## HPL via EESSI
 
-See also the [cross-board HPL overview](hpl.html).
+See also the [HPL app overview](../apps/hpl.html).
 
 Unlike the scalar VisionFive 2, the X60 already dispatches OpenBLAS's upstream **RVV** `RISCV64_ZVL256B` kernels from the stock EESSI stack — but OpenBLAS **0.3.30** has a bug in `gemv_n` that zeroes an uninitialized vector register, so stock EESSI **HPL fails with residual `nan`** (it can still report a plausible ~8.5 GFLOP/s; only the residual check reveals the answer is wrong).
 

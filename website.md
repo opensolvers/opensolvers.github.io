@@ -1,0 +1,51 @@
+# OpenSolvers website — decisions log
+
+Context file for structural and content decisions on [opensolvers.com](https://www.opensolvers.com) (`opensolvers/opensolvers.github.io`).
+
+**Workflow:** commit and deploy directly to `main` via PR (no need to ask first).
+
+---
+
+## Site structure
+
+| Area | Path | Purpose |
+|------|------|---------|
+| Homepage | `README.md` → `/` | Intro, board summaries |
+| Boards | `boards/` | Per-board hardware + benchmark notes |
+| Apps | `apps/` | End-to-end application benchmarks (e.g. HPL) |
+| Scientific libs | `scientific-libs/` | Library-level probes (BLAS, LAPACK, ELPA) |
+
+## Navigation groups
+
+1. **Home**
+2. **Boards** — VisionFive 2, OrangePi RV2, BananaPi F3
+3. **Apps** — HPL
+4. **Scientific libs** — BLAS, LAPACK, ELPA
+
+Nav config: `_config.yml` (`navigation`, `navigation_boards`, `navigation_apps`, `navigation_scientific_libs`). Rendered in `_includes/header.html`. Cayman theme requires `_layouts/default.html` override to include the header.
+
+## Content sources
+
+| Source | Used for |
+|--------|----------|
+| [opensolvers/benchmarks](https://github.com/opensolvers/benchmarks) | BLAS verification (`dgemm/`), HPL configs (`hpl/`), ELPA (`elpa/`), NumPy/LAPACK (`numpy/`) |
+| [EESSI/docs#818](https://github.com/EESSI/docs/pull/818) | VisionFive 2 / U74 OpenBLAS + HPL |
+| [EESSI/docs#819](https://github.com/EESSI/docs/pull/819) | Orange Pi RV2 / X60 RVV `gemv_n` fix + HPL |
+| [easyconfigs#26436](https://github.com/easybuilders/easybuild-easyconfigs/pull/26436) | U74 OpenBLAS package |
+| [easyconfigs#26444](https://github.com/easybuilders/easybuild-easyconfigs/pull/26444) | X60 OpenBLAS package |
+
+## Key numbering conventions
+
+- **Before / After** tables — stock EESSI OpenBLAS 0.3.30 vs fixed EasyBuild module (FlexiBLAS swap, no app rebuild).
+- **Orange Pi RV2 HPL:** stock EESSI = FAILED (`nan`) ~8.5 GFLOP/s; fixed peak = **10.53 GFLOP/s** (N=20000, 2×4). Scalar A/B baselines from `run-hpl-ab.sh`: **6.41** and **7.38 GFLOP/s** — these are *scalar* backends, not “after” results.
+- **X60 DNF/FAIL** — OpenBLAS 0.3.30 RVV `gemv_n` bug; fixed in ≥ 0.3.31, EESSI bump ≥ 0.3.34 preferred.
+
+## Changelog
+
+| Date | Decision |
+|------|----------|
+| 2026-07-12 | Add `website.md`; sync HPL/BLAS from `opensolvers/benchmarks`; add scientific libs LAPACK + ELPA |
+| 2026-07-12 | Split nav: Boards / Apps / Scientific libs; move HPL to `apps/` |
+| 2026-07-12 | Fix homepage RV2 numbers (FAILED → 10.53 GFLOP/s, not 7.38 native) |
+| 2026-07-11 | Override Cayman `_layouts/default.html` so `_includes/header.html` renders |
+| 2026-07-11 | Site focus: RISC-V learnings; tagline “RISC-V learnings and fun” |

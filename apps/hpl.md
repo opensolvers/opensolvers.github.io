@@ -12,7 +12,7 @@ Cross-board summary of **High Performance Linpack (HPL)** runs on consumer RISC-
 
 **Before** — stock EESSI OpenBLAS 0.3.30 on each board.
 
-**After** — board-specific fixed OpenBLAS via EasyBuild, swapped in at runtime with FlexiBLAS (no HPL rebuild).
+**After** — board-specific fixed OpenBLAS via EasyBuild, swapped in at runtime with FlexiBLAS (no HPL rebuild). Details in the [BLAS overview](../scientific-libs/blas.html).
 
 On **VisionFive 2** (scalar U74), stock OpenBLAS uses a generic kernel; the fix adds a tuned U74 micro-kernel ([easyconfigs#26436](https://github.com/easybuilders/easybuild-easyconfigs/pull/26436), [EESSI/docs#818](https://github.com/EESSI/docs/pull/818)).
 

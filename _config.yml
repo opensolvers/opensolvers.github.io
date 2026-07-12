@@ -17,3 +17,7 @@ navigation_boards:
 navigation_apps:
   - title: HPL
     url: /apps/hpl.html
+
+navigation_scientific_libs:
+  - title: BLAS
+    url: /scientific-libs/blas.html

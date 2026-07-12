@@ -12,4 +12,4 @@ See the [HPL results overview](apps/hpl.html) for a cross-board summary.
 - **[OrangePi RV2](boards/RV2.html)** — Ky X1 SoC, 8× SpacemiT X60. Native-arch HPL **7.38 GFLOP/s** (EESSI: DNF, RVV bug in OpenBLAS 0.3.30).
 - **[BananaPi F3](boards/F3.html)** — SpacemiT K1 SoC, 8× SpacemiT X60. HPL benchmarking in progress (EESSI: DNF, RVV bug in OpenBLAS 0.3.30).
 
-Use the menu above to jump to a board or app page.
+Use the menu above to jump to a board, app, or scientific lib page.

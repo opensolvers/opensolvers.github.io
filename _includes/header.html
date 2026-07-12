@@ -49,6 +49,22 @@
                     {% endfor %}
                 </ul>
             </div>
+
+            <div class="site-nav-group">
+                <span class="site-nav-label">Scientific libs</span>
+                <ul class="site-nav-list">
+                    {% for item in site.navigation_scientific_libs %}
+                    <li class="site-nav-item">
+                        <a
+                            href="{{ item.url | relative_url }}"
+                            class="site-nav-link{% if page.url == item.url %} is-active{% endif %}"
+                        >
+                            {{ item.title }}
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
         </div>
     </nav>
 </header>

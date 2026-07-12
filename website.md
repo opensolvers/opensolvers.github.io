@@ -10,7 +10,7 @@ Context file for structural and content decisions on [opensolvers.com](https://w
 
 | Area | Path | Purpose |
 |------|------|---------|
-| Homepage | `README.md` → `/` | Intro, board summaries |
+| Homepage | `README.md` → `/` | Intro, scientific libs, apps, board summaries |
 | Boards | `boards/` | Per-board hardware + benchmark notes |
 | Apps | `apps/` | End-to-end application benchmarks (e.g. HPL) |
 | Scientific libs | `scientific-libs/` | Library-level probes (BLAS, LAPACK, ELPA) |
@@ -44,6 +44,7 @@ Nav config: `_config.yml` (`navigation`, `navigation_boards`, `navigation_apps`,
 
 | Date | Decision |
 |------|----------|
+| 2026-07-12 | Homepage scope widened: scientific libs + apps, not HPL-only |
 | 2026-07-12 | Add `website.md`; sync HPL/BLAS from `opensolvers/benchmarks`; add scientific libs LAPACK + ELPA |
 | 2026-07-12 | Split nav: Boards / Apps / Scientific libs; move HPL to `apps/` |
 | 2026-07-12 | Fix homepage RV2 numbers (FAILED → 10.53 GFLOP/s, not 7.38 native) |

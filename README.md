@@ -3,7 +3,7 @@ Helping you focus on results instead of compiling and maintaining. OpenSolvers p
 Currently working on several generations of RISC-V cores and validating synthetic performance and real-world applications. 
 
 Learnings from different boards:
-- [StarFive VisionFive2](boards/VisionFive2.md)
-- [OrangePi RV2](boards/RV2.md)
-- [BananaPi F3](boards/F3.md) 
+- [StarFive VisionFive2](boards/VisionFive2.html)
+- [OrangePi RV2](boards/RV2.html)
+- [BananaPi F3](boards/F3.html) 
 

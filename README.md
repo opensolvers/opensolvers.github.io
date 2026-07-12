@@ -4,7 +4,7 @@ OpenSolvers explores how open-source scientific software runs on real hardware �
 
 We're benchmarking **High Performance Linpack (HPL)** across several consumer RISC-V boards, comparing stock and architecture-tuned builds through the [EESSI](https://www.eessi.io/) stack. On the VisionFive 2, a SiFive U74-tuned OpenBLAS lifts HPL from **3.13** to **5.28 GFLOP/s** (**1.69×**) — end-to-end via EESSI and EasyBuild.
 
-See the [HPL results overview](boards/hpl.html) for a cross-board summary.
+See the [HPL results overview](apps/hpl.html) for a cross-board summary.
 
 ## Boards
 
@@ -12,4 +12,4 @@ See the [HPL results overview](boards/hpl.html) for a cross-board summary.
 - **[OrangePi RV2](boards/RV2.html)** — Ky X1 SoC, 8× SpacemiT X60. Native-arch HPL **7.38 GFLOP/s** (EESSI: DNF, RVV bug in OpenBLAS 0.3.30).
 - **[BananaPi F3](boards/F3.html)** — SpacemiT K1 SoC, 8× SpacemiT X60. HPL benchmarking in progress (EESSI: DNF, RVV bug in OpenBLAS 0.3.30).
 
-Use the menu above to jump straight to a board page.
+Use the menu above to jump to a board or app page.

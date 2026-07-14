@@ -2,6 +2,22 @@ The Orange Pi RV2 is built on the SpaceMiT **K1** SoC: eight **SpacemiT X60** co
 
 ![](rv2.png)
 
+## IME (Integer Matrix Extension)
+
+Besides RVV, each X60 core cluster exposes SpaceMiT's **IME** — a dedicated **int8 matrix unit** via the custom instruction `smt.vmadot`. One `vmadot` fuses a **4×4 int32** tile update from two **4×8 int8** operand tiles; this is the hardware behind the part's quoted AI TOPS rating.
+
+On the K1 the IME sits in **cluster 0 only** (cores **0–3**), with those four cores sharing a **512 KB L2**. Pin IME workloads to a cluster-0 core (`taskset -c 0`).
+
+Microbenchmarks in [opensolvers/benchmarks/ime](https://github.com/opensolvers/benchmarks/tree/main/ime) (`ime-bench`): pure `s8s8s32` GEMM, bit-exact vs a scalar reference, timed against a plain RVV int8 baseline on this board (core 0, 1.6 GHz):
+
+| M×N×K | RVV int8 | IME (`smt.vmadot`) | IME / RVV |
+| ----- | -------- | ------------------ | --------- |
+| 512×512×512 | 5.2 GOP/s | **39 GOP/s** | **7.5×** |
+| 768×768×512 | ~5.2 GOP/s | **42 GOP/s** (peak) | **8.1×** |
+| 1024×1024×512 | 5.2 GOP/s | **32 GOP/s** | 6.2× |
+
+Peak **~42 GOP/s** single-core — vs ~5 GOP/s for a straightforward RVV int8 path. llama.cpp ships an X60 IME backend (`GGML_CPU_RISCV64_SPACEMIT`) for block-scaled Q4 inference; see also [papers/x60-ime-block-scale-optimization](https://github.com/opensolvers/benchmarks/blob/main/papers/x60-ime-block-scale-optimization.md) in the benchmarks repo.
+
 ## HPL via EESSI
 
 See also the [HPL app overview](../apps/hpl.html).
@@ -13,9 +29,9 @@ End-to-end on real Orange Pi RV2 hardware using [EESSI](https://www.eessi.io/) `
 | | Before | After |
 | --- | ------ | ----- |
 | HPL (8 cores, N=20000, 2×4) | ~8.5 GFLOP/s, **FAILED** (`nan`) | **10.53 GFLOP/s**, **PASSED** |
+| Residual (N=8000, 1×8) | `nan` | 4.04e-03 |
 
 With the fixed backend, scalar-vs-RVV A/B ([benchmarks/hpl](https://github.com/opensolvers/benchmarks/tree/main/hpl)): **6.41 → 11.55 GFLOP/s** (N=8000, 1×8) and **7.38 → 13.41 GFLOP/s** (N=28672, 1×8).
-| Residual (N=8000, 1×8) | `nan` | 4.04e-03 |
 
 **Before** — stock EESSI OpenBLAS 0.3.30 (RVV `gemv_n` bug). **After** — fixed OpenBLAS built with `TARGET=RISCV64_ZVL256B` and a backported `gemv_n` patch ([easyconfigs#26444](https://github.com/easybuilders/easybuild-easyconfigs/pull/26444)), swapped in via FlexiBLAS — no HPL rebuild.
 

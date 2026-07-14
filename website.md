@@ -44,6 +44,7 @@ Nav config: `_config.yml` (`navigation`, `navigation_boards`, `navigation_apps`,
 
 | Date | Decision |
 |------|----------|
+| 2026-07-14 | IME (X60 `smt.vmadot`) section on RV2 and BPI-F3 board pages |
 | 2026-07-14 | Add dedicated DGEMM and NumPy scientific-lib pages from benchmarks repo |
 | 2026-07-14 | BPI-F3 results from `opensolvers/benchmarks`: HPL 11.52 GFLOP/s, 3.7 GB RAM limit |
 | 2026-07-12 | Homepage scope widened: scientific libs + apps, not HPL-only |

@@ -21,6 +21,10 @@ navigation_apps:
 navigation_scientific_libs:
   - title: BLAS
     url: /scientific-libs/blas.html
+  - title: DGEMM
+    url: /scientific-libs/dgemm.html
+  - title: NumPy
+    url: /scientific-libs/numpy.html
   - title: LAPACK
     url: /scientific-libs/lapack.html
   - title: ELPA

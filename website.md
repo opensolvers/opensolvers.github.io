@@ -20,7 +20,7 @@ Context file for structural and content decisions on [opensolvers.com](https://w
 1. **Home**
 2. **Boards** — VisionFive 2, OrangePi RV2, BananaPi F3
 3. **Apps** — HPL
-4. **Scientific libs** — BLAS, LAPACK, ELPA
+4. **Scientific libs** — BLAS, DGEMM, NumPy, LAPACK, ELPA
 
 Nav config: `_config.yml` (`navigation`, `navigation_boards`, `navigation_apps`, `navigation_scientific_libs`). Rendered in `_includes/header.html`. Cayman theme requires `_layouts/default.html` override to include the header.
 
@@ -44,6 +44,7 @@ Nav config: `_config.yml` (`navigation`, `navigation_boards`, `navigation_apps`,
 
 | Date | Decision |
 |------|----------|
+| 2026-07-14 | Add dedicated DGEMM and NumPy scientific-lib pages from benchmarks repo |
 | 2026-07-14 | BPI-F3 results from `opensolvers/benchmarks`: HPL 11.52 GFLOP/s, 3.7 GB RAM limit |
 | 2026-07-12 | Homepage scope widened: scientific libs + apps, not HPL-only |
 | 2026-07-12 | Add `website.md`; sync HPL/BLAS from `opensolvers/benchmarks`; add scientific libs LAPACK + ELPA |

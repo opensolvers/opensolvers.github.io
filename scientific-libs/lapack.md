@@ -15,4 +15,13 @@ Backends swapped via FlexiBLAS on a NumPy linked against the FlexiBLAS hub (`Sci
 
 Both patched runs are **finite** (correct through real LAPACK). The eigensolver speedup is lower than DGEMM because `eigvalsh` mixes BLAS-3 with BLAS-2 tridiagonalization — the same pattern seen in [ELPA](elpa.html).
 
-Stock EESSI default RVV would return NaN on the eigensolver path; see the [BLAS `difftest` table](blas.html) for how the fault isolates to `dgemv`.
+Stock EESSI default RVV would return NaN on the eigensolver path; see the [BLAS `difftest` table](blas.html).
+
+### Banana Pi BPI-F3 (cross-board confirmation)
+
+| Kernel | Scalar | Patched RVV | Speedup |
+| ------ | ------ | ----------- | ------- |
+| DGEMM N=4096 | 4.91 GFLOP/s | **17.51 GFLOP/s** | **3.6×** |
+| EIGH N=2048 | 9.59 s | 5.94 s | **1.6×** |
+
+Stock unpatched RVV: `eigvalsh` aborts with `LinAlgError: Eigenvalues did not converge` (DGEMM alone stays finite at 10.94 GFLOP/s).

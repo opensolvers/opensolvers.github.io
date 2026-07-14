@@ -18,4 +18,14 @@ The stock vector backend is faster than scalar but **wrong** — the same OpenBL
 
 Speedup is smaller than pure `dgemm` (~2.3×) because tridiagonalization is latency-bound BLAS-2 — by design.
 
-See also the [BLAS overview](blas.html) and [LAPACK](lapack.html) NumPy probe.
+### Banana Pi BPI-F3 (cross-board confirmation)
+
+`na=3000`, 8 threads — same three backends as RV2:
+
+| Backend | Time | Correctness |
+| ------- | ---- | ----------- |
+| Stock EESSI RVV | 37.93 s | **`ev0=nan` — FAIL** |
+| Scalar | 50.42 s | finite=1 |
+| Patched RVV | **34.83 s** | finite=1 (bit-identical to scalar) |
+
+**1.45×** faster than scalar with the fix in place.

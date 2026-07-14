@@ -10,7 +10,7 @@ Improvements to **OpenBLAS 0.3.30** on RISC-V boards — built via EasyBuild, de
 | ----------- | ---------------------- | --- | ------ |
 | [VisionFive 2](../boards/VisionFive2.html) — SiFive **U74** (scalar) | No U74 kernel; falls back to generic `RISCV64_GENERIC` C `2×2` GEMM | New **4×4 DGEMM micro-kernel** in RV64 assembly, `TARGET=U74` | Single-core DGEMM **~1.4 → 1.77 GFLOP/s**; 4-core DGEMM **6.31 GFLOP/s**; [HPL **1.69×**](../apps/hpl.html) |
 | [Orange Pi RV2](../boards/RV2.html) — SpacemiT **X60** (RVV VLEN=256) | RVV `gemv_n` zeroes an **uninitialized** vector register → `dgemv` returns NaN | Backport upstream `gemv_n` fix; `TARGET=RISCV64_ZVL256B` | Correct `dgemv`; see [HPL](../apps/hpl.html) and A/B tables below |
-| [Banana Pi F3](../boards/F3.html) — same K1 / X60 SoC | Same RVV `gemv_n` bug as RV2 | Same [easyconfigs#26444](https://github.com/easybuilders/easybuild-easyconfigs/pull/26444) fix | Fix applies; peak results not yet recorded |
+| [Banana Pi F3](../boards/F3.html) — same K1 / X60 SoC | Same RVV `gemv_n` bug as RV2 | Same [easyconfigs#26444](https://github.com/easybuilders/easybuild-easyconfigs/pull/26444) fix | HPL **11.52 GFLOP/s** PASSED; `difftest` bit-identical to RV2; threaded DGEMM **17.71 GFLOP/s** |
 
 ## X60 A/B — patched RVV vs scalar (Orange Pi RV2)
 
@@ -33,6 +33,10 @@ The [benchmarks `difftest`](https://github.com/opensolvers/benchmarks/blob/main/
 | Patched RVV (`gemv_n` fix) | 0 | 0 | 42.06549 (matches) |
 
 `dgemm` looks fine on the broken build — which is why a raw GEMM benchmark can pass while [HPL](../apps/hpl.html) and [ELPA](elpa.html) fail.
+
+### Banana Pi BPI-F3 (cross-board confirmation)
+
+Bit-identical `difftest` to RV2. `bench_dgemm` (1 core, N=2048): **1.26 → 2.96 GFLOP/s** (2.35×). Threaded (8 cores, N=4096): **17.71 GFLOP/s**.
 
 ## Packages
 

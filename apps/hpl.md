@@ -10,7 +10,7 @@ Cross-board summary of **High Performance Linpack (HPL)** on consumer RISC-V har
 | ----- | ----- | ------ | ----- |
 | [VisionFive 2](../boards/VisionFive2.html) | 4× SiFive U74 | 3.13 GFLOP/s | **5.28 GFLOP/s** |
 | [Orange Pi RV2](../boards/RV2.html) | 8× SpacemiT X60 | FAILED (`nan`) | **10.53 GFLOP/s** |
-| [Banana Pi F3](../boards/F3.html) | 8× SpacemiT X60 | FAILED (`nan`) | — |
+| [Banana Pi F3](../boards/F3.html) | 8× SpacemiT X60 | FAILED (`nan`) | **11.52 GFLOP/s** |
 
 **Before** — stock EESSI OpenBLAS 0.3.30 (same `xhpl` binary throughout).
 
@@ -47,4 +47,12 @@ Scalar U74 — stock OpenBLAS uses a generic kernel; the U74-tuned build lifts H
 
 ## Banana Pi F3
 
-Same K1 / X60 SoC as the Orange Pi RV2 — same stock failure and same [easyconfigs#26444](https://github.com/easybuilders/easybuild-easyconfigs/pull/26444) fix applies. Peak HPL not yet recorded.
+Same K1 / X60 SoC as the Orange Pi RV2 — cross-board confirmation on [opensolvers/benchmarks](https://github.com/opensolvers/benchmarks). **3.7 GB RAM** limits problem size: only `HPL.dat` (N=8000) was run; larger configs need more memory than this board has.
+
+| Backend | GFLOP/s | Residual | Result |
+| ------- | ------- | -------- | ------ |
+| Stock EESSI RVV | 11.64 | `nan` | FAILED |
+| Scalar | 6.52 | 4.63e-03 | PASSED |
+| Patched RVV | **11.52** | 4.04e-03 | PASSED |
+
+**1.77×** scalar → patched vector; residual bit-identical to RV2.

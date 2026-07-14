@@ -19,7 +19,7 @@ Context file for structural and content decisions on [opensolvers.com](https://w
 
 1. **Home**
 2. **Boards** — VisionFive 2, OrangePi RV2, BananaPi F3
-3. **Apps** — HPL
+3. **Apps** — HPL, Quantum ESPRESSO
 4. **Scientific libs** — BLAS, DGEMM, NumPy, LAPACK, ELPA
 
 Nav config: `_config.yml` (`navigation`, `navigation_boards`, `navigation_apps`, `navigation_scientific_libs`). Rendered in `_includes/header.html`. Cayman theme requires `_layouts/default.html` override to include the header.
@@ -28,7 +28,7 @@ Nav config: `_config.yml` (`navigation`, `navigation_boards`, `navigation_apps`,
 
 | Source | Used for |
 |--------|----------|
-| [opensolvers/benchmarks](https://github.com/opensolvers/benchmarks) | BLAS verification (`dgemm/`), HPL configs (`hpl/`), ELPA (`elpa/`), NumPy/LAPACK (`numpy/`) |
+| [opensolvers/benchmarks](https://github.com/opensolvers/benchmarks) | BLAS verification (`dgemm/`), HPL configs (`hpl/`), ELPA (`elpa/`), QE (`qe/`), NumPy/LAPACK (`numpy/`) |
 | [EESSI/docs#818](https://github.com/EESSI/docs/pull/818) | VisionFive 2 / U74 OpenBLAS + HPL |
 | [EESSI/docs#819](https://github.com/EESSI/docs/pull/819) | Orange Pi RV2 / X60 RVV `gemv_n` fix + HPL |
 | [easyconfigs#26436](https://github.com/easybuilders/easybuild-easyconfigs/pull/26436) | U74 OpenBLAS package |
@@ -44,6 +44,7 @@ Nav config: `_config.yml` (`navigation`, `navigation_boards`, `navigation_apps`,
 
 | Date | Decision |
 |------|----------|
+| 2026-07-14 | Add Quantum ESPRESSO app page from `opensolvers/benchmarks/qe` |
 | 2026-07-14 | IME (X60 `smt.vmadot`) section on RV2 and BPI-F3 board pages |
 | 2026-07-14 | Add dedicated DGEMM and NumPy scientific-lib pages from benchmarks repo |
 | 2026-07-14 | BPI-F3 results from `opensolvers/benchmarks`: HPL 11.52 GFLOP/s, 3.7 GB RAM limit |

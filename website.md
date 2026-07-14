@@ -44,6 +44,7 @@ Nav config: `_config.yml` (`navigation`, `navigation_boards`, `navigation_apps`,
 
 | Date | Decision |
 |------|----------|
+| 2026-07-14 | Nav layout: 3 stacked rows — Apps (top), Scientific libs (middle), Boards (bottom) |
 | 2026-07-14 | Add Quantum ESPRESSO app page from `opensolvers/benchmarks/qe` |
 | 2026-07-14 | IME (X60 `smt.vmadot`) section on RV2 and BPI-F3 board pages |
 | 2026-07-14 | Add dedicated DGEMM and NumPy scientific-lib pages from benchmarks repo |

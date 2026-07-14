@@ -24,6 +24,6 @@ End-to-end application benchmarks on the same boards and EESSI toolchain:
 
 - **[StarFive VisionFive 2](boards/VisionFive2.html)** — JH7110 SoC, 4× SiFive U74 (`rv64gc`). U74 OpenBLAS tuning: HPL **3.13 → 5.28 GFLOP/s**.
 - **[Orange Pi RV2](boards/RV2.html)** — SpaceMiT K1, 8× X60 (RVV). Fixed OpenBLAS: HPL **FAILED (`nan`) → 10.53 GFLOP/s**; ELPA **34.81 s** (vs 54.92 s scalar).
-- **[Banana Pi F3](boards/F3.html)** — same K1 / X60 SoC; same fixes apply, peak results not yet recorded.
+- **[Banana Pi F3](boards/F3.html)** — same K1 / X60 SoC, **3.7 GB RAM**. HPL **FAILED (`nan`) → 11.52 GFLOP/s**; NumPy DGEMM up to **17.51 GFLOP/s** on patched RVV.
 
 Use the menu above to jump to a board, app, or scientific lib page.

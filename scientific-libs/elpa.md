@@ -14,7 +14,7 @@ Benchmark source: [opensolvers/benchmarks/elpa](https://github.com/opensolvers/b
 | Scalar (`RISCV64_GENERIC`) | 54.92 s | finite=1 |
 | Patched RVV (`gemv_n` fix) | **34.81 s** | finite=1 |
 
-The stock vector backend is faster than scalar but **wrong** — the same OpenBLAS 0.3.30 `gemv_n` NaN bug that breaks [HPL](../apps/hpl.html). With the patch, RVV is **1.58×** faster than scalar (54.92 / 34.81) and numerically correct.
+The stock vector backend is faster than scalar but **wrong** — the same OpenBLAS 0.3.30 `gemv_n` NaN bug that breaks [HPL](../apps/hpl.html) and [Quantum ESPRESSO](../apps/qe.html). With the patch, RVV is **1.58×** faster than scalar (54.92 / 34.81) and numerically correct.
 
 Speedup is smaller than pure `dgemm` (~2.3×) because tridiagonalization is latency-bound BLAS-2 — by design.
 

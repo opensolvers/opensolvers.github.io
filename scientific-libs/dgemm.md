@@ -31,7 +31,7 @@ Bit-identical on [Orange Pi RV2](../boards/RV2.html) and [Banana Pi F3](../board
 | Forced scalar | 0 | 0 | 42.06549 (reference) |
 | Patched RVV (`gemv_n` fix) | 0 | 0 | 42.06549 (matches) |
 
-Fault is in **`dgemv` only** — plain `dgemm` looks fine on the broken build, which is why [HPL](../apps/hpl.html) can NaN while a GEMM micro-benchmark passes.
+Fault is in **`dgemv` only** — plain `dgemm` looks fine on the broken build, which is why [HPL](../apps/hpl.html) and [Quantum ESPRESSO](../apps/qe.html) can fail while a GEMM micro-benchmark passes.
 
 ## Performance — `bench_dgemm`
 

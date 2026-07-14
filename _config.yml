@@ -17,6 +17,8 @@ navigation_boards:
 navigation_apps:
   - title: HPL
     url: /apps/hpl.html
+  - title: Quantum ESPRESSO
+    url: /apps/qe.html
 
 navigation_scientific_libs:
   - title: BLAS

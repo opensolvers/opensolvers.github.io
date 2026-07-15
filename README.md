@@ -4,6 +4,19 @@ OpenSolvers explores how open-source scientific software runs on real hardware �
 
 We benchmark **scientific libraries** and **applications** on consumer RISC-V boards through the [EESSI](https://www.eessi.io/) stack — from BLAS kernels up to full app runs — swapping fixed OpenBLAS builds via FlexiBLAS without rebuilding downstream code.
 
+## What we optimise on the board
+
+Each RISC-V board exposes several compute paths. We benchmark and tune them independently — often swapping backends at runtime via FlexiBLAS rather than rebuilding every app.
+
+![Scalar, Vector, Specific, and GPU compute paths on the board](assets/images/compute-backends.svg)
+
+| Path | What it is | Examples on our boards |
+| ---- | ---------- | ---------------------- |
+| **Scalar** | Portable C fallbacks — the correctness baseline | `OPENBLAS_CORETYPE=RISCV64_GENERIC`; VisionFive 2 before the U74 kernel |
+| **Vector** | ISA vector extensions (RVV) in shared libs | OpenBLAS `RISCV64_ZVL256B` on SpaceMiT X60; the `gemv_n` bug we fixed |
+| **Specific** | Silicon-tuned micro-kernels and custom units | U74 **4×4 DGEMM** on VisionFive 2; X60 **IME** (`smt.vmadot`) int8 on RV2 / F3 |
+| **GPU** | Discrete or integrated accelerators | On the roadmap — not yet in our RISC-V board benchmarks |
+
 Recent highlights on the Orange Pi RV2 (SpaceMiT X60, RVV): fixing an OpenBLAS `gemv_n` bug restores correctness across [BLAS](scientific-libs/blas.html), [LAPACK](scientific-libs/lapack.html), [ELPA](scientific-libs/elpa.html), [HPL](apps/hpl.html), and [Quantum ESPRESSO](apps/qe.html) — with patched RVV reaching **10.53 GFLOP/s** on Linpack, **1.58×** on a dense eigensolve, and **1.31×** on a 64-atom Si DFT SCF.
 
 ## Scientific libs

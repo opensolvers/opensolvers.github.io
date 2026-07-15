@@ -26,7 +26,9 @@
     <rect x="152" y="32" width="120" height="72" rx="10" fill="#ffffff" stroke="#1e6bb8" stroke-width="1.5"/>
     <rect x="152" y="32" width="120" height="8" rx="10" fill="#1e6bb8"/>
     <rect x="152" y="36" width="120" height="4" fill="#1e6bb8"/>
-    <text x="212" y="78" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1e6bb8">Vector</text>
+    <text x="212" y="66" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1e6bb8">Vector</text>
+    <text x="212" y="84" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#1e6bb8" opacity="0.85">ZVL256B</text>
+    <text x="212" y="98" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#1e6bb8" opacity="0.85">ZVL128B</text>
   </g>
 
   <!-- Specific -->

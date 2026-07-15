@@ -12,9 +12,9 @@ Each RISC-V board exposes several compute paths. We benchmark and tune them inde
 
 | Path | What it is | Examples on our boards |
 | ---- | ---------- | ---------------------- |
-| **Scalar** | Portable C fallbacks — the correctness baseline | `OPENBLAS_CORETYPE=RISCV64_GENERIC`; VisionFive 2 before the U74 kernel |
+| **Scalar** | Scalar ISA and portable C kernels — the correctness baseline | `rv64gc` on VisionFive 2; `OPENBLAS_CORETYPE=RISCV64_GENERIC`; U74 **4×4 DGEMM** tuning |
 | **Vector** | ISA vector extensions (RVV) in shared libs | OpenBLAS `RISCV64_ZVL256B` on SpaceMiT X60; the `gemv_n` bug we fixed |
-| **Specific** | Silicon-tuned micro-kernels and custom units | U74 **4×4 DGEMM** on VisionFive 2; X60 **IME** (`smt.vmadot`) int8 on RV2 / F3 |
+| **Specific** | Silicon-specific custom units beyond RVV | X60 **IME** (`smt.vmadot`) int8 on [RV2](boards/RV2.html) / [F3](boards/F3.html) |
 | **GPU** | Discrete or integrated accelerators | On the roadmap — not yet in our RISC-V board benchmarks |
 
 Recent highlights on the Orange Pi RV2 (SpaceMiT X60, RVV): fixing an OpenBLAS `gemv_n` bug restores correctness across [BLAS](scientific-libs/blas.html), [LAPACK](scientific-libs/lapack.html), [ELPA](scientific-libs/elpa.html), [HPL](apps/hpl.html), and [Quantum ESPRESSO](apps/qe.html) — with patched RVV reaching **10.53 GFLOP/s** on Linpack, **1.58×** on a dense eigensolve, and **1.31×** on a 64-atom Si DFT SCF.

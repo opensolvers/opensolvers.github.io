@@ -44,6 +44,7 @@ Nav config: `_config.yml` (`navigation`, `navigation_boards`, `navigation_apps`,
 
 | Date | Decision |
 |------|----------|
+| 2026-07-15 | Compute-backends diagram: RV64GC / IME subtitles; U74 DGEMM under Scalar |
 | 2026-07-15 | Homepage: compute-backends illustration (Scalar / Vector / Specific / GPU) |
 | 2026-07-14 | Nav layout: 3 stacked rows — Apps (top), Scientific libs (middle), Boards (bottom) |
 | 2026-07-14 | Add Quantum ESPRESSO app page from `opensolvers/benchmarks/qe` |

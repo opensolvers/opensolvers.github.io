@@ -17,7 +17,8 @@
     <rect x="16" y="32" width="120" height="72" rx="10" fill="#ffffff" stroke="#155799" stroke-width="1.5"/>
     <rect x="16" y="32" width="120" height="8" rx="10" fill="#155799"/>
     <rect x="16" y="36" width="120" height="4" fill="#155799"/>
-    <text x="76" y="78" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#155799">Scalar</text>
+    <text x="76" y="72" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#155799">Scalar</text>
+    <text x="76" y="92" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#155799" opacity="0.85">RV64GC</text>
   </g>
 
   <!-- Vector -->
@@ -33,7 +34,8 @@
     <rect x="288" y="32" width="120" height="72" rx="10" fill="#ffffff" stroke="#157878" stroke-width="1.5"/>
     <rect x="288" y="32" width="120" height="8" rx="10" fill="#157878"/>
     <rect x="288" y="36" width="120" height="4" fill="#157878"/>
-    <text x="348" y="78" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#157878">Specific</text>
+    <text x="348" y="72" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#157878">Specific</text>
+    <text x="348" y="92" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#157878" opacity="0.85">IME</text>
   </g>
 
   <!-- GPU -->

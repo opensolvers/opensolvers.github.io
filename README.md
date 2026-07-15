@@ -13,7 +13,7 @@ Each RISC-V board exposes several compute paths. We benchmark and tune them inde
 | Path | What it is | Examples on our boards |
 | ---- | ---------- | ---------------------- |
 | **Scalar** | Scalar ISA and portable C kernels — the correctness baseline | `rv64gc` on VisionFive 2; `OPENBLAS_CORETYPE=RISCV64_GENERIC`; U74 **4×4 DGEMM** tuning |
-| **Vector** | ISA vector extensions (RVV) in shared libs | OpenBLAS `RISCV64_ZVL256B` on SpaceMiT X60; the `gemv_n` bug we fixed |
+| **Vector** | ISA vector extensions (RVV) in shared libs | OpenBLAS `RISCV64_ZVL256B` on SpaceMiT X60 (VLEN=256); `ZVL128B` where VLEN=128; the `gemv_n` bug we fixed |
 | **Specific** | Silicon-specific custom units beyond RVV | X60 **IME** (`smt.vmadot`) int8 on [RV2](boards/RV2.html) / [F3](boards/F3.html) |
 | **GPU** | Discrete or integrated accelerators | On the roadmap — not yet in our RISC-V board benchmarks |
 

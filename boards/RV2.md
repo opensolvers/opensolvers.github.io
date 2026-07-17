@@ -45,3 +45,7 @@ The fix backports the upstream `gemv_n` correction from OpenBLAS ≥ 0.3.31 ([Op
 4. Register the new backend with FlexiBLAS and re-run the same `xhpl`.
 
 Full walkthrough: [EESSI/docs#819](https://github.com/EESSI/docs/pull/819) — *Chasing a NaN: correct RVV HPL on a RISC-V SpaceMiT X60 via EESSI*.
+
+## FFTW RVV
+
+See [FFTW](../scientific-libs/fftw.html) — FFTW 3.3.10 with the `r5v` RVV backend vs scalar on this board. Under `FFTW_MEASURE`, r5v wins **1.06–1.60×**; `FFTW_ESTIMATE` under-plans large transforms by **3–5×**.

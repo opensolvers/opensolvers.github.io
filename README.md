@@ -17,7 +17,7 @@ Each RISC-V board exposes several compute paths. We benchmark and tune them inde
 | **Specific** | Silicon-specific custom units beyond RVV | X60 **IME** (`smt.vmadot`) int8 on [RV2](boards/RV2.html) / [F3](boards/F3.html); [ONNX Runtime](apps/onnx.html) int4 via MLAS |
 | **GPU** | Discrete or integrated accelerators | On the roadmap — not yet in our RISC-V board benchmarks |
 
-Recent highlights on the Orange Pi RV2 (SpaceMiT X60, RVV): fixing an OpenBLAS `gemv_n` bug restores correctness across [BLAS](scientific-libs/blas.html), [LAPACK](scientific-libs/lapack.html), [ELPA](scientific-libs/elpa.html), [HPL](apps/hpl.html), and [Quantum ESPRESSO](apps/qe.html) — with patched RVV reaching **10.53 GFLOP/s** on Linpack, **1.58×** on a dense eigensolve, and **1.31×** on a 64-atom Si DFT SCF. [FFTW `r5v`](scientific-libs/fftw.html) beats scalar **1.06–1.60×** under `FFTW_MEASURE`; planner choice alone is worth **3–5×**. On the IME path, setting `accuracy_level=4` on ONNX `MatMulNBits` nodes unlocks **9–10×** int4 LLM decode — see [ONNX Runtime](apps/onnx.html) and [MLAS](scientific-libs/mlas.html).
+Recent highlights on the Orange Pi RV2 (SpaceMiT X60, RVV): fixing an OpenBLAS `gemv_n` bug restores correctness across [BLAS](scientific-libs/blas.html), [LAPACK](scientific-libs/lapack.html), [ELPA](scientific-libs/elpa.html), [ScaLAPACK](scientific-libs/scalapack.html), [HPL](apps/hpl.html), and [Quantum ESPRESSO](apps/qe.html). [FFTW `r5v`](scientific-libs/fftw.html) wins **1.06–1.60×** in isolation but **~0%** inside a real QE SCF (`FFTW_ESTIMATE`); [GROMACS](apps/gromacs.html) sees **1.23×** on isolated `PME 3D-FFT`. ONNX `accuracy_level=4` unlocks **9–10×** int4 decode — [ONNX Runtime](apps/onnx.html) / [MLAS](scientific-libs/mlas.html).
 
 ## Scientific libs
 
@@ -29,7 +29,8 @@ Library-level probes — performance *and* numerical correctness:
 - **[LAPACK](scientific-libs/lapack.html)** — LAPACK path via NumPy `eigvalsh`
 - **[ELPA](scientific-libs/elpa.html)** — dense eigensolver (CP2K / VASP class workloads)
 - **[MLAS](scientific-libs/mlas.html)** — ONNX Runtime QNBit int4 GEMM; isolated IME kernel rates on X60
-- **[FFTW](scientific-libs/fftw.html)** — RVV `r5v` backend A/B vs scalar; planner-aware `tests/bench` on X60
+- **[FFTW](scientific-libs/fftw.html)** — RVV `r5v` backend A/B; QE FFT-axis shows ~0% end-to-end despite micro wins
+- **[ScaLAPACK](scientific-libs/scalapack.html)** — distributed `PDSYEV`; stock RVV hangs, patched **1.09×**
 
 ## Apps
 
@@ -38,6 +39,7 @@ End-to-end application benchmarks on the same boards and EESSI toolchain:
 - **[HPL](apps/hpl.html)** — High Performance Linpack; cross-board summary and A/B configs from [opensolvers/benchmarks](https://github.com/opensolvers/benchmarks)
 - **[Quantum ESPRESSO](apps/qe.html)** — plane-wave DFT SCF (`pw.x`); whole-application BLAS backend A/B with per-routine timers
 - **[ONNX Runtime](apps/onnx.html)** — int4 `MatMulNBits` LLM decode; `accuracy_level=4` unlocks X60 IME (**9–10×**)
+- **[GROMACS](apps/gromacs.html)** — PME MD; FFT-axis A/B via `libfftw3f` `LD_PRELOAD` (**1.23×** on `PME 3D-FFT`)
 
 ## Boards
 

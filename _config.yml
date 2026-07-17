@@ -21,6 +21,8 @@ navigation_apps:
     url: /apps/qe.html
   - title: ONNX Runtime
     url: /apps/onnx.html
+  - title: GROMACS
+    url: /apps/gromacs.html
 
 navigation_scientific_libs:
   - title: BLAS
@@ -37,3 +39,5 @@ navigation_scientific_libs:
     url: /scientific-libs/mlas.html
   - title: FFTW
     url: /scientific-libs/fftw.html
+  - title: ScaLAPACK
+    url: /scientific-libs/scalapack.html

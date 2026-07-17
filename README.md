@@ -14,10 +14,10 @@ Each RISC-V board exposes several compute paths. We benchmark and tune them inde
 | ---- | ---------- | ---------------------- |
 | **Scalar** | Scalar ISA and portable C kernels — the correctness baseline | `rv64gc` on VisionFive 2; `OPENBLAS_CORETYPE=RISCV64_GENERIC`; U74 **4×4 DGEMM** tuning |
 | **Vector** | ISA vector extensions (RVV) in shared libs | OpenBLAS `RISCV64_ZVL256B` on SpaceMiT X60 (VLEN=256); `ZVL128B` where VLEN=128; the `gemv_n` bug we fixed |
-| **Specific** | Silicon-specific custom units beyond RVV | X60 **IME** (`smt.vmadot`) int8 on [RV2](boards/RV2.html) / [F3](boards/F3.html) |
+| **Specific** | Silicon-specific custom units beyond RVV | X60 **IME** (`smt.vmadot`) int8 on [RV2](boards/RV2.html) / [F3](boards/F3.html); [ONNX Runtime](apps/onnx.html) int4 via MLAS |
 | **GPU** | Discrete or integrated accelerators | On the roadmap — not yet in our RISC-V board benchmarks |
 
-Recent highlights on the Orange Pi RV2 (SpaceMiT X60, RVV): fixing an OpenBLAS `gemv_n` bug restores correctness across [BLAS](scientific-libs/blas.html), [LAPACK](scientific-libs/lapack.html), [ELPA](scientific-libs/elpa.html), [HPL](apps/hpl.html), and [Quantum ESPRESSO](apps/qe.html) — with patched RVV reaching **10.53 GFLOP/s** on Linpack, **1.58×** on a dense eigensolve, and **1.31×** on a 64-atom Si DFT SCF.
+Recent highlights on the Orange Pi RV2 (SpaceMiT X60, RVV): fixing an OpenBLAS `gemv_n` bug restores correctness across [BLAS](scientific-libs/blas.html), [LAPACK](scientific-libs/lapack.html), [ELPA](scientific-libs/elpa.html), [HPL](apps/hpl.html), and [Quantum ESPRESSO](apps/qe.html) — with patched RVV reaching **10.53 GFLOP/s** on Linpack, **1.58×** on a dense eigensolve, and **1.31×** on a 64-atom Si DFT SCF. On the IME path, setting `accuracy_level=4` on ONNX `MatMulNBits` nodes unlocks **9–10×** int4 LLM decode vs the fp32 fallback — see [ONNX Runtime](apps/onnx.html) and [MLAS](scientific-libs/mlas.html).
 
 ## Scientific libs
 
@@ -28,6 +28,7 @@ Library-level probes — performance *and* numerical correctness:
 - **[NumPy](scientific-libs/numpy.html)** — `bench_blas.py` DGEMM and `eigvalsh` through the SciPy stack
 - **[LAPACK](scientific-libs/lapack.html)** — LAPACK path via NumPy `eigvalsh`
 - **[ELPA](scientific-libs/elpa.html)** — dense eigensolver (CP2K / VASP class workloads)
+- **[MLAS](scientific-libs/mlas.html)** — ONNX Runtime QNBit int4 GEMM; isolated IME kernel rates on X60
 
 ## Apps
 
@@ -35,6 +36,7 @@ End-to-end application benchmarks on the same boards and EESSI toolchain:
 
 - **[HPL](apps/hpl.html)** — High Performance Linpack; cross-board summary and A/B configs from [opensolvers/benchmarks](https://github.com/opensolvers/benchmarks)
 - **[Quantum ESPRESSO](apps/qe.html)** — plane-wave DFT SCF (`pw.x`); whole-application BLAS backend A/B with per-routine timers
+- **[ONNX Runtime](apps/onnx.html)** — int4 `MatMulNBits` LLM decode; `accuracy_level=4` unlocks X60 IME (**9–10×**)
 
 ## Boards
 

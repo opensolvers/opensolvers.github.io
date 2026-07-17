@@ -16,7 +16,7 @@ Microbenchmarks in [opensolvers/benchmarks/ime](https://github.com/opensolvers/b
 | 768×768×512 | ~5.2 GOP/s | **42 GOP/s** (peak) | **8.1×** |
 | 1024×1024×512 | 5.2 GOP/s | **32 GOP/s** | 6.2× |
 
-Peak **~42 GOP/s** single-core — vs ~5 GOP/s for a straightforward RVV int8 path. llama.cpp ships an X60 IME backend (`GGML_CPU_RISCV64_SPACEMIT`) for block-scaled Q4 inference; see also [papers/x60-ime-block-scale-optimization](https://github.com/opensolvers/benchmarks/blob/main/papers/x60-ime-block-scale-optimization.md) in the benchmarks repo.
+Peak **~42 GOP/s** single-core — vs ~5 GOP/s for a straightforward RVV int8 path. End-to-end int4 LLM decode through [ONNX Runtime](../apps/onnx.html) and isolated [MLAS](../scientific-libs/mlas.html) kernel rates use the same IME hardware; see also [papers/x60-ime-block-scale-optimization](https://github.com/opensolvers/benchmarks/blob/main/papers/x60-ime-block-scale-optimization.md) in the benchmarks repo.
 
 ## HPL via EESSI
 

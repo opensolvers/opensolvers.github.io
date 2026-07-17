@@ -16,7 +16,7 @@ Benchmark source: [opensolvers/benchmarks/elpa](https://github.com/opensolvers/b
 
 The stock vector backend is faster than scalar but **wrong** — the same OpenBLAS 0.3.30 `gemv_n` NaN bug that breaks [HPL](../apps/hpl.html) and [Quantum ESPRESSO](../apps/qe.html). With the patch, RVV is **1.58×** faster than scalar (54.92 / 34.81) and numerically correct.
 
-Speedup is smaller than pure `dgemm` (~2.3×) because tridiagonalization is latency-bound BLAS-2 — by design.
+Speedup is smaller than pure `dgemm` (~2.3×) because tridiagonalization is latency-bound BLAS-2 — by design. For the pure-MPI end of the spectrum see [ScaLAPACK](scalapack.html) (`PDSYEV`, **1.09×** patched RVV, stock RVV **hangs**).
 
 ### Banana Pi BPI-F3 (cross-board confirmation)
 

@@ -37,7 +37,18 @@ The stock vector backend aborts in `inverse_s` (overlap-matrix inversion / Lowdi
 
 ### Default band count (`nbnd=136`)
 
-**67.6 s → 57.0 s = 1.19×** overall (`calbec` 1.90×, `rdiaghg` 1.53×). BLAS routines speed up ~1.5–2.0×; the FFT half of the run does not move with a FlexiBLAS swap — see [FFTW](../scientific-libs/fftw.html) for RVV FFT tuning on the same hardware (**1.06–1.60×** under `FFTW_MEASURE`, plus **3–5×** from planner choice).
+**67.6 s → 57.0 s = 1.19×** overall (`calbec` 1.90×, `rdiaghg` 1.53×). BLAS routines speed up ~1.5–2.0×; the FFT half does not move with a FlexiBLAS swap. Swapping the FFT library directly ([FFTW](../scientific-libs/fftw.html) `run-qe-fft-ab.sh`) also yields **~0% end-to-end** — QE uses `FFTW_ESTIMATE` on thousands of small transforms, not the `MEASURE` planner where r5v wins **1.06–1.60×** in isolation.
+
+## FFT axis — RVV FFTW also ~0% end-to-end
+
+Serial `pw.x` on [Orange Pi RV2](../boards/RV2.html), BLAS pinned to scalar OpenBLAS, FFT swapped via `LD_PRELOAD` ([`run-qe-fft-ab.sh`](https://github.com/opensolvers/benchmarks/blob/main/fftw/run-qe-fft-ab.sh)):
+
+| Timer | Scalar FFTW | r5v FFTW | Speedup |
+| ----- | ----------: | -------: | ------: |
+| `fftw` (~45% of run) | 112.24 s | 110.09 s | 1.019× |
+| **`PWSCF` (total)** | **248.49 s** | **248.10 s** | **1.002×** |
+
+Energy bit-identical. A microbenchmark FFT win does not automatically become an application win — see also [GROMACS](gromacs.html) for the FFT-axis mirror ( **1.23×** on isolated `PME 3D-FFT`, diluted by scalar `Force`).
 
 ## Where QE sits on the BLAS-dilution spectrum
 
@@ -50,7 +61,7 @@ Same X60, patched RVV vs scalar:
 | [ELPA](../scientific-libs/elpa.html) (eigensolver) | ~1.58× | BLAS-3 + BLAS-2 tridiagonalization |
 | **QE** (full DFT SCF) | **~1.2–1.3×** | BLAS + ~40–50% FFT + MPI |
 
-Each step down adds more non-BLAS / latency-bound work, diluting the BLAS-3 peak. QE is the most realistic whole-application figure — and the reason a raw `dgemm` A/B *overstates* what a real code sees.
+Each step down adds more non-BLAS / latency-bound work, diluting the BLAS-3 peak. And on the X60 today, **neither BLAS nor FFT drop-in swaps meaningfully move a real QE SCF** — BLAS wins are capped by the FFT half; FFT wins evaporate under `FFTW_ESTIMATE`.
 
 ## Reproducing
 

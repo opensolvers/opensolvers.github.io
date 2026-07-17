@@ -19,8 +19,8 @@ Context file for structural and content decisions on [opensolvers.com](https://w
 
 1. **Home**
 2. **Boards** — VisionFive 2, OrangePi RV2, BananaPi F3
-3. **Apps** — HPL, Quantum ESPRESSO, ONNX Runtime
-4. **Scientific libs** — BLAS, DGEMM, NumPy, LAPACK, ELPA, MLAS, FFTW
+3. **Apps** — HPL, Quantum ESPRESSO, ONNX Runtime, GROMACS
+4. **Scientific libs** — BLAS, DGEMM, NumPy, LAPACK, ELPA, MLAS, FFTW, ScaLAPACK
 
 Nav config: `_config.yml` (`navigation`, `navigation_boards`, `navigation_apps`, `navigation_scientific_libs`). Rendered in `_includes/header.html`. Cayman theme requires `_layouts/default.html` override to include the header.
 
@@ -28,7 +28,7 @@ Nav config: `_config.yml` (`navigation`, `navigation_boards`, `navigation_apps`,
 
 | Source | Used for |
 |--------|----------|
-| [opensolvers/benchmarks](https://github.com/opensolvers/benchmarks) | BLAS (`dgemm/`), HPL (`hpl/`), ELPA (`elpa/`), QE (`qe/`), NumPy/LAPACK (`numpy/`), ONNX/MLAS (`onnx/`), FFTW RVV (`fftw/`) |
+| [opensolvers/benchmarks](https://github.com/opensolvers/benchmarks) | BLAS (`dgemm/`), HPL (`hpl/`), ELPA/ScaLAPACK (`elpa/`, `scalapack/`), QE/FFTW (`qe/`, `fftw/`), GROMACS (`gromacs/`), ONNX/MLAS (`onnx/`), NumPy (`numpy/`) |
 | [EESSI/docs#818](https://github.com/EESSI/docs/pull/818) | VisionFive 2 / U74 OpenBLAS + HPL |
 | [EESSI/docs#819](https://github.com/EESSI/docs/pull/819) | Orange Pi RV2 / X60 RVV `gemv_n` fix + HPL |
 | [easyconfigs#26436](https://github.com/easybuilders/easybuild-easyconfigs/pull/26436) | U74 OpenBLAS package |
@@ -44,6 +44,7 @@ Nav config: `_config.yml` (`navigation`, `navigation_boards`, `navigation_apps`,
 
 | Date | Decision |
 |------|----------|
+| 2026-07-18 | Sync from benchmarks: GROMACS app, ScaLAPACK lib, FFTW QE end-to-end (~0%), updated QE/elpa/RV2 |
 | 2026-07-17 | Add FFTW `r5v` RVV page from `benchmarks/fftw`; cross-links from QE and RV2 |
 | 2026-07-17 | Add MLAS (lib) and ONNX Runtime (app) pages from `benchmarks/onnx` |
 | 2026-07-15 | Vector box: add ZVL256B and ZVL128B subtitles |

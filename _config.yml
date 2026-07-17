@@ -19,6 +19,8 @@ navigation_apps:
     url: /apps/hpl.html
   - title: Quantum ESPRESSO
     url: /apps/qe.html
+  - title: ONNX Runtime
+    url: /apps/onnx.html
 
 navigation_scientific_libs:
   - title: BLAS
@@ -31,3 +33,5 @@ navigation_scientific_libs:
     url: /scientific-libs/lapack.html
   - title: ELPA
     url: /scientific-libs/elpa.html
+  - title: MLAS
+    url: /scientific-libs/mlas.html

@@ -6,7 +6,7 @@ Benchmark source: [opensolvers/benchmarks/qe](https://github.com/opensolvers/ben
 
 ## Why QE as a probe
 
-[`dgemm`](../scientific-libs/dgemm.html) isolates BLAS-3; [HPL](hpl.html) and [ELPA](../scientific-libs/elpa.html) probe single HPC solvers. A full DFT SCF mixes level-3 GEMM (`calbec`, subspace rotation), dense LAPACK diagonalization, latency-bound BLAS-2, MPI, **and a large FFT fraction** — so it shows both whether a buggy vector BLAS breaks a production code, and what fraction of a real run the RVV speedup actually moves.
+[`dgemm`](../scientific-libs/dgemm.html) isolates BLAS-3; [HPL](hpl.html) and [ELPA](../scientific-libs/elpa.html) probe single HPC solvers; [FFTW](../scientific-libs/fftw.html) covers the FFT half. A full DFT SCF mixes level-3 GEMM (`calbec`, subspace rotation), dense LAPACK diagonalization, latency-bound BLAS-2, MPI, **and a large FFT fraction** — so it shows both whether a buggy vector BLAS breaks a production code, and what fraction of a real run each backend swap actually moves.
 
 ## Correctness — stock RVV `gemv_n` breaks a real DFT SCF
 
@@ -37,7 +37,7 @@ The stock vector backend aborts in `inverse_s` (overlap-matrix inversion / Lowdi
 
 ### Default band count (`nbnd=136`)
 
-**67.6 s → 57.0 s = 1.19×** overall (`calbec` 1.90×, `rdiaghg` 1.53×). BLAS routines speed up ~1.5–2.0×; the FFT half of the run does not move (FlexiBLAS only swaps BLAS), which caps the whole-application number.
+**67.6 s → 57.0 s = 1.19×** overall (`calbec` 1.90×, `rdiaghg` 1.53×). BLAS routines speed up ~1.5–2.0×; the FFT half of the run does not move with a FlexiBLAS swap — see [FFTW](../scientific-libs/fftw.html) for RVV FFT tuning on the same hardware (**1.06–1.60×** under `FFTW_MEASURE`, plus **3–5×** from planner choice).
 
 ## Where QE sits on the BLAS-dilution spectrum
 

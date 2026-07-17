@@ -35,3 +35,5 @@ navigation_scientific_libs:
     url: /scientific-libs/elpa.html
   - title: MLAS
     url: /scientific-libs/mlas.html
+  - title: FFTW
+    url: /scientific-libs/fftw.html

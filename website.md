@@ -44,7 +44,7 @@ Nav config: `_config.yml` (`navigation`, `navigation_boards`, `navigation_apps`,
 
 | Date | Decision |
 |------|----------|
-| 2026-07-18 | U74 hybrid video pack (`video/u74/`) — script, storyboard, slides, terminal guide; no render yet |
+| 2026-07-18 | U74 video production moved to private repo `opensolvers/u74-video` (removed from site) |
 | 2026-07-18 | Sync from benchmarks: GROMACS app, ScaLAPACK lib, FFTW QE end-to-end (~0%), updated QE/elpa/RV2 |
 | 2026-07-17 | Add FFTW `r5v` RVV page from `benchmarks/fftw`; cross-links from QE and RV2 |
 | 2026-07-17 | Add MLAS (lib) and ONNX Runtime (app) pages from `benchmarks/onnx` |

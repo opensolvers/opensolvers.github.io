@@ -71,3 +71,84 @@
   font-size: 0.8em;
   opacity: 0.85;
 }
+
+.video-grid {
+  display: grid;
+  gap: 2rem;
+  margin: 1.5rem 0 2rem;
+}
+
+.video-card {
+  border: 1px solid #e9ebec;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+}
+
+.video-embed {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #111;
+}
+
+.video-embed iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.video-card-body {
+  padding: 1.25rem 1.5rem 1.5rem;
+}
+
+.video-card-title {
+  margin: 0 0 0.35rem;
+  font-size: 1.25rem;
+}
+
+.video-card-title a {
+  color: #155799;
+  text-decoration: none;
+}
+
+.video-card-title a:hover {
+  text-decoration: underline;
+}
+
+.video-card-meta {
+  margin: 0 0 0.75rem;
+  color: #606c71;
+  font-size: 0.9rem;
+}
+
+.video-card-desc {
+  margin: 0 0 0.75rem;
+  line-height: 1.55;
+}
+
+.video-card-tags {
+  margin: 0 0 0.75rem;
+}
+
+.video-tag {
+  display: inline-block;
+  margin: 0 0.35rem 0.35rem 0;
+  padding: 0.2rem 0.55rem;
+  border-radius: 0.25rem;
+  background: #f3f6fa;
+  color: #155799;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.video-card-links {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.video-card-links li {
+  margin: 0.25rem 0;
+}

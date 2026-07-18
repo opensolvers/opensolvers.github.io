@@ -1,3 +1,8 @@
+---
+title: HPL results on RISC-V boards
+description: High Performance Linpack cross-board summary — VisionFive 2 U74 tuning, Orange Pi RV2 and Banana Pi F3 X60 fixes, EESSI stack, and FlexiBLAS backend swaps.
+---
+
 # HPL results overview
 
 Cross-board summary of **High Performance Linpack (HPL)** on consumer RISC-V hardware through the EESSI stack. Configs and an A/B runner (`run-hpl-ab.sh`) are in [opensolvers/benchmarks/hpl](https://github.com/opensolvers/benchmarks/tree/main/hpl).

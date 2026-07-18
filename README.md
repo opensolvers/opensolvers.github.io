@@ -1,4 +1,15 @@
+---
+title: OpenSolvers — RISC-V scientific software benchmarks
+description: Benchmark notes for open-source scientific libraries and applications on consumer RISC-V boards — HPL, BLAS, Quantum ESPRESSO, GROMACS, EESSI, and FlexiBLAS backend swaps.
+---
+
 OpenSolvers explores how open-source scientific software runs on real hardware — starting with **RISC-V** boards and the tools that make that practical (EESSI, OpenBLAS, and friends). This site documents what we learn along the way.
+
+## Videos
+
+Walkthroughs on our [YouTube channel](https://www.youtube.com/@opensolvers) — see the full list on the [Videos](videos.html) page.
+
+- **[1.69× HPL on VisionFive 2](https://www.youtube.com/watch?v=DS4IlzsEq9w)** — U74-tuned OpenBLAS via EESSI and FlexiBLAS (3.13 → 5.28 GFLOP/s)
 
 ## What we're working on
 

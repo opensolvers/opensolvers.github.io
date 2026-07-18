@@ -1,10 +1,20 @@
 theme: jekyll-theme-cayman
 title: OpenSolvers
-description: RISC-V learnings and fun
+description: Open-source scientific software benchmarks on RISC-V boards — HPL, BLAS, Quantum ESPRESSO, GROMACS, and library-level probes via EESSI.
+url: https://www.opensolvers.com
+lang: en
+twitter:
+  card: summary_large_image
+logo: /assets/images/compute-backends.svg
 
 navigation:
   - title: Home
     url: /
+  - title: Videos
+    url: /videos.html
+  - title: YouTube
+    url: https://www.youtube.com/@opensolvers
+    external: true
 
 navigation_boards:
   - title: VisionFive 2
@@ -41,3 +51,21 @@ navigation_scientific_libs:
     url: /scientific-libs/fftw.html
   - title: ScaLAPACK
     url: /scientific-libs/scalapack.html
+
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: default
+  - scope:
+      path: "boards"
+    values:
+      layout: default
+  - scope:
+      path: "apps"
+    values:
+      layout: default
+  - scope:
+      path: "scientific-libs"
+    values:
+      layout: default

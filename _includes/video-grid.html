@@ -1,0 +1,65 @@
+{% assign videos = include.videos | default: site.data.videos %}
+{% if videos and videos.size > 0 %}
+<div class="video-grid">
+  {% for video in videos %}
+  <article class="video-card" id="{{ video.id }}">
+    <div class="video-embed">
+      <iframe
+        src="https://www.youtube-nocookie.com/embed/{{ video.youtube_id }}"
+        title="{{ video.title | escape }}"
+        loading="lazy"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen
+      ></iframe>
+    </div>
+    <div class="video-card-body">
+      <h3 class="video-card-title">
+        <a href="https://www.youtube.com/watch?v={{ video.youtube_id }}" rel="noopener noreferrer">
+          {{ video.title }}
+        </a>
+      </h3>
+      {% if video.date %}
+      <p class="video-card-meta"><time datetime="{{ video.date }}">{{ video.date }}</time></p>
+      {% endif %}
+      {% if video.description %}
+      <p class="video-card-desc">{{ video.description }}</p>
+      {% endif %}
+      {% if video.boards %}
+      <p class="video-card-tags">
+        {% for board in video.boards %}
+        <span class="video-tag">{{ board }}</span>
+        {% endfor %}
+      </p>
+      {% endif %}
+      {% if video.related_pages %}
+      <ul class="video-card-links">
+        {% for link in video.related_pages %}
+        <li><a href="{{ link.url | relative_url }}">{{ link.title }}</a></li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+    </div>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "VideoObject",
+      "name": {{ video.title | jsonify }},
+      "description": {{ video.description | strip | jsonify }},
+      "thumbnailUrl": "https://img.youtube.com/vi/{{ video.youtube_id }}/maxresdefault.jpg",
+      "uploadDate": "{{ video.date }}",
+      "duration": "{{ video.duration | default: '' }}",
+      "embedUrl": "https://www.youtube.com/embed/{{ video.youtube_id }}",
+      "contentUrl": "https://www.youtube.com/watch?v={{ video.youtube_id }}",
+      "publisher": {
+        "@type": "Organization",
+        "name": "OpenSolvers",
+        "url": "{{ site.url | default: 'https://www.opensolvers.com' }}"
+      }
+    }
+    </script>
+  </article>
+  {% endfor %}
+</div>
+{% else %}
+<p>No videos yet.</p>
+{% endif %}

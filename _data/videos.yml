@@ -1,0 +1,22 @@
+# YouTube videos — add new entries here (newest first).
+- id: u74-hpl-visionfive2
+  title: "1.69× HPL on RISC-V: U74-Tuned OpenBLAS on VisionFive 2 (EESSI)"
+  description: >
+    How we lifted HPL on a StarFive VisionFive 2 from 3.13 to 5.28 GFLOP/s without
+    rebuilding HPL — by swapping in a SiFive U74-tuned OpenBLAS kernel through EESSI
+    and FlexiBLAS.
+  youtube_id: DS4IlzsEq9w
+  date: 2026-07-18
+  duration: PT4M38S
+  boards:
+    - VisionFive 2
+  topics:
+    - HPL
+    - OpenBLAS
+    - EESSI
+    - FlexiBLAS
+  related_pages:
+    - title: VisionFive 2 board notes
+      url: /boards/VisionFive2.html
+    - title: HPL overview
+      url: /apps/hpl.html

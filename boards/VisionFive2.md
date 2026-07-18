@@ -1,6 +1,15 @@
+---
+title: StarFive VisionFive 2 — SiFive U74 benchmarks
+description: VisionFive 2 (JH7110) notes — scalar U74 OpenBLAS tuning, HPL 3.13 to 5.28 GFLOP/s via EESSI and FlexiBLAS, compute paths, and EESSI reproduction steps.
+---
+
 The StarFive VisionFive 2 board is built around the StarFive **JH7110** SoC: four **SiFive U74** cores at 1.5 GHz (`rv64gc`, scalar — no vector extension), integrated **IMG BXE-4-32 MC1** GPU (OpenCL 3.0 / Vulkan 1.2), 8 GB RAM, typically running Ubuntu 24.04.
 
 ![](vf2.jpg)
+
+## Video walkthrough
+
+**[1.69× HPL on RISC-V: U74-Tuned OpenBLAS on VisionFive 2 (EESSI)](https://www.youtube.com/watch?v=DS4IlzsEq9w)** — [all videos](../videos.html)
 
 ## Compute paths on this board
 

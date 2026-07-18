@@ -11,18 +11,34 @@ Context file for structural and content decisions on [opensolvers.com](https://w
 | Area | Path | Purpose |
 |------|------|---------|
 | Homepage | `README.md` → `/` | Intro, scientific libs, apps, board summaries |
+| Videos | `videos.md` → `/videos.html` | YouTube walkthroughs (`_data/videos.yml`) |
 | Boards | `boards/` | Per-board hardware + benchmark notes |
 | Apps | `apps/` | End-to-end application benchmarks (e.g. HPL) |
 | Scientific libs | `scientific-libs/` | Library-level probes (BLAS, LAPACK, ELPA) |
 
 ## Navigation groups
 
-1. **Home**
-2. **Boards** — VisionFive 2, OrangePi RV2, BananaPi F3
-3. **Apps** — HPL, Quantum ESPRESSO, ONNX Runtime, GROMACS
-4. **Scientific libs** — BLAS, DGEMM, NumPy, LAPACK, ELPA, MLAS, FFTW, ScaLAPACK
+1. **Home** · **Videos** · **YouTube** (external)
+2. **Apps** — HPL, Quantum ESPRESSO, ONNX Runtime, GROMACS
+3. **Scientific libs** — BLAS, DGEMM, NumPy, LAPACK, ELPA, MLAS, FFTW, ScaLAPACK
+4. **Boards** — VisionFive 2, OrangePi RV2, BananaPi F3
 
 Nav config: `_config.yml` (`navigation`, `navigation_boards`, `navigation_apps`, `navigation_scientific_libs`). Rendered in `_includes/header.html`. Cayman theme requires `_layouts/default.html` override to include the header.
+
+## Videos
+
+Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.html` on `videos.md`. Add a row per published YouTube video — no new page needed.
+
+## SEO
+
+| Item | Location |
+|------|----------|
+| Site `url`, `lang`, description | `_config.yml` |
+| `{% seo %}` tags | `_layouts/default.html` (jekyll-seo-tag) |
+| Organization + WebSite JSON-LD | `_includes/head-custom.html` |
+| VideoObject JSON-LD | `_includes/video-grid.html` (per video) |
+| `robots.txt` + sitemap | site root; sitemap from GitHub Pages / `url:` |
+| Page titles/descriptions | YAML front matter on key pages |
 
 ## Content sources
 
@@ -44,6 +60,8 @@ Nav config: `_config.yml` (`navigation`, `navigation_boards`, `navigation_apps`,
 
 | Date | Decision |
 |------|----------|
+| 2026-07-18 | Videos page + `_data/videos.yml`; U74 YouTube link; SEO (`url`, JSON-LD, robots.txt, page descriptions) |
+| 2026-07-18 | Per-board compute-backend SVGs; fix invalid UTF-8 in VisionFive 2 / K1 diagrams |
 | 2026-07-18 | U74 video production moved to private repo `opensolvers/u74-video` (removed from site) |
 | 2026-07-18 | Sync from benchmarks: GROMACS app, ScaLAPACK lib, FFTW QE end-to-end (~0%), updated QE/elpa/RV2 |
 | 2026-07-17 | Add FFTW `r5v` RVV page from `benchmarks/fftw`; cross-links from QE and RV2 |

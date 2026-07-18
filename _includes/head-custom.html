@@ -1,0 +1,31 @@
+{% assign site_url = site.url | default: "https://www.opensolvers.com" | append: "" %}
+<meta property="og:site_name" content="{{ site.title | default: 'OpenSolvers' }}">
+<meta name="author" content="OpenSolvers">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "OpenSolvers",
+  "url": "{{ site_url }}",
+  "description": {{ site.description | jsonify }},
+  "sameAs": [
+    "https://www.youtube.com/@opensolvers",
+    "https://github.com/opensolvers"
+  ]
+}
+</script>
+{% if page.url == '/' or page.url == '/index.html' %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "OpenSolvers",
+  "url": "{{ site_url }}",
+  "description": {{ site.description | jsonify }},
+  "publisher": {
+    "@type": "Organization",
+    "name": "OpenSolvers"
+  }
+}
+</script>
+{% endif %}

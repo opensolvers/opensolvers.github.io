@@ -17,7 +17,7 @@
     <rect x="16" y="36" width="120" height="4" fill="#155799"/>
     <text x="76" y="66" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#155799">Scalar</text>
     <text x="76" y="84" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#155799" opacity="0.85">RV64GC</text>
-    <text x="76" y="98" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#155799" opacity="0.85">Zba · Zbb</text>
+    <text x="76" y="98" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#155799" opacity="0.85">Zba &#183; Zbb</text>
   </g>
 
   <g filter="url(#soft-shadow)">
@@ -26,6 +26,6 @@
     <rect x="160" y="36" width="120" height="4" fill="#159957"/>
     <text x="220" y="66" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#159957">GPU</text>
     <text x="220" y="84" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#159957" opacity="0.85">BXE-4-32</text>
-    <text x="220" y="98" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#159957" opacity="0.75">OpenCL · Vulkan</text>
+    <text x="220" y="98" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#159957" opacity="0.75">OpenCL &#183; Vulkan</text>
   </g>
 </svg>

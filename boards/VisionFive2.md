@@ -1,4 +1,4 @@
-The StarFive VisionFive 2 board is built around the StarFive **JH7110** SoC: four **SiFive U74** cores at 1.5 GHz (`rv64gc`, scalar — no vector extension), 8 GB RAM, typically running Ubuntu 24.04.
+The StarFive VisionFive 2 board is built around the StarFive **JH7110** SoC: four **SiFive U74** cores at 1.5 GHz (`rv64gc`, scalar — no vector extension), integrated **IMG BXE-4-32 MC1** GPU (OpenCL 3.0 / Vulkan 1.2), 8 GB RAM, typically running Ubuntu 24.04.
 
 ![](vf2.jpg)
 

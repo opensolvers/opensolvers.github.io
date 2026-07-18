@@ -44,6 +44,6 @@
     <rect x="424" y="36" width="120" height="4" fill="#159957"/>
     <text x="484" y="66" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#159957">GPU</text>
     <text x="484" y="84" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#159957" opacity="0.85">BXE-2-32</text>
-    <text x="484" y="98" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#159957" opacity="0.75">OpenCL · Vulkan</text>
+    <text x="484" y="98" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#159957" opacity="0.75">OpenCL &#183; Vulkan</text>
   </g>
 </svg>

@@ -1,4 +1,4 @@
-The Orange Pi RV2 is built on the SpaceMiT **K1** SoC: eight **SpacemiT X60** cores at ~1.6 GHz (`rv64gcv`, **RVV 1.0, VLEN=256**), 8 GB RAM.
+The Orange Pi RV2 is built on the SpaceMiT **K1** SoC: eight **SpacemiT X60** cores at ~1.6 GHz (`rv64gcv`, **RVV 1.0, VLEN=256**), integrated **IMG BXE-2-32** GPU (OpenCL 3.0 / Vulkan 1.3), 8 GB RAM.
 
 ![](rv2.png)
 

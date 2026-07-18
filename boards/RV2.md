@@ -2,6 +2,12 @@ The Orange Pi RV2 is built on the SpaceMiT **K1** SoC: eight **SpacemiT X60** co
 
 ![](rv2.png)
 
+## Compute paths on this board
+
+The K1 SoC exposes all four paths we benchmark: scalar baseline, **RVV** OpenBLAS, **IME** int4 matrix ops (cluster 0), and an integrated **GPU**.
+
+![Compute backends on the Orange Pi RV2](../assets/images/compute-backends-k1.svg)
+
 ## IME (Integer Matrix Extension)
 
 Besides RVV, each X60 core cluster exposes SpaceMiT's **IME** — a dedicated **int8 matrix unit** via the custom instruction `smt.vmadot`. One `vmadot` fuses a **4×4 int32** tile update from two **4×8 int8** operand tiles; this is the hardware behind the part's quoted AI TOPS rating.

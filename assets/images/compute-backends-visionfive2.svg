@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="296" height="128" viewBox="0 0 296 128" role="img" aria-label="VisionFive 2 compute backends: Scalar (RV64GC, Zba, Zbb) and GPU (BXE-4-32)">
+  <defs>
+    <linearGradient id="header-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#155799"/>
+      <stop offset="100%" stop-color="#159957"/>
+    </linearGradient>
+    <filter id="soft-shadow" x="-4%" y="-8%" width="108%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#155799" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+
+  <rect x="16" y="12" width="264" height="6" rx="3" fill="url(#header-gradient)"/>
+
+  <g filter="url(#soft-shadow)">
+    <rect x="16" y="32" width="120" height="72" rx="10" fill="#ffffff" stroke="#155799" stroke-width="1.5"/>
+    <rect x="16" y="32" width="120" height="8" rx="10" fill="#155799"/>
+    <rect x="16" y="36" width="120" height="4" fill="#155799"/>
+    <text x="76" y="66" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#155799">Scalar</text>
+    <text x="76" y="84" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#155799" opacity="0.85">RV64GC</text>
+    <text x="76" y="98" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#155799" opacity="0.85">Zba · Zbb</text>
+  </g>
+
+  <g filter="url(#soft-shadow)">
+    <rect x="160" y="32" width="120" height="72" rx="10" fill="#ffffff" stroke="#159957" stroke-width="1.5"/>
+    <rect x="160" y="32" width="120" height="8" rx="10" fill="#159957"/>
+    <rect x="160" y="36" width="120" height="4" fill="#159957"/>
+    <text x="220" y="66" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#159957">GPU</text>
+    <text x="220" y="84" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#159957" opacity="0.85">BXE-4-32</text>
+    <text x="220" y="98" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#159957" opacity="0.75">OpenCL · Vulkan</text>
+  </g>
+</svg>

@@ -2,6 +2,12 @@ The StarFive VisionFive 2 board is built around the StarFive **JH7110** SoC: fou
 
 ![](vf2.jpg)
 
+## Compute paths on this board
+
+The JH7110 has **scalar** CPU cores (U74-tuned OpenBLAS) and an integrated **GPU** — no RVV vector unit or vendor matrix extension.
+
+![Compute backends on the VisionFive 2](../assets/images/compute-backends-visionfive2.svg)
+
 ## HPL via EESSI
 
 See also the [HPL app overview](../apps/hpl.html).

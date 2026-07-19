@@ -14,9 +14,9 @@ The K1 SoC exposes all four paths we benchmark: scalar baseline, **RVV** OpenBLA
 
 ## IME (Integer Matrix Extension)
 
-Besides RVV, each X60 core cluster exposes SpaceMiT's **IME** — a dedicated **int8 matrix unit** via the custom instruction `smt.vmadot`. One `vmadot` fuses a **4×4 int32** tile update from two **4×8 int8** operand tiles; this is the hardware behind the part's quoted AI TOPS rating.
+Besides RVV, SpaceMiT's **IME** is a dedicated **int8 matrix unit** via the custom instruction `smt.vmadot`. One `vmadot` fuses a **4×4 int32** tile update from two **4×8 int8** operand tiles; this is the hardware behind the part's quoted AI TOPS rating.
 
-On the K1 the IME sits in **cluster 0 only** (cores **0–3**), with those four cores sharing a **512 KB L2**. Pin IME workloads to a cluster-0 core (`taskset -c 0`).
+On the K1 the IME sits in **cluster 0 only** (cores **0–3**), with those four cores sharing a **512 KB L2** — cluster 1 (cores 4–7) has no IME. Pin IME workloads to a cluster-0 core (`taskset -c 0`).
 
 Microbenchmarks in [opensolvers/benchmarks/ime](https://github.com/opensolvers/benchmarks/tree/main/ime) (`ime-bench`): pure `s8s8s32` GEMM, bit-exact vs a scalar reference, timed against a plain RVV int8 baseline on this board (core 0, 1.6 GHz):
 

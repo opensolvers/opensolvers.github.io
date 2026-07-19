@@ -2,7 +2,7 @@
 
 LAPACK performance and correctness probed via NumPy **`eigvalsh`** (`dsyevd`) — the LAPACK-heavy half of the [NumPy benchmark](numpy.html).
 
-Benchmark source: [opensolvers/benchmarks/numpy](https://github.com/opensolvers/benchmarks/tree/main/numpy) (`bench_blas.py`). For DGEMM (`A @ B`) see the [NumPy](numpy.html) or [DGEMM](dgemm.html) pages.
+Benchmark source: [opensolvers/benchmarks/numpy](https://github.com/opensolvers/benchmarks/tree/main/numpy) (`bench_blas.py`). For DGEMM (`A @ B`) see the [NumPy](numpy.html) or [BLAS verification](blas.html#verification) sections.
 
 ## Orange Pi RV2 (8 threads)
 
@@ -12,7 +12,7 @@ Patched RVV OpenBLAS via FlexiBLAS (`SciPy-bundle` module, [easyconfigs#26444](h
 | ------ | ------ | ----------- | ------- |
 | EIGH (`eigvalsh`, N=2048) | 10.54 s | 6.72 s | **1.6×** |
 
-Stock EESSI default RVV: `eigvalsh` returns NaN / fails to converge. See [DGEMM `difftest`](dgemm.html).
+Stock EESSI default RVV: `eigvalsh` returns NaN / fails to converge. See [`difftest`](blas.html#verification).
 
 ## Banana Pi F3 (cross-board)
 

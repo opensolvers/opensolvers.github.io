@@ -60,6 +60,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 
 | Date | Decision |
 |------|----------|
+| 2026-07-19 | Publish X60 gemv_n / HPL NaN video (`W_-8cKA-CCU`) — `_data/videos.yml`, homepage, RV2, HPL, BLAS |
 | 2026-07-19 | Sync benchmarks PR #19–20: add **BLIS** page; expand **GROMACS** with RVV Force backend (3.31×) and 2026.3 autovec lever |
 | 2026-07-19 | Nav: OpenSolvers title links home; Home/Videos/YouTube on separate row from Apps |
 | 2026-07-19 | Sync benchmarks PR #18: merge OpenBLAS verification into BLAS page; remove `dgemm.html`; fix GitHub links |

@@ -23,6 +23,8 @@ Cross-board summary of **High Performance Linpack (HPL)** on consumer RISC-V har
 
 ## Orange Pi RV2 — detailed results
 
+**Video:** [NaN Linpack on RISC-V: Fixing OpenBLAS gemv_n on Orange Pi RV2 (EESSI)](https://www.youtube.com/watch?v=W_-8cKA-CCU) — [all videos](../videos.html)
+
 Stock EESSI dispatches RVV `ZVL256B` on the X60, but the unpatched `gemv_n` kernel makes HPL report ~8.5 GFLOP/s while **failing** the residual check (`nan`). With the [easyconfigs#26444](https://github.com/easybuilders/easybuild-easyconfigs/pull/26444) fix, all runs below **PASSED**.
 
 ### EESSI walkthrough (fixed backend)

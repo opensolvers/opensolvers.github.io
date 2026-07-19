@@ -1,4 +1,28 @@
 # YouTube videos — add new entries here (newest first).
+- id: x60-gemv-hpl-rv2
+  title: "NaN Linpack on RISC-V: Fixing OpenBLAS gemv_n on Orange Pi RV2 (EESSI)"
+  description: >
+    Stock EESSI OpenBLAS on an Orange Pi RV2 reports ~8.5 GFLOP/s on HPL — then
+    residual nan, FAILED. We isolate 192 NaNs in RVV dgemv with difftest, and fix
+    it via OpenBLAS#5408 / easyconfigs#26444 through FlexiBLAS (10.53 GFLOP/s PASSED).
+  youtube_id: W_-8cKA-CCU
+  date: 2026-07-19
+  duration: PT6M23S
+  boards:
+    - Orange Pi RV2
+  topics:
+    - HPL
+    - OpenBLAS
+    - EESSI
+    - FlexiBLAS
+    - RVV
+  related_pages:
+    - title: Orange Pi RV2 board notes
+      url: /boards/RV2.html
+    - title: HPL overview
+      url: /apps/hpl.html
+    - title: BLAS / OpenBLAS
+      url: /scientific-libs/blas.html
 - id: u74-hpl-visionfive2
   title: "1.69× HPL on RISC-V: U74-Tuned OpenBLAS on VisionFive 2 (EESSI)"
   description: >

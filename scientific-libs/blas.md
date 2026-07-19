@@ -19,7 +19,7 @@ Verification microbenchmarks live in [opensolvers/benchmarks/OpenBLAS](https://g
 | Target | EasyBuild PR | Upstream OpenBLAS | Walkthrough |
 | ------ | ------------ | ----------------- | ----------- |
 | SiFive U74 | [easyconfigs#26436](https://github.com/easybuilders/easybuild-easyconfigs/pull/26436) | [OpenBLAS#5903](https://github.com/OpenMathLib/OpenBLAS/pull/5903) | [EESSI/docs#818](https://github.com/EESSI/docs/pull/818) |
-| SpacemiT X60 | [easyconfigs#26444](https://github.com/easybuilders/easybuild-easyconfigs/pull/26444) | [OpenBLAS#5408](https://github.com/OpenMathLib/OpenBLAS/pull/5408), [#5476](https://github.com/OpenMathLib/OpenBLAS/pull/5476) | [EESSI/docs#819](https://github.com/EESSI/docs/pull/819) |
+| SpacemiT X60 | [easyconfigs#26444](https://github.com/easybuilders/easybuild-easyconfigs/pull/26444) | [OpenBLAS#5408](https://github.com/OpenMathLib/OpenBLAS/pull/5408), [#5476](https://github.com/OpenMathLib/OpenBLAS/pull/5476) | [EESSI/docs#819](https://github.com/EESSI/docs/pull/819) · [YouTube](https://www.youtube.com/watch?v=W_-8cKA-CCU) |
 
 Build with `eb --from-pr <num> --robot` into an **EESSI-extend** user install, then `flexiblas add` / `flexiblas default` — no downstream rebuild.
 

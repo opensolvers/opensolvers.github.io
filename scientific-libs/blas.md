@@ -2,7 +2,7 @@
 
 Improvements to **OpenBLAS 0.3.30** on RISC-V boards — built via EasyBuild, deployed through [EESSI](https://www.eessi.io/) with **FlexiBLAS** runtime swapping.
 
-Verification microbenchmarks live in [opensolvers/benchmarks/OpenBLAS](https://github.com/opensolvers/benchmarks/tree/main/OpenBLAS) (`bench_dgemm`, `difftest`, `verify_ctrsm`). Stack probes: [NumPy](numpy.html) (`bench_blas.py`). Full repo: [opensolvers/benchmarks](https://github.com/opensolvers/benchmarks).
+Verification microbenchmarks live in [opensolvers/benchmarks/OpenBLAS](https://github.com/opensolvers/benchmarks/tree/main/OpenBLAS) (`bench_dgemm`, `difftest`, `verify_ctrsm`). **Alternative BLAS:** [BLIS](blis.html) RVV vs OpenBLAS DGEMM A/B on X60. Stack probes: [NumPy](numpy.html) (`bench_blas.py`). Full repo: [opensolvers/benchmarks](https://github.com/opensolvers/benchmarks).
 
 **Base stack:** GCC 14.3.0, OpenBLAS 0.3.30, EESSI `2025.06-001` ([`dev.eessi.io/riscv`](https://www.eessi.io/docs/repositories/dev.eessi.io-riscv/)).
 

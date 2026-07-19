@@ -37,6 +37,8 @@ navigation_apps:
 navigation_scientific_libs:
   - title: BLAS
     url: /scientific-libs/blas.html
+  - title: BLIS
+    url: /scientific-libs/blis.html
   - title: NumPy
     url: /scientific-libs/numpy.html
   - title: LAPACK

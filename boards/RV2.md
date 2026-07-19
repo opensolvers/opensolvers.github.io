@@ -52,9 +52,22 @@ The fix backports the upstream `gemv_n` correction from OpenBLAS ≥ 0.3.31 ([Op
 
 Full walkthrough: [EESSI/docs#819](https://github.com/EESSI/docs/pull/819) — *Chasing a NaN: correct RVV HPL on a RISC-V SpaceMiT X60 via EESSI*.
 
+## BLIS vs OpenBLAS
+
+See [BLIS](../scientific-libs/blis.html) — FLAME BLIS `rv64iv` with hand-written RVV assembly vs patched OpenBLAS on the same `bench_dgemm.c`. Single-thread DGEMM at N=4096: **2.95 vs 2.28 GFLOP/s** (**1.29×** BLIS); 8-thread OpenBLAS still leads at large N. TRSM: **2400 cases, 0 fails** on BLIS.
+
 ## FFTW RVV
 
-See [FFTW](../scientific-libs/fftw.html) — r5v wins **1.06–1.60×** in `tests/bench`, but **~0%** end-to-end in [Quantum ESPRESSO](../apps/qe.html) (`FFTW_ESTIMATE`). [GROMACS](../apps/gromacs.html) FFT swap: **1.23×** on isolated `PME 3D-FFT`.
+See [FFTW](../scientific-libs/fftw.html) — r5v wins **1.06–1.60×** in `tests/bench`, but **~0%** end-to-end in [Quantum ESPRESSO](../apps/qe.html) (`FFTW_ESTIMATE`).
+
+## GROMACS
+
+See [GROMACS](../apps/gromacs.html) — two axes on this board:
+
+| Axis | Result |
+| ---- | ------ |
+| **FFT** (`libfftw3f` swap) | **1.23×** on isolated `PME 3D-FFT`; ~0% whole-app (`Force` = 90%) |
+| **Force** (`rvv-backend/`, `SIMD: RISCV_RVV`) | **4.38×** on `Force`, **3.31×** whole-app (0.380 → **1.256 ns/day**) |
 
 ## ScaLAPACK
 

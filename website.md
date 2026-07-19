@@ -60,6 +60,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 
 | Date | Decision |
 |------|----------|
+| 2026-07-19 | Nav: OpenSolvers title links home; Home/Videos/YouTube on separate row from Apps |
 | 2026-07-19 | Sync benchmarks PR #18: merge OpenBLAS verification into BLAS page; remove `dgemm.html`; fix GitHub links |
 | 2026-07-18 | Videos page + `_data/videos.yml`; U74 YouTube link; SEO (`url`, JSON-LD, robots.txt, page descriptions) |
 | 2026-07-18 | Per-board compute-backend SVGs; fix invalid UTF-8 in VisionFive 2 / K1 diagrams |

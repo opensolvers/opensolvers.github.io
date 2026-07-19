@@ -1,5 +1,7 @@
 <header class="page-header" role="banner">
-    <h1 class="project-name">{{ site.title | default: "OpenSolvers" }}</h1>
+    <h1 class="project-name">
+        <a href="{{ '/' | relative_url }}" class="project-name-link">{{ site.title | default: "OpenSolvers" }}</a>
+    </h1>
     <h2 class="project-tagline">{{ site.description | default: "RISC-V learnings and fun" }}</h2>
 
     <nav class="site-nav" aria-label="Main navigation">
@@ -18,6 +20,9 @@
                     </li>
                     {% endfor %}
                 </ul>
+            </div>
+
+            <div class="site-nav-row">
                 <span class="site-nav-label">Apps</span>
                 <ul class="site-nav-list">
                     {% for item in site.navigation_apps %}

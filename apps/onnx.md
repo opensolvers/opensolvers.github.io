@@ -4,7 +4,7 @@
 
 Benchmark source: [opensolvers/benchmarks/onnx](https://github.com/opensolvers/benchmarks/tree/main/onnx) — Llama-7B-proportioned FFN stack, `patch_accuracy_level.py`, and `onnxruntime_perf_test` runners.
 
-Library-level kernel numbers: [MLAS](../scientific-libs/mlas.html). Raw IME microbenchmarks: [Orange Pi RV2](../boards/RV2.html#ime-integer-matrix-extension). Related (llama.cpp, not ORT): IME1 scale-build prefill patch **+4.3%** on the isolated Q4_0 GEMM — see [RV2 IME](../boards/RV2.html#ime1-scale-build-prefill-optimization-llamacpp).
+Library-level kernel numbers: [MLAS](../scientific-libs/mlas.html). Raw IME microbenchmarks: [Orange Pi RV2](../boards/RV2.html#ime-integer-matrix-extension). End-to-end llama.cpp (10 Q4_0 models, IME vs RVV): [llama.cpp app](llamacpp.html). Related kernel patch: IME1 scale-build **+4.3%** — see [RV2 IME](../boards/RV2.html#ime1-scale-build-prefill-optimization-llamacpp).
 
 ## The workload
 

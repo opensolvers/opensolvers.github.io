@@ -28,6 +28,8 @@ Microbenchmarks in [opensolvers/benchmarks/ime](https://github.com/opensolvers/b
 
 Peak **~42 GOP/s** single-core — vs ~5 GOP/s for a straightforward RVV int8 path. End-to-end int4 LLM decode through [ONNX Runtime](../apps/onnx.html) and isolated [MLAS](../scientific-libs/mlas.html) kernel rates use the same IME hardware; see also [papers/x60-ime-block-scale-optimization](https://github.com/opensolvers/benchmarks/blob/main/papers/x60-ime-block-scale-optimization.md) in the benchmarks repo.
 
+End-to-end [llama.cpp](../apps/llamacpp.html): **10/10** Q4_0 models (0.5B–7.6B) validated on this board — IME wins prefill ≥1.1B (up to ~2.5×), RVV wins token-gen.
+
 ### IME1 scale-build prefill optimization (llama.cpp)
 
 llama.cpp's block-scaled Q4_0 kernel (`gemm_kernel_i8i4`) pays a per-block FP scale tax (~31–37% vs raw `s8s8s32`). Patch [`llama-ime1-scalebuild-opt.patch`](https://github.com/opensolvers/benchmarks/blob/main/ime/llama-ime1-scalebuild-opt.patch) rebuilds `As×Bs` scales with `vfmul.vv` (`LOAD_SCALE_4x16_FP16_OPT`) instead of the masked `vfmul.vf` chain.

@@ -25,7 +25,7 @@ Build with `eb --from-pr <num> --robot` into an **EESSI-extend** user install, t
 
 ## Verification {#verification}
 
-The benchmarks repo renamed `dgemm/` → **`OpenBLAS/`** — a small suite for **BLAS performance and per-routine correctness**, used to isolate broken RVV kernels before trusting downstream apps.
+Small, self-contained programs in [opensolvers/benchmarks/OpenBLAS](https://github.com/opensolvers/benchmarks/tree/main/OpenBLAS) for **BLAS performance and per-routine correctness** — used to isolate broken RVV kernels before trusting downstream apps.
 
 | File | Purpose |
 | ---- | ------- |

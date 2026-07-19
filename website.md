@@ -60,7 +60,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 
 | Date | Decision |
 |------|----------|
-| 2026-07-19 | Sync benchmarks PR #18: `dgemm/` → `OpenBLAS/`; merge verification into BLAS page; `dgemm.html` redirect stub; fix GitHub links |
+| 2026-07-19 | Sync benchmarks PR #18: merge OpenBLAS verification into BLAS page; remove `dgemm.html`; fix GitHub links |
 | 2026-07-18 | Videos page + `_data/videos.yml`; U74 YouTube link; SEO (`url`, JSON-LD, robots.txt, page descriptions) |
 | 2026-07-18 | Per-board compute-backend SVGs; fix invalid UTF-8 in VisionFive 2 / K1 diagrams |
 | 2026-07-18 | U74 video production moved to private repo `opensolvers/u74-video` (removed from site) |

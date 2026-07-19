@@ -44,7 +44,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 
 | Source | Used for |
 |--------|----------|
-| [opensolvers/benchmarks](https://github.com/opensolvers/benchmarks) | OpenBLAS (`OpenBLAS/`), **BLIS (`BLIS/`)**, HPL (`hpl/`), ELPA/ScaLAPACK (`elpa/`, `scalapack/`), QE/FFTW (`qe/`, `fftw/`), GROMACS (`gromacs/` incl. `rvv-backend/`), ONNX/MLAS (`onnx/`), NumPy (`numpy/`) |
+| [opensolvers/benchmarks](https://github.com/opensolvers/benchmarks) | OpenBLAS (`OpenBLAS/`), **BLIS (`BLIS/`)**, HPL (`hpl/` incl. BLIS-linked validation), ELPA/ScaLAPACK (`elpa/`, `scalapack/`), QE/FFTW (`qe/`, `fftw/`), GROMACS (`gromacs/` incl. `rvv-backend/`), ONNX/MLAS (`onnx/`), NumPy (`numpy/`), **IME (`ime/` scale-build opt + paper)** |
 | [EESSI/docs#818](https://github.com/EESSI/docs/pull/818) | VisionFive 2 / U74 OpenBLAS + HPL |
 | [EESSI/docs#819](https://github.com/EESSI/docs/pull/819) | Orange Pi RV2 / X60 RVV `gemv_n` fix + HPL |
 | [easyconfigs#26436](https://github.com/easybuilders/easybuild-easyconfigs/pull/26436) | U74 OpenBLAS package |
@@ -60,6 +60,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 
 | Date | Decision |
 |------|----------|
+| 2026-07-19 | Sync benchmarks PR #21–22: HPL-on-BLIS end-to-end (0.35–0.53× OpenBLAS); IME1 scale-build **+4.3%** pp512 |
 | 2026-07-19 | Publish X60 gemv_n / HPL NaN video (`W_-8cKA-CCU`) — `_data/videos.yml`, homepage, RV2, HPL, BLAS |
 | 2026-07-19 | Sync benchmarks PR #19–20: add **BLIS** page; expand **GROMACS** with RVV Force backend (3.31×) and 2026.3 autovec lever |
 | 2026-07-19 | Nav: OpenSolvers title links home; Home/Videos/YouTube on separate row from Apps |

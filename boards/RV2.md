@@ -28,6 +28,21 @@ Microbenchmarks in [opensolvers/benchmarks/ime](https://github.com/opensolvers/b
 
 Peak **~42 GOP/s** single-core — vs ~5 GOP/s for a straightforward RVV int8 path. End-to-end int4 LLM decode through [ONNX Runtime](../apps/onnx.html) and isolated [MLAS](../scientific-libs/mlas.html) kernel rates use the same IME hardware; see also [papers/x60-ime-block-scale-optimization](https://github.com/opensolvers/benchmarks/blob/main/papers/x60-ime-block-scale-optimization.md) in the benchmarks repo.
 
+### IME1 scale-build prefill optimization (llama.cpp)
+
+llama.cpp's block-scaled Q4_0 kernel (`gemm_kernel_i8i4`) pays a per-block FP scale tax (~31–37% vs raw `s8s8s32`). Patch [`llama-ime1-scalebuild-opt.patch`](https://github.com/opensolvers/benchmarks/blob/main/ime/llama-ime1-scalebuild-opt.patch) rebuilds `As×Bs` scales with `vfmul.vv` (`LOAD_SCALE_4x16_FP16_OPT`) instead of the masked `vfmul.vf` chain.
+
+Isolated interleaved A/B on this board (30 rounds, cluster-0 pinned, performance governor, pp512 = 512³) — [benchmarks/ime](https://github.com/opensolvers/benchmarks/tree/main/ime):
+
+| | stock | scaleopt |
+| --- | ---: | ---: |
+| median GOP/s | 22.50 | **23.47** |
+| range | 22.4–22.7 | 23.2–23.6 |
+
+**+4.3%** (+0.97 GOP/s); scaleopt faster in **30/30** rounds; zero overlap; paired t = 50.3. Bit-exact (`sum`/`sumsq`/`max` identical across three shapes).
+
+The kernel win is real; end-to-end `llama-bench` pp512 on this multi-tenant part is **not resolvable above ±15–20% noise** (see the paper linked above). Decode (`tg`) uses the untouched M1/GEMV path.
+
 ## HPL via EESSI
 
 See also the [HPL app overview](../apps/hpl.html).
@@ -59,6 +74,8 @@ Full walkthrough: [EESSI/docs#819](https://github.com/EESSI/docs/pull/819) — *
 ## BLIS vs OpenBLAS
 
 See [BLIS](../scientific-libs/blis.html) — FLAME BLIS `rv64iv` with hand-written RVV assembly vs patched OpenBLAS on the same `bench_dgemm.c`. Single-thread DGEMM at N=4096: **2.95 vs 2.28 GFLOP/s** (**1.29×** BLIS); 8-thread OpenBLAS still leads at large N. TRSM: **2400 cases, 0 fails** on BLIS.
+
+End-to-end [HPL on BLIS](../apps/hpl.html#hpl-on-blis--end-to-end-validation): all **PASSED**, but **0.35–0.53×** OpenBLAS-RVV (best full-memory **5.87 GFLOP/s** at N=25600, 2×4) — the DGEMM win does not carry to Linpack.
 
 ## FFTW RVV
 

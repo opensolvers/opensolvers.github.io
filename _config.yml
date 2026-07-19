@@ -1,6 +1,6 @@
 theme: jekyll-theme-cayman
 title: OpenSolvers
-description: Open-source scientific software benchmarks on RISC-V boards — HPL, BLAS, Quantum ESPRESSO, GROMACS, and library-level probes via EESSI.
+description: Open-source scientific software benchmarks on RISC-V boards — HPL, BLAS, Quantum ESPRESSO, llama.cpp, GROMACS, and library-level probes via EESSI.
 url: https://www.opensolvers.com
 lang: en
 twitter:
@@ -31,6 +31,8 @@ navigation_apps:
     url: /apps/qe.html
   - title: ONNX Runtime
     url: /apps/onnx.html
+  - title: llama.cpp
+    url: /apps/llamacpp.html
   - title: GROMACS
     url: /apps/gromacs.html
 

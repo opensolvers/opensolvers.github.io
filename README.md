@@ -35,8 +35,7 @@ Recent highlights on the Orange Pi RV2 (SpaceMiT X60, RVV): fixing an OpenBLAS `
 
 Library-level probes — performance *and* numerical correctness:
 
-- **[BLAS](scientific-libs/blas.html)** — OpenBLAS improvements (U74 kernel, X60 `gemv_n` fix)
-- **[DGEMM](scientific-libs/dgemm.html)** — `bench_dgemm` + `difftest` performance and correctness probes
+- **[BLAS](scientific-libs/blas.html)** — OpenBLAS improvements (U74 kernel, X60 `gemv_n` / TRSM fixes) and [`OpenBLAS/`](https://github.com/opensolvers/benchmarks/tree/main/OpenBLAS) verification (`bench_dgemm`, `difftest`, `verify_ctrsm`)
 - **[NumPy](scientific-libs/numpy.html)** — `bench_blas.py` DGEMM and `eigvalsh` through the SciPy stack
 - **[LAPACK](scientific-libs/lapack.html)** — LAPACK path via NumPy `eigvalsh`
 - **[ELPA](scientific-libs/elpa.html)** — dense eigensolver (CP2K / VASP class workloads)

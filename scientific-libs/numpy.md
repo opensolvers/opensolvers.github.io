@@ -7,7 +7,7 @@ A **SciPy-stack probe** for BLAS and LAPACK through NumPy — from [opensolvers/
 | DGEMM | `A @ B` | `dgemm` | GFLOP/s |
 | EIGH | `np.linalg.eigvalsh(S)` | `dsyevd` | seconds |
 
-Unlike raw [DGEMM](dgemm.html), `eigvalsh` exercises BLAS-2 tridiagonalization — a correctness gate for the same `gemv_n` bug that breaks [HPL](../apps/hpl.html) and [ELPA](elpa.html).
+Unlike raw [OpenBLAS verification](blas.html#verification), `eigvalsh` exercises BLAS-2 tridiagonalization — a correctness gate for the same `gemv_n` bug that breaks [HPL](../apps/hpl.html) and [ELPA](elpa.html).
 
 ```bash
 module load SciPy-bundle/2025.07-gfbf-2025b
@@ -33,6 +33,6 @@ Both patched results finite. See [LAPACK](lapack.html) for the LAPACK angle.
 | DGEMM N=4096 | 4.91 GFLOP/s | **17.51 GFLOP/s** | **3.6×** |
 | EIGH N=2048 | 9.59 s | 5.94 s | **1.6×** |
 
-**Stock unpatched RVV:** `eigvalsh` raises `LinAlgError: Eigenvalues did not converge`; DGEMM alone stays finite at 10.94 GFLOP/s (only `gemv` is broken — see [DGEMM difftest](dgemm.html)).
+**Stock unpatched RVV:** `eigvalsh` raises `LinAlgError: Eigenvalues did not converge`; DGEMM alone stays finite at 10.94 GFLOP/s (only `gemv` is broken — see [`difftest`](blas.html#verification)).
 
 Eigensolver speedup (~1.6×) is lower than DGEMM (~2.4–3.6×) because `eigvalsh` mixes BLAS-3 with latency-bound BLAS-2 — same pattern as [ELPA](elpa.html).

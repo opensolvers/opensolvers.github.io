@@ -6,7 +6,7 @@ Benchmark source: [opensolvers/benchmarks/qe](https://github.com/opensolvers/ben
 
 ## Why QE as a probe
 
-[`dgemm`](../scientific-libs/dgemm.html) isolates BLAS-3; [HPL](hpl.html) and [ELPA](../scientific-libs/elpa.html) probe single HPC solvers; [FFTW](../scientific-libs/fftw.html) covers the FFT half. A full DFT SCF mixes level-3 GEMM (`calbec`, subspace rotation), dense LAPACK diagonalization, latency-bound BLAS-2, MPI, **and a large FFT fraction** — so it shows both whether a buggy vector BLAS breaks a production code, and what fraction of a real run each backend swap actually moves.
+[OpenBLAS verification](../scientific-libs/blas.html#verification) isolates BLAS-3; [HPL](hpl.html) and [ELPA](../scientific-libs/elpa.html) probe single HPC solvers; [FFTW](../scientific-libs/fftw.html) covers the FFT half. A full DFT SCF mixes level-3 GEMM (`calbec`, subspace rotation), dense LAPACK diagonalization, latency-bound BLAS-2, MPI, **and a large FFT fraction** — so it shows both whether a buggy vector BLAS breaks a production code, and what fraction of a real run each backend swap actually moves.
 
 ## Correctness — stock RVV `gemv_n` breaks a real DFT SCF
 
@@ -56,7 +56,7 @@ Same X60, patched RVV vs scalar:
 
 | Probe | Speedup | Why |
 | ----- | ------: | --- |
-| [DGEMM](../scientific-libs/dgemm.html) (pure level-3) | ~2.3× | all BLAS-3 |
+| [OpenBLAS verification](../scientific-libs/blas.html#verification) (pure level-3) | ~2.3× | all BLAS-3 |
 | [HPL](hpl.html) (Linpack) | ~1.8× | BLAS-3 + `dgemv` panel factorization |
 | [ELPA](../scientific-libs/elpa.html) (eigensolver) | ~1.58× | BLAS-3 + BLAS-2 tridiagonalization |
 | **QE** (full DFT SCF) | **~1.2–1.3×** | BLAS + ~40–50% FFT + MPI |
@@ -76,4 +76,4 @@ RVV_LIB=/path/to/patched/libopenblas.so ./run-qe-ab.sh si-scf.in 4
 RVV_LIB=/path/to/patched/libopenblas.so ./run-perf-ab.sh si-super-64.in 4
 ```
 
-**Toolchain:** QuantumESPRESSO 7.5 / foss-2025b (EESSI), FlexiBLAS 3.4.5, OpenBLAS 0.3.30. Patched vector backend = OpenBLAS 0.3.30 with the RISC-V `gemv_n` NaN fix backported — same build used by [DGEMM](../scientific-libs/dgemm.html), [HPL](hpl.html), and [ELPA](../scientific-libs/elpa.html).
+**Toolchain:** QuantumESPRESSO 7.5 / foss-2025b (EESSI), FlexiBLAS 3.4.5, OpenBLAS 0.3.30. Patched vector backend = OpenBLAS 0.3.30 with the RISC-V `gemv_n` NaN fix backported — same build used by [OpenBLAS verification](../scientific-libs/blas.html#verification), [HPL](hpl.html), and [ELPA](../scientific-libs/elpa.html).

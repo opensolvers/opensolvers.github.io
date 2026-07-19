@@ -39,7 +39,7 @@ The **`Force` row confirms the A/B** — 821.35 vs 819.97 s (0.17%, noise). RVV 
 
 | Probe | Axis | Isolated speedup | Whole-app effect |
 | ----- | ---- | ---------------: | ---------------- |
-| [DGEMM](../scientific-libs/dgemm.html) | BLAS | ~2.3× | (pure kernel) |
+| [OpenBLAS verification](../scientific-libs/blas.html#verification) | BLAS | ~2.3× | (pure kernel) |
 | [QE](qe.html) (DFT SCF) | BLAS | ~1.5–2.0× on BLAS routines | ~1.2–1.3× (FFT half untouched) |
 | [QE + FFTW](../scientific-libs/fftw.html) | FFT | ~1.02× on `fftw` | **~0%** (`FFTW_ESTIMATE`) |
 | **GROMACS** (this page) | **FFT** | **~1.23× on `PME 3D-FFT`** | small (`Force` = 90%) |

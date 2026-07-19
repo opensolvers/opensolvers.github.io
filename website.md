@@ -20,7 +20,7 @@ Context file for structural and content decisions on [opensolvers.com](https://w
 
 1. **Home** · **Videos** · **YouTube** (external)
 2. **Apps** — HPL, Quantum ESPRESSO, ONNX Runtime, GROMACS
-3. **Scientific libs** — BLAS, DGEMM, NumPy, LAPACK, ELPA, MLAS, FFTW, ScaLAPACK
+3. **Scientific libs** — BLAS (incl. OpenBLAS verification), NumPy, LAPACK, ELPA, MLAS, FFTW, ScaLAPACK
 4. **Boards** — VisionFive 2, OrangePi RV2, BananaPi F3
 
 Nav config: `_config.yml` (`navigation`, `navigation_boards`, `navigation_apps`, `navigation_scientific_libs`). Rendered in `_includes/header.html`. Cayman theme requires `_layouts/default.html` override to include the header.
@@ -44,7 +44,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 
 | Source | Used for |
 |--------|----------|
-| [opensolvers/benchmarks](https://github.com/opensolvers/benchmarks) | BLAS (`dgemm/`), HPL (`hpl/`), ELPA/ScaLAPACK (`elpa/`, `scalapack/`), QE/FFTW (`qe/`, `fftw/`), GROMACS (`gromacs/`), ONNX/MLAS (`onnx/`), NumPy (`numpy/`) |
+| [opensolvers/benchmarks](https://github.com/opensolvers/benchmarks) | OpenBLAS (`OpenBLAS/`), HPL (`hpl/`), ELPA/ScaLAPACK (`elpa/`, `scalapack/`), QE/FFTW (`qe/`, `fftw/`), GROMACS (`gromacs/`), ONNX/MLAS (`onnx/`), NumPy (`numpy/`) |
 | [EESSI/docs#818](https://github.com/EESSI/docs/pull/818) | VisionFive 2 / U74 OpenBLAS + HPL |
 | [EESSI/docs#819](https://github.com/EESSI/docs/pull/819) | Orange Pi RV2 / X60 RVV `gemv_n` fix + HPL |
 | [easyconfigs#26436](https://github.com/easybuilders/easybuild-easyconfigs/pull/26436) | U74 OpenBLAS package |
@@ -60,6 +60,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 
 | Date | Decision |
 |------|----------|
+| 2026-07-19 | Sync benchmarks PR #18: merge OpenBLAS verification into BLAS page; remove `dgemm.html`; fix GitHub links |
 | 2026-07-18 | Videos page + `_data/videos.yml`; U74 YouTube link; SEO (`url`, JSON-LD, robots.txt, page descriptions) |
 | 2026-07-18 | Per-board compute-backend SVGs; fix invalid UTF-8 in VisionFive 2 / K1 diagrams |
 | 2026-07-18 | U74 video production moved to private repo `opensolvers/u74-video` (removed from site) |

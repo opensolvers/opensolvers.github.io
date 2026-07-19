@@ -10,7 +10,7 @@ See also [BLAS (OpenBLAS)](blas.html) for the OpenBLAS fixes and verification su
 
 ## Why link, not FlexiBLAS
 
-Other BLAS-axis benchmarks ([HPL](../apps/hpl.html), [NumPy](numpy.html), [QE](../apps/qe.html)) swap backends at runtime via FlexiBLAS. **FlexiBLAS is not installed on the RV2**, so this A/B links the same unchanged `bench_dgemm.c` against each library in turn — still one variable (the BLAS implementation), identical `-O3 -march=rv64imafdcv_zvl256b`.
+Other BLAS-axis benchmarks ([HPL](../apps/hpl.html), [NumPy](numpy.html), [QE](../apps/qe.html)) swap backends at runtime via FlexiBLAS. **FlexiBLAS is not installed on the RV2**, so this A/B links the same unchanged `bench_dgemm.c` against each library in turn — still one variable (the BLAS implementation), identical `-O3 -march=rv64imafdcv_zvl256b`. The same constraint applies end-to-end: [HPL on BLIS](../apps/hpl.html#hpl-on-blis--end-to-end-validation) builds a dedicated `xhpl` against static `libblis.a`.
 
 ## Build & run
 
@@ -52,6 +52,12 @@ BLIS `061c2eb` (`rv64iv`, OpenMP) vs patched RVV OpenBLAS `0.3.33.dev` (`zvl128b
 - **Single thread, large N:** BLIS's RVV assembly microkernel **beats OpenBLAS by ~20–30%** once packing is amortized (N ≥ 2048). At N=1024 the two are within noise.
 - **8 threads:** OpenBLAS scales slightly better (BLIS **0.80–0.89×**). Both get ~3.5–5× from 8 cores; BLIS's OpenMP path leaves headroom vs OpenBLAS threading.
 - **Correctness first:** both backends numerically identical on DGEMM; BLIS TRSM verified independently.
+
+## End-to-end: HPL on BLIS
+
+Linking HPL against the same RVV `libblis.a` ([HPL app](../apps/hpl.html#hpl-on-blis--end-to-end-validation)): all configs **PASSED**, but BLIS is **0.35–0.53×** patched OpenBLAS-RVV (4.02 / 5.57 GFLOP/s; full-memory best **5.87** at N=25600, 2×4).
+
+The 1T square-DGEMM advantage does **not** predict Linpack: HPL hits skinny rank-k / `dtrsm` / `dgemv` shapes where BLIS RVV trails. Details and grid sweep: [benchmarks/hpl](https://github.com/opensolvers/benchmarks/tree/main/hpl).
 
 ## References
 

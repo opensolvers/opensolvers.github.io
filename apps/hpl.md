@@ -48,6 +48,30 @@ Same `xhpl`, backend swapped via FlexiBLAS. All **PASSED** with the fixed vector
 
 A squarer **2×4** grid beats 1×8 for peak throughput. `HPL_big.dat` needs ~6.6 GB RAM — tight on 8 GB boards.
 
+### HPL on BLIS — end-to-end validation
+
+Unlike the FlexiBLAS OpenBLAS A/B above, BLIS cannot be swapped at runtime on the RV2 (no FlexiBLAS). A dedicated `xhpl` is linked statically against RVV `libblis.a` (`Make.rv64_blis`, `build-hpl-blis.sh`). Source: [benchmarks/hpl](https://github.com/opensolvers/benchmarks/tree/main/hpl).
+
+This validates that RVV BLIS drives a real Linpack solve — not just square DGEMM — because HPL's panel path leans on `dgemv`/`dtrsv` (the same reason stock OpenBLAS NaN'd).
+
+| Config | BLIS GFLOP/s | Residual | vs patched OpenBLAS-RVV |
+| ------ | -----------: | -------- | ----------------------: |
+| `HPL.dat` (N=8000, 1×8) | 4.02 | 4.12e-03 PASSED | **0.35×** |
+| `HPL-sweep.dat` (N=20000, 2×4) | 5.57 | 3.39e-03 PASSED | **0.53×** |
+
+#### Full-memory process-grid sweep (N=25600)
+
+Largest square problem that fits (~5.2 GB). N=28672 OOMs on this 8 GB no-swap board (rank 7 signal 9).
+
+| Grid | GFLOP/s | Time | Residual |
+| ---- | ------: | ---: | -------- |
+| **2×4** | **5.87** | 1904.5 s | 3.37e-03 PASSED |
+| 1×8 | 5.84 | 1916.0 s | 2.84e-03 PASSED |
+| 4×2 | 5.23 | 2140.5 s | 4.07e-03 PASSED |
+| 8×1 | 4.31 | 2592.9 s | 5.75e-03 PASSED |
+
+**Takeaway:** correctness holds (no NaN, residual on par with OpenBLAS). Throughput trails patched-RVV OpenBLAS — HPL is panel-heavy (thin k=256, `dtrsm`, level-2), not the large square DGEMM where BLIS wins ~1.2–1.3× single-thread. Wide grids beat tall (8×1 −26% vs 2×4). See [BLIS](../scientific-libs/blis.html).
+
 ## VisionFive 2
 
 Scalar U74 — stock OpenBLAS uses a generic kernel; the U74-tuned build lifts HPL **3.13 → 5.28 GFLOP/s** (**1.69×**). Walkthrough: [EESSI/docs#818](https://github.com/EESSI/docs/pull/818).

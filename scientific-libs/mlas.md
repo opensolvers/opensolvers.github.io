@@ -4,7 +4,7 @@
 
 Benchmark source: [opensolvers/benchmarks/onnx](https://github.com/opensolvers/benchmarks/tree/main/onnx) — [`bench_qnbit_mlas.cpp`](https://github.com/opensolvers/benchmarks/blob/main/onnx/bench_qnbit_mlas.cpp) links directly against `libonnxruntime_mlas.a` and calls the same entry points as ORT's `matmul_nbits.cc`.
 
-See also the [ONNX Runtime app](../apps/onnx.html) for end-to-end int4 LLM-FFN inference and the [IME microbenchmarks](../boards/RV2.html#ime-integer-matrix-extension) on the Orange Pi RV2.
+See also the [ONNX Runtime app](../apps/onnx.html) for end-to-end int4 LLM-FFN inference and the [IME microbenchmarks](../boards/RV2.html#ime-integer-matrix-extension) on the Orange Pi RV2. Related (llama.cpp path): [IME1 scale-build +4.3%](../boards/RV2.html#ime1-scale-build-prefill-optimization-llamacpp).
 
 ## What it probes
 

@@ -4,7 +4,7 @@
 
 Benchmark source: [opensolvers/benchmarks/onnx](https://github.com/opensolvers/benchmarks/tree/main/onnx) — [`bench_qnbit_mlas.cpp`](https://github.com/opensolvers/benchmarks/blob/main/onnx/bench_qnbit_mlas.cpp) links directly against `libonnxruntime_mlas.a` and calls the same entry points as ORT's `matmul_nbits.cc`.
 
-See also the [ONNX Runtime app](../apps/onnx.html) for end-to-end int4 LLM-FFN inference and the [IME microbenchmarks](../boards/RV2.html#ime-integer-matrix-extension) on the Orange Pi RV2. llama.cpp path: [llama.cpp app](../apps/llamacpp.html) (10-model IME vs RVV) and [IME1 scale-build +4.3%](../boards/RV2.html#ime1-scale-build-prefill-optimization-llamacpp).
+See also the [ONNX Runtime app](../apps/onnx.html) for end-to-end int4 LLM-FFN inference and the [IME microbenchmarks](../boards/RV2.html#ime-integer-matrix-extension) on the Orange Pi RV2. llama.cpp path: [llama.cpp app](../apps/llamacpp.html) (10-model IME vs RVV) and [IME1 scale-build +4.3%](../boards/RV2.html#ime1-scale-build-prefill-optimization-llamacpp). Toolchain: `smt.vmadot` via inline asm + patched binutils / raw `.insn` — [RV2](../boards/RV2.html#toolchain-support-xsmtvdot).
 
 ## What it probes
 

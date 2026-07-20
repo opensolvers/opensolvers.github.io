@@ -24,6 +24,15 @@ Where [`ime/`](https://github.com/opensolvers/benchmarks/tree/main/ime) isolates
 
 IME accelerates **Q4_0** specifically; other quants run but on the RVV/scalar path.
 
+## Building the IME backend (toolchain)
+
+`smt.vmadot` has **no compiler intrinsics**. Mainline support is assembler-only: **LLVM ≥ 22**, **GCC ≥ 16**, **binutils ≥ 2.46** (`xsmtvdot`). EESSI `foss-2025b` is still GCC **14.3** + binutils **2.44**, so the IME llama.cpp build needs:
+
+1. **Source patch** [`llama.cpp-x60-ime-upstream-binutils.patch`](https://github.com/opensolvers/benchmarks/blob/main/ime/llama.cpp-x60-ime-upstream-binutils.patch) — rename ggml's vendor `vmadot` → upstream **`smt.vmadot`**, inject `.option arch,+xsmtvdot` in the inline asm, and skip IME2 sources (X60 is IME1-only).
+2. **Patched assembler** — deploy standalone **`binutils-2.46.1-xsmtvdot`** and hand GCC **only that `as`** via `-B` (private symlink dir) so `FindSMTIME` and every compile see the mnemonic while linking keeps the toolchain `ld`.
+
+Details and the raw-`.insn` alternative used by `ime-bench`: [RV2 IME — toolchain support](../boards/RV2.html#toolchain-support-xsmtvdot).
+
 ## Headline results (10/10 validated)
 
 Every model **loaded, reported `use_ime1: 1`, and produced coherent finite output.** No OOM.

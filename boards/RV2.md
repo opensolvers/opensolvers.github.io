@@ -18,6 +18,23 @@ Besides RVV, SpaceMiT's **IME** is a dedicated **int8 matrix unit** via the cust
 
 On the K1 the IME sits in **cluster 0 only** (cores **0–3**), with those four cores sharing a **512 KB L2** — cluster 1 (cores 4–7) has no IME. Pin IME workloads to a cluster-0 core (`taskset -c 0`).
 
+### Toolchain support (`xsmtvdot`)
+
+On X60 the usable IME subset is the vendor extension **`xsmtvdot` / `XSMTVDot`** (SpacemiT Vector Dot Product v1.0) — mnemonics like `smt.vmadot`. There are **no C intrinsics and no auto-vectorization**; every real user emits the instruction via **inline assembly**.
+
+| Toolchain | First version with `xsmtvdot` | What it gives you |
+| --------- | ----------------------------- | ----------------- |
+| **LLVM / Clang** | **≥ 22** ([PR #151706](https://github.com/llvm/llvm-project/pull/151706)) | Assembler recognizes `smt.vmadot` with `-march=…_xsmtvdot` |
+| **GCC** | **≥ 16** (`spacemit-x60` core includes `…_xsmtvdot`) | `-march` / `-mcpu=spacemit-x60` know the extension |
+| **Binutils (gas)** | **≥ 2.46** | Named `smt.*` mnemonics in the assembler |
+
+EESSI `foss-2025b` on this board is still **GCC 14.3 + binutils 2.44** — neither understands `smt.vmadot`. We get IME working anyway with two patterns (both in [benchmarks/ime](https://github.com/opensolvers/benchmarks/tree/main/ime)):
+
+1. **Raw encodings (no special assembler)** — `ime-bench` emits `smt.vmadot` as a **`.insn` / raw word** (`0xe200302b|…` with register fields filled in). Stock **binutils 2.42** on the RV2 assembles it; any RVV-capable `as` is enough.
+2. **Named mnemonics + patched binutils** — llama.cpp's SpaceMiT backend uses inline asm. Upstream ggml still wrote bare `vmadot`; our patch ([`llama.cpp-x60-ime-upstream-binutils.patch`](https://github.com/opensolvers/benchmarks/blob/main/ime/llama.cpp-x60-ime-upstream-binutils.patch)) renames those to **`smt.vmadot`**, injects `.option arch,+xsmtvdot`, and gates IME2 sources (X60 is IME1-only). We deploy a standalone **`binutils-2.46.1-xsmtvdot`** and point GCC at **only that `as`** via `-B…/` (symlink in a private dir) so linking still uses the toolchain `ld` — see the EasyBuild recipe comments in the same directory. Without that assembler, the CMake `FindSMTIME` probe fails and the IME backend never builds.
+
+Same hardware and toolchain story apply on the [Banana Pi F3](F3.html) (identical K1 / X60 silicon).
+
 Microbenchmarks in [opensolvers/benchmarks/ime](https://github.com/opensolvers/benchmarks/tree/main/ime) (`ime-bench`): pure `s8s8s32` GEMM, bit-exact vs a scalar reference, timed against a plain RVV int8 baseline on this board (core 0, 1.6 GHz):
 
 | M×N×K | RVV int8 | IME (`smt.vmadot`) | IME / RVV |

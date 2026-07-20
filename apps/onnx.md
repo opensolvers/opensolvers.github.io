@@ -6,6 +6,8 @@ Benchmark source: [opensolvers/benchmarks/onnx](https://github.com/opensolvers/b
 
 Library-level kernel numbers: [MLAS](../scientific-libs/mlas.html). Raw IME microbenchmarks: [Orange Pi RV2](../boards/RV2.html#ime-integer-matrix-extension). End-to-end llama.cpp (10 Q4_0 models, IME vs RVV): [llama.cpp app](llamacpp.html). Related kernel patch: IME1 scale-build **+4.3%** — see [RV2 IME](../boards/RV2.html#ime1-scale-build-prefill-optimization-llamacpp).
 
+Toolchain note: X60 IME (`xsmtvdot` / `smt.vmadot`) is **assembler-only** (LLVM ≥ 22, GCC ≥ 16, binutils ≥ 2.46). On EESSI GCC 14 we either emit raw `.insn` encodings or point builds at a **patched binutils 2.46 `as`** — [how we wire it](../boards/RV2.html#toolchain-support-xsmtvdot).
+
 ## The workload
 
 8-layer stack of FFN/projection blocks: `hidden=4096`, `ffn=11008`, **16 `MatMulNBits` nodes** (com.microsoft), 4-bit symmetric weights, `block_size=32` — the big quantised GEMMs in LLM decode. Measured with `onnxruntime_perf_test` (`-m times`, `-r 8`) at decode shape **M=1**.

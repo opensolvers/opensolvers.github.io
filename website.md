@@ -60,6 +60,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 
 | Date | Decision |
 |------|----------|
+| 2026-07-20 | Document X60 IME toolchain (`xsmtvdot`: LLVM ≥22, GCC ≥16, binutils ≥2.46) + how we use inline asm / patched `as` on EESSI GCC 14 |
 | 2026-07-19 | Add **llama.cpp** app page from benchmarks PR #24–25 (10 Q4_0 models, IME vs RVV); nav + cross-links |
 | 2026-07-19 | Sync benchmarks PR #21–22: HPL-on-BLIS end-to-end (0.35–0.53× OpenBLAS); IME1 scale-build **+4.3%** pp512 |
 | 2026-07-19 | Publish X60 gemv_n / HPL NaN video (`W_-8cKA-CCU`) — `_data/videos.yml`, homepage, RV2, HPL, BLAS |

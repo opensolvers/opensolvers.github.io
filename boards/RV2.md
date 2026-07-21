@@ -62,6 +62,24 @@ Isolated interleaved A/B on this board (30 rounds, cluster-0 pinned, performance
 
 The kernel win is real; end-to-end `llama-bench` pp512 on this multi-tenant part is **not resolvable above ±15–20% noise** (see the paper linked above). Decode (`tg`) uses the untouched M1/GEMV path.
 
+## GPU (PowerVR BXE-2-32) — compute closed
+
+The on-die **Imagination PowerVR BXE-2-32** (BVNC `36.29.52.182`) is compute-capable on paper — OpenCL 3.0 + Vulkan 1.3, and `/sys/kernel/debug/pvr/status` shows a live **CDM (Compute Data Master)**. Firmware (`rgx.fw.36.29.52.182`) loads. Source: [benchmarks/gpu](https://github.com/opensolvers/benchmarks/tree/main/gpu).
+
+**Vendor userspace is a dead end.** SpaceMiT's shipped DDK (`libVK_IMG`, `libPVROCL`, `libGLESv2_PVR_MESA`) embeds only **`"B-Series BXM-4-64"`** — none of the blobs know BXE. Measured on this board:
+
+| API | Result |
+| --- | ------ |
+| OpenCL (`libPVROCL`) | Gates on BVNC → refuses `36.29.52.182` |
+| Vulkan (`libVK_IMG`) | `vkCreateInstance` → **`VK_ERROR_INCOMPATIBLE_DRIVER` (−9)** after probing `/dev/dri/renderD128` |
+| GLES 3.1 compute | Same DDK / same BXM allowlist |
+
+No rebuild path: the CL/VK/GLES runtime and USC shader compiler are proprietary; every public `img-gpu-powervr` package is the same `24.2@6603887` BXM blob. Graphics rendering works; **GPGPU on our SKU does not.**
+
+**Open stack (deferred).** The only self-buildable route is Mesa `pvr` + mainline `drm/imagination` — a different kernel uAPI and firmware format (`powervr/rogue_36.29.52.182_v1.fw` exists on freedesktop). That needs a **rebuilt K1 kernel** (backport onto `6.6.63-ky`; no vendor/Armbian/OpenWrt tree ships the open driver). Explicitly **not** switching this board's kernel for now. Even on full success the GPU ceiling is **~20 GFLOPS FP32** — roughly **50–100× below** 8× X60 RVV / IME for our int8 LLM GEMM.
+
+**Bottom line:** GPU compute via the vendor stack is **closed**. Useful accelerators on this SoC remain **RVV** and **IME** (above). Same silicon on the [Banana Pi F3](F3.html).
+
 ## HPL via EESSI
 
 See also the [HPL app overview](../apps/hpl.html).

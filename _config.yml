@@ -16,7 +16,7 @@ navigation:
     url: https://www.youtube.com/@opensolvers
     external: true
   - title: GitHub
-    url: https://github.com/opensolvers
+    url: https://github.com/opensolvers/benchmarks
     external: true
     icon: github
 

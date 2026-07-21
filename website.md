@@ -18,7 +18,7 @@ Context file for structural and content decisions on [opensolvers.com](https://w
 
 ## Navigation groups
 
-1. **Home** · **Videos** · **YouTube** · **GitHub** (external; GitHub uses logo icon)
+1. **Home** · **Videos** · **GitHub** (external → `opensolvers/benchmarks`; GitHub uses logo icon)
 2. **Apps** — HPL, Quantum ESPRESSO, ONNX Runtime, **llama.cpp**, GROMACS
 3. **Scientific libs** — BLAS (incl. OpenBLAS verification), **BLIS**, NumPy, LAPACK, ELPA, MLAS, FFTW, ScaLAPACK
 4. **Boards** — VisionFive 2, OrangePi RV2, BananaPi F3

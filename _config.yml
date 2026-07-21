@@ -12,9 +12,6 @@ navigation:
     url: /
   - title: Videos
     url: /videos.html
-  - title: YouTube
-    url: https://www.youtube.com/@opensolvers
-    external: true
   - title: GitHub
     url: https://github.com/opensolvers/benchmarks
     external: true

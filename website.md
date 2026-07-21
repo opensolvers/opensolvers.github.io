@@ -18,7 +18,7 @@ Context file for structural and content decisions on [opensolvers.com](https://w
 
 ## Navigation groups
 
-1. **Home** · **Videos** · **YouTube** (external)
+1. **Home** · **Videos** · **YouTube** · **GitHub** (external; GitHub uses logo icon)
 2. **Apps** — HPL, Quantum ESPRESSO, ONNX Runtime, **llama.cpp**, GROMACS
 3. **Scientific libs** — BLAS (incl. OpenBLAS verification), **BLIS**, NumPy, LAPACK, ELPA, MLAS, FFTW, ScaLAPACK
 4. **Boards** — VisionFive 2, OrangePi RV2, BananaPi F3
@@ -60,6 +60,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 
 | Date | Decision |
 |------|----------|
+| 2026-07-21 | Home-row nav: add GitHub (`opensolvers`) with mark logo |
 | 2026-07-21 | Sync benchmarks PR #27: BXE-2-32 GPGPU **closed** (vendor BXM-only DDK); open Mesa `pvr` deferred — RV2 / F3 / homepage |
 | 2026-07-20 | Document X60 IME toolchain (`xsmtvdot`: LLVM ≥22, GCC ≥16, binutils ≥2.46) + how we use inline asm / patched `as` on EESSI GCC 14 |
 | 2026-07-19 | Add **llama.cpp** app page from benchmarks PR #24–25 (10 Q4_0 models, IME vs RVV); nav + cross-links |

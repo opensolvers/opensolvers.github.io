@@ -15,6 +15,10 @@ navigation:
   - title: YouTube
     url: https://www.youtube.com/@opensolvers
     external: true
+  - title: GitHub
+    url: https://github.com/opensolvers
+    external: true
+    icon: github
 
 navigation_boards:
   - title: VisionFive 2

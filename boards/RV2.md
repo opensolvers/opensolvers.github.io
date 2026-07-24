@@ -45,7 +45,7 @@ Microbenchmarks in [opensolvers/benchmarks/ime](https://github.com/opensolvers/b
 
 Peak **~42 GOP/s** single-core — vs ~5 GOP/s for a straightforward RVV int8 path. End-to-end int4 LLM decode through [ONNX Runtime](../apps/onnx.html) and isolated [MLAS](../scientific-libs/mlas.html) kernel rates use the same IME hardware; see also [papers/x60-ime-block-scale-optimization](https://github.com/opensolvers/benchmarks/blob/main/papers/x60-ime-block-scale-optimization.md) in the benchmarks repo.
 
-End-to-end [llama.cpp](../apps/llamacpp.html): **10/10** Q4_0 models (0.5B–7.6B) validated on this board — IME wins prefill ≥1.1B (up to ~2.5×), RVV wins token-gen.
+End-to-end [llama.cpp](../apps/llamacpp.html): **10/10** Q4_0 models (0.5B–7.6B) validated on this board — IME wins prefill ≥1.1B (up to ~2.5×), RVV wins token-gen. Staging fork: [`opensolvers/llama.cpp`](https://github.com/opensolvers/llama.cpp) branch [`x60-ime-rvv`](https://github.com/opensolvers/llama.cpp/tree/x60-ime-rvv).
 
 ### IME1 scale-build prefill optimization (llama.cpp)
 

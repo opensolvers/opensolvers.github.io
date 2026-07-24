@@ -5,9 +5,56 @@ description: End-to-end Q4_0 GGUF validation on Orange Pi RV2 — ten models, IM
 
 # llama.cpp
 
-[llama.cpp](https://github.com/ggml-org/llama.cpp) Q4_0 inference on the SpaceMiT X60 — end-to-end validation of the **IME `smt.vmadot`** path against a plain **RVV** build on the Orange Pi RV2.
+[llama.cpp](https://github.com/ggml-org/llama.cpp) Q4_0 / Q8_0 inference on the SpaceMiT X60 — end-to-end validation of the **IME `smt.vmadot`** path against a plain **RVV** build on the Orange Pi RV2.
 
 Benchmark source: [opensolvers/benchmarks/llamacpp](https://github.com/opensolvers/benchmarks/tree/main/llamacpp) — model list, `validate_model.sh` / `run_all.sh`, and `model_validation.tsv`. Kernel-level IME work: [IME on RV2](../boards/RV2.html#ime-integer-matrix-extension) / [benchmarks/ime](https://github.com/opensolvers/benchmarks/tree/main/ime). Related ORT int4 path: [ONNX Runtime](onnx.html).
+
+## Our fork: `opensolvers/llama.cpp` (`x60-ime-rvv`)
+
+Upstream [ggml-org/llama.cpp](https://github.com/ggml-org/llama.cpp) already ships a SpaceMiT backend (`GGML_CPU_RISCV64_SPACEMIT`). We keep a **fork** — [opensolvers/llama.cpp](https://github.com/opensolvers/llama.cpp) — and stage X60-specific work on the **[`x60-ime-rvv`](https://github.com/opensolvers/llama.cpp/tree/x60-ime-rvv)** branch so we can iterate on real silicon without blocking upstream review.
+
+**Why a fork / branch (not patches-only):**
+
+- Core-level kernels (IME GEMM, RVV softmax / GEMV) change often; a branch is the durable place to stack, bisect, and A/B them.
+- Some changes are **IME1 / X60-shaped** (cluster-0 matrix unit, `xsmtvdot` mnemonics, IME2 gated out) and need a landing pad before they are ready for `master`.
+- Viewers can **clone one branch** and get the same software we measure on the RV2 — no hunting across EasyBuild patch files.
+
+**What is on `x60-ime-rvv` today** (stacked on upstream master):
+
+| Change | Role |
+| ------ | ---- |
+| IME1 i8i8 GEMM for **Q8_0** / **Q6_K** | Prefill `MUL_MAT` via `smt.vmadot` (repack opt-in so default tg stays RVV-friendly) |
+| IME1 **scale-build** opt (`LOAD_SCALE_4x16_FP16_OPT`) | **+4.3%** on isolated Q4_0 GEMM — [RV2 notes](../boards/RV2.html#ime1-scale-build-prefill-optimization-llamacpp) |
+| Upstream **`xsmtvdot` / `smt.vmadot`** asm | Builds against binutils ≥ 2.46; IME2 sources only if the toolchain has them |
+| RVV **SOFT_MAX** F32 | ~2× vs scalar on multi-row shapes (`test-backend-ops`) |
+
+Open follow-ups live as PRs on the fork (e.g. RVV M1 GEMV for token-gen).
+
+### How to use it
+
+On a SpaceMiT X60 board (Orange Pi RV2 / Banana Pi F3), with a toolchain that can assemble `smt.vmadot` ([details](../boards/RV2.html#toolchain-support-xsmtvdot)):
+
+```bash
+git clone -b x60-ime-rvv https://github.com/opensolvers/llama.cpp.git
+cd llama.cpp
+
+cmake -B build -DCMAKE_BUILD_TYPE=Release \
+  -DGGML_CPU_RISCV64_SPACEMIT=ON \
+  -DGGML_RVV=ON -DGGML_RV_ZVFH=ON -DGGML_RV_ZFH=ON \
+  -DGGML_RV_ZBA=ON -DGGML_RV_ZICBOP=ON
+cmake --build build --parallel "$(nproc)"
+
+# Prefer Q4_0 for the IME Q4 path; pin to cluster 0 for IME (cores 0–3)
+./build/bin/llama-cli -m model.q4_0.gguf -t 4 -c 2048 -n 64 \
+  -p "Explain RISC-V vector extensions in two sentences."
+# Startup should report use_ime1: 1
+
+./build/bin/llama-bench -m model.q4_0.gguf -p 128 -n 32 -t 4
+```
+
+- **Docs on the branch:** [docs/build-riscv64-spacemit.md](https://github.com/opensolvers/llama.cpp/blob/x60-ime-rvv/docs/build-riscv64-spacemit.md) (SpaceMiT cross-toolchain / QEMU notes).
+- **Validation suite we publish numbers from:** [benchmarks/llamacpp](https://github.com/opensolvers/benchmarks/tree/main/llamacpp) (`validate_model.sh` / `run_all.sh`).
+- For A/B against plain RVV, build once **with** `GGML_CPU_RISCV64_SPACEMIT=ON` and once **without** (or use two install prefixes) — same pattern as the tables below.
 
 ## What it probes
 
@@ -26,12 +73,11 @@ IME accelerates **Q4_0** specifically; other quants run but on the RVV/scalar pa
 
 ## Building the IME backend (toolchain)
 
-`smt.vmadot` has **no compiler intrinsics**. Mainline support is assembler-only: **LLVM ≥ 22**, **GCC ≥ 16**, **binutils ≥ 2.46** (`xsmtvdot`). EESSI `foss-2025b` is still GCC **14.3** + binutils **2.44**, so the IME llama.cpp build needs:
+`smt.vmadot` has **no compiler intrinsics**. Mainline support is assembler-only: **LLVM ≥ 22**, **GCC ≥ 16**, **binutils ≥ 2.46** (`xsmtvdot`). EESSI `foss-2025b` is still GCC **14.3** + binutils **2.44**.
 
-1. **Source patch** [`llama.cpp-x60-ime-upstream-binutils.patch`](https://github.com/opensolvers/benchmarks/blob/main/ime/llama.cpp-x60-ime-upstream-binutils.patch) — rename ggml's vendor `vmadot` → upstream **`smt.vmadot`**, inject `.option arch,+xsmtvdot` in the inline asm, and skip IME2 sources (X60 is IME1-only).
-2. **Patched assembler** — deploy standalone **`binutils-2.46.1-xsmtvdot`** and hand GCC **only that `as`** via `-B` (private symlink dir) so `FindSMTIME` and every compile see the mnemonic while linking keeps the toolchain `ld`.
+On the [`x60-ime-rvv`](https://github.com/opensolvers/llama.cpp/tree/x60-ime-rvv) fork branch those asm/CMake fixes are **already applied**. You still need an assembler that understands `smt.vmadot` — typically a standalone **`binutils-2.46+xsmtvdot`** pointed at GCC via `-B` only for `as` (so linking keeps the toolchain `ld`). Older EasyBuild patches that did the same rename live under [benchmarks/ime](https://github.com/opensolvers/benchmarks/tree/main/ime) for reference.
 
-Details and the raw-`.insn` alternative used by `ime-bench`: [RV2 IME — toolchain support](../boards/RV2.html#toolchain-support-xsmtvdot).
+Raw-`.insn` alternative (no special assembler): [RV2 IME — toolchain support](../boards/RV2.html#toolchain-support-xsmtvdot).
 
 ## Headline results (10/10 validated)
 

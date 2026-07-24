@@ -45,6 +45,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 | Source | Used for |
 |--------|----------|
 | [opensolvers/benchmarks](https://github.com/opensolvers/benchmarks) | OpenBLAS (`OpenBLAS/`), **BLIS (`BLIS/`)**, HPL (`hpl/` incl. BLIS-linked validation), ELPA/ScaLAPACK (`elpa/`, `scalapack/`), QE/FFTW (`qe/`, `fftw/`), GROMACS (`gromacs/` incl. `rvv-backend/`), ONNX/MLAS (`onnx/`), **llama.cpp (`llamacpp/` 10-model IME vs RVV)**, NumPy (`numpy/`), **IME (`ime/` scale-build opt + paper)**, **GPU (`gpu/` BXE-2-32 vendor closed + open Mesa deferred)** |
+| [opensolvers/llama.cpp](https://github.com/opensolvers/llama.cpp) (`x60-ime-rvv`) | SpaceMiT X60 IME/RVV staging fork — kernels + how-to on [apps/llamacpp](apps/llamacpp.html) |
 | [EESSI/docs#818](https://github.com/EESSI/docs/pull/818) | VisionFive 2 / U74 OpenBLAS + HPL |
 | [EESSI/docs#819](https://github.com/EESSI/docs/pull/819) | Orange Pi RV2 / X60 RVV `gemv_n` fix + HPL |
 | [easyconfigs#26436](https://github.com/easybuilders/easybuild-easyconfigs/pull/26436) | U74 OpenBLAS package |
@@ -60,6 +61,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 
 | Date | Decision |
 |------|----------|
+| 2026-07-24 | Document `opensolvers/llama.cpp` fork + `x60-ime-rvv` branch (why + how to clone/build) on llama.cpp app page |
 | 2026-07-24 | Homepage: why SBCs — core-level software work needs cores; improvements scale to HPC |
 | 2026-07-21 | Home-row nav: add GitHub (`opensolvers`) with mark logo |
 | 2026-07-21 | Sync benchmarks PR #27: BXE-2-32 GPGPU **closed** (vendor BXM-only DDK); open Mesa `pvr` deferred — RV2 / F3 / homepage |

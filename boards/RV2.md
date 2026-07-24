@@ -127,6 +127,17 @@ See [GROMACS](../apps/gromacs.html) — two axes on this board:
 | **FFT** (`libfftw3f` swap) | **1.23×** on isolated `PME 3D-FFT`; ~0% whole-app (`Force` = 90%) |
 | **Force** (`rvv-backend/`, `SIMD: RISCV_RVV`) | **4.38×** on `Force`, **3.31×** whole-app (0.380 → **1.256 ns/day**) |
 
+## LAMMPS
+
+See [LAMMPS](../apps/lammps.html) — RVV-Kokkos whole-app MD (five upstream `bench/` workloads, 32000 atoms / 100 steps):
+
+| Regime | Best back-end | Peak vs serial |
+| ------ | ------------- | -------------: |
+| Compute-bound pair (`lj`, `eam`) | Kokkos/OpenMP (8 threads) | **6.20×** / **7.21×** |
+| Comm / bonded-heavy (`chain`, `chute`, `rhodo`) | MPI (8 ranks) | **5.67×** / **4.90×** / **5.94×** |
+
+Speedups are **parallel scaling** on one RVV-vectorized binary (not RVV-vs-scalar). Pair force ≈ **84%** of `lj` wall.
+
 ## ScaLAPACK
 
 See [ScaLAPACK](../scientific-libs/scalapack.html) — `PDSYEV` on 2×4 grid: stock RVV **hangs**; patched RVV **107.23 s** vs scalar **116.87 s** (**1.09×**).

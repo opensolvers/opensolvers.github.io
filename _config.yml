@@ -16,6 +16,9 @@ navigation:
     url: https://github.com/opensolvers/benchmarks
     external: true
     icon: github
+  - title: Sponsor
+    url: https://github.com/sponsors/opensolvers
+    external: true
 
 navigation_boards:
   - title: VisionFive 2

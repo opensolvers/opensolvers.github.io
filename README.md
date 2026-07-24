@@ -4,7 +4,7 @@ description: Benchmark notes for open-source scientific libraries, applications,
 permalink: /
 ---
 
-OpenSolvers explores how open-source scientific software runs on real hardware — starting with **RISC-V** boards and the tools that make that practical (EESSI, OpenBLAS, and friends). Alongside classical HPC apps, we also work on **AI inference engines** — [llama.cpp](apps/llamacpp.html), [ONNX Runtime](apps/onnx.html) — tuning the same core kernels (RVV, IME) that scientific codes use. This site documents what we learn along the way.
+OpenSolvers explores how open-source scientific software runs on real hardware — starting with **RISC-V** boards and the tools that make that practical (EESSI, OpenBLAS, and friends). Alongside classical HPC apps, we also work on **AI inference engines** — [llama.cpp](apps/llamacpp.html), [ONNX Runtime](apps/onnx.html) — tuning the same core kernels (RVV, IME) that scientific codes use. This site documents what we learn along the way. If the work is useful, you can [sponsor OpenSolvers on GitHub](https://github.com/sponsors/opensolvers).
 
 ## Why single-board computers?
 

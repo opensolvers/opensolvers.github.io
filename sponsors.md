@@ -11,9 +11,11 @@ Today we work on what we can buy and keep on the desk: SiFive U74 ([VisionFive 2
 **Sponsorship is how we add platforms.** Boards, shipping, power, and CI time are the bottleneck — not interest. Two platforms we especially want next:
 
 - **T-Head C910** — a widely shipped RISC-V core class we have not instrumented yet; different microarchitecture means different BLAS / RVV / app behaviour.
-- **SpacemiT K3** — the next step after K1 / X60 (RVA23, newer IME / vector story); we need silicon in-hand to extend the same kernel and app work beyond today’s RV2 / F3 results.
+- **SpacemiT K3** — the next step after K1 / X60 (RVA23, newer IME / vector story); we need silicon in-hand to extend the same kernel and app work beyond today’s RV2 / F3 results. Entry boards are about **$300** ([Banana Pi shop ~$293](https://www.bpi-shop.com/k3-pico-itx-spacemit-k3.html); Sipeed from **$299** for 8 GB Pico-ITX); 16 GB configs are closer to **~$400**.
 
 Your support buys those boards and the time to run the same careful A/B methodology on them — then publish the notes here and in [opensolvers/benchmarks](https://github.com/opensolvers/benchmarks).
+
+**Near-term Sponsors goal:** **$300/month** — enough to cover a K3 Pico-ITX and keep iterating on it.
 
 **[Become a sponsor on GitHub →](https://github.com/sponsors/opensolvers)**
 

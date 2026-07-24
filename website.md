@@ -62,6 +62,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 
 | Date | Decision |
 |------|----------|
+| 2026-07-24 | Sponsors goal target: ~$300 for SpacemiT K3 Pico-ITX (8 GB entry; 16 GB ~$400) |
 | 2026-07-24 | Short OpenSolvers bio/tagline; set GitHub org description + website |
 | 2026-07-24 | Sponsors page: why sponsorship funds new platforms (C910, K3) |
 | 2026-07-24 | Sponsors page + tiers ($5/$25/$100/$250 + one-time); `FUNDING.yml`; nav link |

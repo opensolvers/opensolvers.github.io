@@ -61,6 +61,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 
 | Date | Decision |
 |------|----------|
+| 2026-07-24 | Expand llama.cpp page: fork PRs #1–5 (Q8/Q6 GEMM, scale-build, xsmtvdot, softmax, M1 GEMV) + 17-model Q4_K_M study |
 | 2026-07-24 | Document `opensolvers/llama.cpp` fork + `x60-ime-rvv` branch (why + how to clone/build) on llama.cpp app page |
 | 2026-07-24 | Homepage: why SBCs — core-level software work needs cores; improvements scale to HPC |
 | 2026-07-21 | Home-row nav: add GitHub (`opensolvers`) with mark logo |

@@ -1,6 +1,6 @@
 ---
 title: llama.cpp on RISC-V — X60 IME vs RVV
-description: End-to-end Q4_0 GGUF validation on Orange Pi RV2 — ten models, IME smt.vmadot prefill vs RVV token-gen, coherence and llama-bench results.
+description: End-to-end llama.cpp on Orange Pi RV2 — Q4_0 IME vs RVV, Q4_K_M m1gemv study, and opensolvers/llama.cpp x60-ime-rvv kernel work.
 ---
 
 # llama.cpp
@@ -21,14 +21,15 @@ Upstream [ggml-org/llama.cpp](https://github.com/ggml-org/llama.cpp) already shi
 
 **What is on `x60-ime-rvv` today** (stacked on upstream master):
 
-| Change | Role |
-| ------ | ---- |
-| IME1 i8i8 GEMM for **Q8_0** / **Q6_K** | Prefill `MUL_MAT` via `smt.vmadot` (repack opt-in so default tg stays RVV-friendly) |
-| IME1 **scale-build** opt (`LOAD_SCALE_4x16_FP16_OPT`) | **+4.3%** on isolated Q4_0 GEMM — [RV2 notes](../boards/RV2.html#ime1-scale-build-prefill-optimization-llamacpp) |
-| Upstream **`xsmtvdot` / `smt.vmadot`** asm | Builds against binutils ≥ 2.46; IME2 sources only if the toolchain has them |
-| RVV **SOFT_MAX** F32 | ~2× vs scalar on multi-row shapes (`test-backend-ops`) |
+| # | Change | Status | Measured impact |
+| - | ------ | ------ | --------------- |
+| [#1](https://github.com/opensolvers/llama.cpp/pull/1) | IME1 i8i8 GEMM for **Q8_0** / **Q6_K** `MUL_MAT` | merged | Prefill path via `smt.vmadot`; repack opt-in so default tg stays RVV-friendly |
+| [#2](https://github.com/opensolvers/llama.cpp/pull/2) | IME1 **scale-build** (`LOAD_SCALE_4x16_FP16_OPT`) | merged | **+4.3%** isolated Q4_0 GEMM (22.50 → 23.47 GOP/s), bit-exact — [RV2](../boards/RV2.html#ime1-scale-build-prefill-optimization-llamacpp) |
+| [#3](https://github.com/opensolvers/llama.cpp/pull/3) | Upstream **`xsmtvdot` / `smt.vmadot`** asm + IME2 gate | merged | Builds against binutils ≥ 2.46; X60 skips IME2 sources |
+| [#4](https://github.com/opensolvers/llama.cpp/pull/4) | RVV **SOFT_MAX** F32 | merged | **212/212** `test-backend-ops` OK; ~**2.1×** vs scalar on `[4096,4096,5]` |
+| [#5](https://github.com/opensolvers/llama.cpp/pull/5) | RVV **M1 int8 GEMV** (token-gen / remainder rows) | open | Bit-exact; standalone **9.36×** vs scalar; tg64 on Qwen2.5-0.5B **Q8_0**: **0.82 → 5.29 t/s (6.45×)** — but see [Q4_K_M caveat](#study-2--q4_k_m-17-models-m1gemv-vs-rvv) |
 
-Open follow-ups live as PRs on the fork (e.g. RVV M1 GEMV for token-gen).
+Upstream already ships the base SpaceMiT Q4_0 IME path; the fork stacks the kernels above on top of that.
 
 ### How to use it
 
@@ -69,7 +70,7 @@ Where [`ime/`](https://github.com/opensolvers/benchmarks/tree/main/ime) isolates
 
 7.7 GiB RAM, **no swap** → ~5.5 GiB safe model+KV budget. Largest safe fit is **7–7.6B at Q4_0**. ≥13B Q4_0 and 7–8B at Q8_0/fp16 will OOM.
 
-IME accelerates **Q4_0** specifically; other quants run but on the RVV/scalar path.
+IME accelerates **Q4_0** (and Q8_0 / Q6_K via the fork GEMM path). **Q4_K_M** does not engage `smt.vmadot` today — use the RVV build (see [study 2](#study-2--q4_k_m-17-models-m1gemv-vs-rvv)).
 
 ## Building the IME backend (toolchain)
 
@@ -109,29 +110,95 @@ tg scales down with model size as the ~3.85 GB/s memory-bandwidth wall predicts 
 
 Raw TSV: [`model_validation.tsv`](https://github.com/opensolvers/benchmarks/blob/main/llamacpp/model_validation.tsv). Full model notes and HF sources: [`models.md`](https://github.com/opensolvers/benchmarks/blob/main/llamacpp/models.md).
 
-## Kernel optimization (scale-build)
+## Optimizations in detail
 
-Isolated IME1 Q4_0 GEMM patch: **+4.3%** pp512 microkernel (22.50 → 23.47 GOP/s), bit-exact — see [RV2 IME scale-build](../boards/RV2.html#ime1-scale-build-prefill-optimization-llamacpp). End-to-end `llama-bench` pp512 on this board sits under ±15–20% noise; decode (`tg`) uses the untouched M1/GEMV path.
+### IME1 Q8_0 / Q6_K GEMM ([#1](https://github.com/opensolvers/llama.cpp/pull/1))
+
+Adds an IME1 `smt.vmadot` int8 GEMM fast path for **Q8_0** and **Q6_K** `MUL_MAT` / `MUL_MAT_ID`. The i8i8 repack is **opt-in / prefill-oriented**, so default token-generation does not pay for a layout that only helps large-M GEMM. Verified on-board: **64 `smt.vmadot`** instructions in `libggml-cpu.so` under xsmtvdot-aware objdump.
+
+### IME1 scale-build ([#2](https://github.com/opensolvers/llama.cpp/pull/2))
+
+Replaces the masked `vfmul.vf` scale-combine chain with `LOAD_SCALE_4x16_FP16_OPT` (`vfmul.vv`). Isolated interleaved A/B on RV2: **+4.3%** pp512 (22.50 → 23.47 GOP/s), bit-exact, 30/30 rounds. End-to-end `llama-bench` pp512 on this multi-tenant board sits under ±15–20% noise. Details: [RV2 IME scale-build](../boards/RV2.html#ime1-scale-build-prefill-optimization-llamacpp).
+
+### `xsmtvdot` binutils alignment ([#3](https://github.com/opensolvers/llama.cpp/pull/3))
+
+Inline asm emits `.option arch,+xsmtvdot` + `smt.vmadot` (encoding `0xe241b12b`); CMake only builds IME2 when `xsmtvdotii` is present. Lets EESSI GCC 14 + a standalone binutils 2.46 `as` build the backend — [toolchain notes](../boards/RV2.html#toolchain-support-xsmtvdot).
+
+### RVV SOFT_MAX ([#4](https://github.com/opensolvers/llama.cpp/pull/4))
+
+Vectorized F32 `SOFT_MAX` in the SpaceMiT backend (mask / sinks / ALiBi). Correctness: **212/212** `test-backend-ops`. Perf vs scalar (~0.98 GB/s baseline):
+
+| Shape `ne` | GB/s | Speedup |
+| ---------- | ---: | ------: |
+| **[4096,4096,5]** | **2.09** | **~2.1×** |
+| [1024,1024,10] | 2.15 | ~2.2× |
+| [64,64,20] | 5.15 | ~5.3× |
+| large single-row (≥65536) | 1.08–1.35 | ~1.1–1.4× (bandwidth-bound) |
+
+### RVV M1 int8 GEMV ([#5](https://github.com/opensolvers/llama.cpp/pull/5), open)
+
+Vectorizes the scalar M=1 / remainder-row i8i8 path used in token-gen (`vlse8` + widening `vwmacc` + fused `vfmacc` for bit-exact scales). On **Q8_0**, tg64 for Qwen2.5-0.5B jumps **0.82 → 5.29 t/s (6.45×)**. On **Q4_K_M**, the IME `smt.vmadot` fast path does **not** engage — the m1gemv build is then a **net regression** vs plain RVV (next section).
+
+## Study 2 — Q4_K_M, 17 models (`m1gemv` vs RVV)
+
+Companion to the Q4_0 table above: **17 models** (0.5B–4B), **Q4_K_M**, `llama-bench -p 512 -n 64 -t 8`, IME build with the M1-GEMV-tuned kernel vs the same `~/x60-rvv` control. Source: [results_17model_m1gemv_vs_rvv.md](https://github.com/opensolvers/benchmarks/blob/main/llamacpp/results_17model_m1gemv_vs_rvv.md).
+
+**Finding:** on K-quants, **`m1gemv` is a net regression**.
+
+- **tg64:** RVV wins **17/17**, by **2.9–6.5×** (e.g. Qwen2.5-0.5B: 1.42 IME vs 9.19 RVV).
+- **pp512:** near parity; RVV ahead on most models. IME wins pp on only three (qwen2.5-0.5b, phi-3.5-mini, phi-4-mini).
+
+Why: Q4_K_M's 256-element superblocks / 6-bit scales do **not** map onto the IME `smt.vmadot` tiling that won prefill on Q4_0, so the kernel falls back and still pays m1gemv overhead on decode.
+
+| label | GB | pp512 IME | pp512 RVV | tg64 IME | tg64 RVV |
+| ----- | -: | --------: | --------: | -------: | -------: |
+| qwen2.5-0.5b | 0.37 | 23.92 | 20.73 | 1.42 | **9.19** |
+| llama-3.2-1b | 0.75 | 24.13 | **27.49** | 1.90 | **8.19** |
+| gemma-3-1b | 0.75 | **12.75** | 11.36 | 1.04 | **4.40** |
+| deepseek-coder-1.3b | 0.81 | 16.51 | 16.43 | 1.37 | **6.91** |
+| qwen2.5-1.5b | 0.92 | 18.62 | 18.80 | 1.14 | **6.31** |
+| stablelm-2-1.6b | 0.96 | 16.58 | **20.65** | 1.17 | **6.74** |
+| falcon3-1b | 0.98 | 19.57 | **22.49** | 1.69 | **7.28** |
+| smollm2-1.7b | 0.98 | 13.62 | **15.46** | 1.35 | **5.94** |
+| deepseek-r1-qwen-1.5b | 1.04 | 18.54 | 19.10 | 1.14 | **6.38** |
+| granite-3.1-2b | 1.44 | 9.23 | **10.48** | 0.80 | **4.04** |
+| gemma-2-2b | 1.59 | 11.43 | 12.07 | 0.97 | **3.25** |
+| qwen2.5-3b | 1.80 | 8.25 | 8.93 | 0.79 | **3.43** |
+| falcon3-3b | 1.87 | 10.37 | 10.68 | 1.17 | **3.74** |
+| llama-3.2-3b | 1.88 | 8.59 | 9.14 | 0.96 | **3.30** |
+| phi-3.5-mini | 2.23 | **4.08** | 2.91 | 0.69 | **2.04** |
+| gemma-3-4b | 2.32 | 7.67 | 7.68 | 0.70 | **2.52** |
+| phi-4-mini | 2.32 | **5.33** | 4.14 | 0.76 | **2.17** |
+
+**Default to RVV for Q4_K_M.** Keep the IME build for **Q4_0** (and Q8_0 once #5 lands) where `smt.vmadot` actually fires. Next kernel target: engage IME on K-quant superblocks, or gate m1gemv off for K-quants.
 
 ## Reproduce
+
+### Study 1 (Q4_0, 10 models)
 
 Requires IME and RVV builds on the board (`~/x60-ime`, `~/x60-rvv`) plus a models directory.
 
 ```bash
-# single model
 ./validate_model.sh \
   "https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF/resolve/main/qwen2.5-1.5b-instruct-q4_0.gguf" \
   qwen2.5-1.5b.q4_0.gguf qwen2.5-1.5b 1.5B
 
-# full sweep (all 10)
 ./run_all.sh
 ```
 
-Each run downloads the Q4_0 GGUF, coherence-checks on IME, benches IME then RVV, appends a TSV row, and deletes the GGUF to respect the no-swap RAM ceiling.
+### Study 2 (Q4_K_M, 17 models)
+
+```bash
+./bench_suite.sh       # m1gemv IME arm  → results.md
+./bench_suite_rvv.sh   # RVV control     → results_rvv.md
+```
+
+Harnesses and TSVs: [benchmarks/llamacpp](https://github.com/opensolvers/benchmarks/tree/main/llamacpp).
 
 ## Takeaways
 
-1. **IME wins prefill ≥1.1B** (1.2–2.6×); RVV wins token-gen everywhere.
-2. **Pick the build by workload** — batch/prefill vs interactive decode.
-3. **7B Q4_0 is the practical ceiling** on 8 GB no-swap; keep ctx modest on ≥3B.
-4. **Kernel + models** — microkernel A/B in `ime/`; coverage here in `llamacpp/`.
+1. **Q4_0:** IME wins prefill ≥1.1B (1.2–2.6×); RVV wins token-gen everywhere.
+2. **Q4_K_M:** plain RVV wins tg (and usually pp); m1gemv IME regresses until K-quants hit `smt.vmadot`.
+3. **Fork kernels:** Q8_0/Q6_K IME GEMM, +4.3% scale-build, RVV softmax (~2×), M1 GEMV (**6.45×** tg on Q8_0 — [#5](https://github.com/opensolvers/llama.cpp/pull/5)).
+4. **7B Q4_0 is the practical ceiling** on 8 GB no-swap; keep ctx modest on ≥3B.
+5. **Pick build by quant + workload** — not “IME always” or “RVV always”.

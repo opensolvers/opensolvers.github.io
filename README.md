@@ -58,7 +58,7 @@ End-to-end application benchmarks on the same boards and EESSI toolchain:
 - **[HPL](apps/hpl.html)** — High Performance Linpack; OpenBLAS A/B + BLIS-linked validation from [opensolvers/benchmarks](https://github.com/opensolvers/benchmarks)
 - **[Quantum ESPRESSO](apps/qe.html)** — plane-wave DFT SCF (`pw.x`); whole-application BLAS backend A/B with per-routine timers
 - **[ONNX Runtime](apps/onnx.html)** — int4 `MatMulNBits` LLM decode; `accuracy_level=4` unlocks X60 IME (**9–10×**)
-- **[llama.cpp](apps/llamacpp.html)** — Q4_0 GGUF on X60; IME wins prefill (≥1.1B, up to **~2.5×**); RVV wins token-gen; fork branch [`x60-ime-rvv`](https://github.com/opensolvers/llama.cpp/tree/x60-ime-rvv)
+- **[llama.cpp](apps/llamacpp.html)** — Q4_0 IME vs RVV; Q4_K_M study (m1gemv regresses); fork [`x60-ime-rvv`](https://github.com/opensolvers/llama.cpp/tree/x60-ime-rvv) (scale-build, softmax, M1 GEMV)
 - **[GROMACS](apps/gromacs.html)** — PME MD; FFT-axis **1.23×** on `PME 3D-FFT`; RVV `Force` backend **3.31×** whole-app
 
 ## Boards

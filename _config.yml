@@ -1,5 +1,6 @@
 theme: jekyll-theme-cayman
 title: OpenSolvers
+tagline: Open scientific software & AI inference on real RISC-V hardware
 description: Open-source scientific software benchmarks on RISC-V boards — HPL, BLAS, Quantum ESPRESSO, llama.cpp, GROMACS, and library-level probes via EESSI.
 url: https://www.opensolvers.com
 lang: en

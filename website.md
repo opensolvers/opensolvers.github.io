@@ -12,6 +12,7 @@ Context file for structural and content decisions on [opensolvers.com](https://w
 |------|------|---------|
 | Homepage | `README.md` → `/` | Intro, scientific libs, apps, board summaries |
 | Videos | `videos.md` → `/videos.html` | YouTube walkthroughs (`_data/videos.yml`) |
+| Sponsors | `sponsors.md` → `/sponsors.html` | Tier table + backer/logo list; CTA to GitHub Sponsors |
 | Boards | `boards/` | Per-board hardware + benchmark notes |
 | Apps | `apps/` | End-to-end application benchmarks (e.g. HPL) |
 | Scientific libs | `scientific-libs/` | Library-level probes (BLAS, LAPACK, ELPA) |
@@ -61,6 +62,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 
 | Date | Decision |
 |------|----------|
+| 2026-07-24 | Sponsors page + tiers ($5/$25/$100/$250 + one-time); `FUNDING.yml`; nav link |
 | 2026-07-24 | Home-row nav + homepage: link [GitHub Sponsors](https://github.com/sponsors/opensolvers) |
 | 2026-07-24 | Expand llama.cpp page: fork PRs #1–5 (Q8/Q6 GEMM, scale-build, xsmtvdot, softmax, M1 GEMV) + 17-model Q4_K_M study |
 | 2026-07-24 | Document `opensolvers/llama.cpp` fork + `x60-ime-rvv` branch (why + how to clone/build) on llama.cpp app page |

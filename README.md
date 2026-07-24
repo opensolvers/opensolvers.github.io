@@ -1,10 +1,10 @@
 ---
 title: OpenSolvers — RISC-V scientific software benchmarks
-description: Benchmark notes for open-source scientific libraries and applications on consumer RISC-V boards — HPL, BLAS, Quantum ESPRESSO, GROMACS, EESSI, and FlexiBLAS backend swaps.
+description: Benchmark notes for open-source scientific libraries, applications, and AI inference engines on consumer RISC-V boards — HPL, BLAS, Quantum ESPRESSO, llama.cpp, GROMACS, EESSI, and FlexiBLAS.
 permalink: /
 ---
 
-OpenSolvers explores how open-source scientific software runs on real hardware — starting with **RISC-V** boards and the tools that make that practical (EESSI, OpenBLAS, and friends). This site documents what we learn along the way.
+OpenSolvers explores how open-source scientific software runs on real hardware — starting with **RISC-V** boards and the tools that make that practical (EESSI, OpenBLAS, and friends). Alongside classical HPC apps, we also work on **AI inference engines** — [llama.cpp](apps/llamacpp.html), [ONNX Runtime](apps/onnx.html) — tuning the same core kernels (RVV, IME) that scientific codes use. This site documents what we learn along the way.
 
 ## Why single-board computers?
 
@@ -21,7 +21,7 @@ Walkthroughs on our [YouTube channel](https://www.youtube.com/@opensolvers) — 
 
 ## What we're working on
 
-We benchmark **scientific libraries** and **applications** on consumer RISC-V boards through the [EESSI](https://www.eessi.io/) stack — from BLAS kernels up to full app runs — swapping fixed OpenBLAS builds via FlexiBLAS without rebuilding downstream code.
+We benchmark **scientific libraries**, **applications**, and **AI inference engines** on consumer RISC-V boards through the [EESSI](https://www.eessi.io/) stack — from BLAS kernels up to full app runs and LLM decode — swapping fixed OpenBLAS builds via FlexiBLAS without rebuilding downstream code, and staging X60 IME/RVV kernels in our [llama.cpp fork](apps/llamacpp.html).
 
 ## What we optimise on the board
 

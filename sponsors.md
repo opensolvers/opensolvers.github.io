@@ -19,6 +19,8 @@ Your support buys those boards and the time to run the same careful A/B methodol
 
 **[Become a sponsor on GitHub →](https://github.com/sponsors/opensolvers)**
 
+For public questions, open an [issue on opensolvers/benchmarks](https://github.com/opensolvers/benchmarks/issues). Sponsors can also reach us privately via GitHub Sponsors **Contact**.
+
 ## Tiers
 
 | Monthly | Tier | What you get |

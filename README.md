@@ -68,3 +68,8 @@ End-to-end application benchmarks on the same boards and EESSI toolchain:
 - **[Banana Pi F3](boards/F3.html)** — same K1 / X60 SoC, **3.7 GB RAM**. HPL **FAILED (`nan`) → 11.52 GFLOP/s**; NumPy DGEMM up to **17.51 GFLOP/s** on patched RVV; same GPU closure as RV2.
 
 Use the menu above to jump to a board, app, or scientific lib page.
+
+## Contact
+
+- **Public:** open an [issue on opensolvers/benchmarks](https://github.com/opensolvers/benchmarks/issues) — questions, bugs, and board/benchmark requests are welcome there.
+- **More private:** [sponsor OpenSolvers](https://github.com/sponsors/opensolvers) and use GitHub Sponsors **Contact** (after sponsoring). Details and tiers are on the [Sponsors](sponsors.html) page.

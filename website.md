@@ -60,6 +60,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 
 | Date | Decision |
 |------|----------|
+| 2026-07-24 | Homepage: why SBCs — core-level software work needs cores; improvements scale to HPC |
 | 2026-07-21 | Home-row nav: add GitHub (`opensolvers`) with mark logo |
 | 2026-07-21 | Sync benchmarks PR #27: BXE-2-32 GPGPU **closed** (vendor BXM-only DDK); open Mesa `pvr` deferred — RV2 / F3 / homepage |
 | 2026-07-20 | Document X60 IME toolchain (`xsmtvdot`: LLVM ≥22, GCC ≥16, binutils ≥2.46) + how we use inline asm / patched `as` on EESSI GCC 14 |

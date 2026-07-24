@@ -6,6 +6,12 @@ permalink: /
 
 OpenSolvers explores how open-source scientific software runs on real hardware — starting with **RISC-V** boards and the tools that make that practical (EESSI, OpenBLAS, and friends). This site documents what we learn along the way.
 
+## Why single-board computers?
+
+We work on desk-sized RISC-V SBCs rather than huge supercomputers because the improvements we chase live at the **core** of the software stack — BLAS kernels, vector backends, ISA-specific bugs, and correctness that only shows up on real silicon. That work needs **cores**, not a full machine room. An SBC gives us the same microarchitecture we care about, with a feedback loop measured in hours instead of queue days.
+
+Those core-level fixes and tunings are what HPC already runs at scale: the same OpenBLAS, FlexiBLAS, EESSI modules, and app binaries. Get them right on a board, and the improvement **scales** to a cluster or supercomputer — without needing one to do the engineering.
+
 ## Videos
 
 Walkthroughs on our [YouTube channel](https://www.youtube.com/@opensolvers) — see the full list on the [Videos](videos.html) page.

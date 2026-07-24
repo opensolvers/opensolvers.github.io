@@ -4,7 +4,7 @@
 
 Benchmark source: [opensolvers/benchmarks/fftw](https://github.com/opensolvers/benchmarks/tree/main/fftw) — `build-fftw-r5v.sh` and `bench-fftw-ab.sh`.
 
-Relevant to [Quantum ESPRESSO](../apps/qe.html) and [GROMACS](../apps/gromacs.html): real apps spend large fractions on FFT. A FlexiBLAS swap does not touch FFT — swap the library via `LD_PRELOAD` instead (see `run-qe-fft-ab.sh` in the benchmarks repo).
+Relevant to [Quantum ESPRESSO](../apps/qe.html) and [GROMACS](../apps/gromacs.html): real apps spend large fractions on FFT. A FlexiBLAS swap does not touch FFT — swap the library via `LD_PRELOAD` instead (see `run-qe-fft-ab.sh` in the benchmarks repo). **Video:** [3.31× GROMACS Force backend](https://www.youtube.com/watch?v=COayFhBa0as) (why FFT micro wins can dilute).
 
 ## Orange Pi RV2 (SpaceMiT X60, 1 thread)
 

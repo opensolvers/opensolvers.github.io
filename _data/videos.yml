@@ -1,4 +1,28 @@
 # YouTube videos — add new entries here (newest first).
+- id: gromacs-rvv-force-rv2
+  title: "3.31× GROMACS on RISC-V: Hand-Written RVV Force Backend (Orange Pi RV2)"
+  description: >
+    RVV FFT wins ~1.23× on PME 3D-FFT but Force is ~90% of the run — whole-app
+    barely moves. A hand-written impl_riscv_rvv/ Force backend delivers 3.31×
+    whole-app (0.380 → 1.256 ns/day) on Orange Pi RV2.
+  youtube_id: COayFhBa0as
+  date: 2026-07-24
+  duration: PT4M4S
+  boards:
+    - Orange Pi RV2
+  topics:
+    - GROMACS
+    - RVV
+    - Force
+    - EESSI
+    - SIMD
+  related_pages:
+    - title: GROMACS app notes
+      url: /apps/gromacs.html
+    - title: Orange Pi RV2 board notes
+      url: /boards/RV2.html
+    - title: FFTW
+      url: /scientific-libs/fftw.html
 - id: x60-gemv-hpl-rv2
   title: "NaN Linpack on RISC-V: Fixing OpenBLAS gemv_n on Orange Pi RV2 (EESSI)"
   description: >

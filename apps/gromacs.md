@@ -1,5 +1,7 @@
 # GROMACS
 
+**Video:** [3.31× GROMACS on RISC-V: Hand-Written RVV Force Backend (Orange Pi RV2)](https://www.youtube.com/watch?v=COayFhBa0as) — [all videos](../videos.html)
+
 [GROMACS](https://www.gromacs.org/) `mdrun` PME molecular dynamics on the SpaceMiT X60 — two independent backend axes measured end-to-end:
 
 1. **FFT axis** — swap single-precision `libfftw3f.so.3` via `LD_PRELOAD` (stock EESSI build, `SIMD: None`)

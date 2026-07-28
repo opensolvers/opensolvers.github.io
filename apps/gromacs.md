@@ -9,7 +9,7 @@
 
 Benchmark source: [opensolvers/benchmarks/gromacs](https://github.com/opensolvers/benchmarks/tree/main/gromacs) — `gen-water-box.sh`, `run-gmx-fft-ab.sh`, and [`rvv-backend/`](https://github.com/opensolvers/benchmarks/tree/main/gromacs/rvv-backend) (patch + `apply-and-build.sh`).
 
-FFT microbench numbers: [FFTW](../scientific-libs/fftw.html). BLAS-axis counterpart: [Quantum ESPRESSO](qe.html). Whole-app MD counterpart (RVV-Kokkos, five upstream benches): [LAMMPS](lammps.html).
+FFT microbench numbers: [FFTW](../scientific-libs/fftw.html). BLAS-axis counterpart: [Quantum ESPRESSO](qe.html). Whole-app MD counterpart (RVV-Kokkos + hand RVV Pair): [LAMMPS](lammps.html) / [Kokkos](../scientific-libs/kokkos.html).
 
 ---
 

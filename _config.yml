@@ -58,6 +58,8 @@ navigation_scientific_libs:
     url: /scientific-libs/mlas.html
   - title: FFTW
     url: /scientific-libs/fftw.html
+  - title: Kokkos
+    url: /scientific-libs/kokkos.html
   - title: ScaLAPACK
     url: /scientific-libs/scalapack.html
 

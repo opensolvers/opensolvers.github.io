@@ -7,9 +7,10 @@ description: RVV-Kokkos LAMMPS whole-app MD on Orange Pi RV2 — five upstream b
 
 [LAMMPS](https://www.lammps.org/) molecular dynamics on the SpaceMiT X60 — a **whole-application throughput** probe with an **RVV-vectorized Kokkos** build, not a drop-in library A/B like [GROMACS](gromacs.html) FFT or [QE](qe.html) BLAS.
 
-Benchmark source: [opensolvers/benchmarks/lammps](https://github.com/opensolvers/benchmarks/tree/main/lammps) — `run-lammps-bench.sh` runs the five upstream `bench/` inputs × three modes (serial / Kokkos-OpenMP / MPI).
+Benchmark source: [opensolvers/benchmarks/lammps](https://github.com/opensolvers/benchmarks/tree/main/lammps) — `run-lammps-bench.sh` runs the five upstream `bench/` inputs × three modes (serial / Kokkos-OpenMP / MPI). Hand RVV Pair plugins: [`rvv-lj/`](https://github.com/opensolvers/benchmarks/tree/main/lammps/rvv-lj), [`rvv-eam/`](https://github.com/opensolvers/benchmarks/tree/main/lammps/rvv-eam). Kokkos learnings: [Kokkos](../scientific-libs/kokkos.html).
 
-The binary is genuinely vectorized (`Tag_RISCV_arch` includes `v1p0` / `zve64d`; ~53k `vsetvli`, ~12k `vf*` FMAs in `liblammps.so.0`). Speedups below are **parallel scaling** (1→8 cores) on that vectorized build — **not** a vector-vs-scalar A/B.
+The binary is genuinely vectorized (`Tag_RISCV_arch` includes `v1p0` / `zve64d`; ~53k `vsetvli`, ~12k `vf*` FMAs in `liblammps.so.0`). Whole-app speedups below are **parallel scaling** (1→8 cores) on that vectorized build — **not** a vector-vs-scalar A/B. Kokkos 4.6.2 has **no RVV SIMD backend**; Pair functors run scalar FP in `parallel_for`, with GCC auto-vec supplying the ELF’s `vf*` work.
+
 
 ---
 
@@ -70,7 +71,22 @@ On single-thread Kokkos `lj` (`-k on t 1 -sf kk`), LAMMPS timers and gdb stack s
 | Neigh | 11.8% | neighbor-list build |
 | Comm / Modify / other | ~3.8% | ghosts, NVE, output |
 
-gdb leaf samples put `PairComputeFunctor<PairLJCutKokkos>::operator()` first (~46%, plus stripped leaves on the same path). Kokkos is header-only and inherits `-march=…v`, so the ELF’s `vf*` FMAs run **inside this pair functor** — not in FFTW/OpenBLAS (`lj` has no FFT/BLAS symbols; FFTW only matters for `rhodo` PPPM).
+gdb leaf samples put `PairComputeFunctor<PairLJCutKokkos>::operator()` first (~46%, plus stripped leaves on the same path). Kokkos is header-only and inherits `-march=…v`, so the ELF’s `vf*` FMAs run **inside this pair functor** — not in FFTW/OpenBLAS (`lj` has no FFT/BLAS symbols; FFTW only matters for `rhodo` PPPM). Details: [Kokkos](../scientific-libs/kokkos.html).
+
+---
+
+## Hand RVV Pair plugins
+
+Stock Kokkos Pair is gather/scatter-heavy and a weak auto-vec target. Same spirit as [GROMACS Force](gromacs.html): **hand layout + hand RVV** on the Pair math.
+
+| Plugin | Scope | Result |
+| ------ | ----- | ------ |
+| [`lj/cut/rvv`](https://github.com/opensolvers/benchmarks/tree/main/lammps/rvv-lj) | Microbench force-on-i vs naive scalar | **~1.61–1.64×** |
+| | In-LAMMPS vs stock `lj/cut` (4000 atoms) | **~1.02×** (near parity) |
+| [`eam/rvv`](https://github.com/opensolvers/benchmarks/tree/main/lammps/rvv-eam) | In-LAMMPS vs `eam` (Cu, 864 atoms, bit-exact) | **1.27×** |
+| | vs `eam/opt` | 0.93× (still ~7% behind OPT) |
+
+EAM (~96% Pair) is the stronger in-app win; LJ is limited by gather tax once stock is already auto-vec’d.
 
 ---
 

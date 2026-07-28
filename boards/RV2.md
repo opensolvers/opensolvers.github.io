@@ -139,7 +139,11 @@ See [LAMMPS](../apps/lammps.html) — RVV-Kokkos whole-app MD (five upstream `be
 | Compute-bound pair (`lj`, `eam`) | Kokkos/OpenMP (8 threads) | **6.20×** / **7.21×** |
 | Comm / bonded-heavy (`chain`, `chute`, `rhodo`) | MPI (8 ranks) | **5.67×** / **4.90×** / **5.94×** |
 
-Speedups are **parallel scaling** on one RVV-vectorized binary (not RVV-vs-scalar). Pair force ≈ **84%** of `lj` wall.
+Speedups are **parallel scaling** on one RVV-vectorized binary (not RVV-vs-scalar). Pair force ≈ **84%** of `lj` wall. Hand RVV Pair: **eam/rvv 1.27×** vs stock; LJ in-app ~**1.02×** — see [Kokkos](../scientific-libs/kokkos.html).
+
+## Kokkos
+
+See [Kokkos](../scientific-libs/kokkos.html) — portable OpenMP/Serial for LAMMPS; **no RVV SIMD backend** in 4.6.2; hand RVV LJ microbench **~1.64×**, EAM plugin **1.27×**.
 
 ## ScaLAPACK
 

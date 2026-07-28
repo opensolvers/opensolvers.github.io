@@ -37,7 +37,7 @@ Each RISC-V board exposes several compute paths. We benchmark and tune them inde
 | **Custom** | Custom ISA extensions beyond standard RVV | X60 **IME** / **XsmtVdot** (`smt.vmadot`) int8 on [RV2](boards/RV2.html) / [F3](boards/F3.html); [ONNX Runtime](apps/onnx.html) int4 via MLAS |
 | **GPU** | Integrated Imagination GPUs (OpenCL / Vulkan) | **IMG BXE-4-32 MC1** on [VisionFive 2](boards/VisionFive2.html) (JH7110); **IMG BXE-2-32** on [RV2](boards/RV2.html) / [F3](boards/F3.html) (K1) — silicon is compute-capable, but **vendor DDK is BXM-only** (GPGPU closed; open Mesa `pvr` deferred) |
 
-Recent highlights on the Orange Pi RV2 (SpaceMiT X60, RVV): fixing an OpenBLAS `gemv_n` bug restores correctness across [BLAS](scientific-libs/blas.html), [LAPACK](scientific-libs/lapack.html), [ELPA](scientific-libs/elpa.html), [ScaLAPACK](scientific-libs/scalapack.html), [HPL](apps/hpl.html), and [Quantum ESPRESSO](apps/qe.html). [BLIS](scientific-libs/blis.html) RVV assembly beats patched OpenBLAS **~1.29×** on single-thread DGEMM (N=4096), but HPL linked to BLIS is correct yet only **0.35–0.53×** OpenBLAS-RVV. [FFTW `r5v`](scientific-libs/fftw.html) wins **1.06–1.60×** in isolation but **~0%** inside a real QE SCF; [GROMACS](apps/gromacs.html) sees **1.23×** on isolated `PME 3D-FFT` and **3.31×** whole-app with a hand-written RVV `Force` backend. [LAMMPS](apps/lammps.html) RVV-Kokkos whole-app MD scales to **7.21×** (eam, Kokkos/OpenMP) / **5.94×** (rhodo, MPI) across 8 cores. ONNX `accuracy_level=4` unlocks **9–10×** int4 decode — [ONNX Runtime](apps/onnx.html) / [MLAS](scientific-libs/mlas.html). [llama.cpp](apps/llamacpp.html): 10/10 Q4_0 models validated; IME wins prefill (up to **~2.5×**), RVV wins token-gen; IME1 scale-build **+4.3%** pp512.
+Recent highlights on the Orange Pi RV2 (SpaceMiT X60, RVV): fixing an OpenBLAS `gemv_n` bug restores correctness across [BLAS](scientific-libs/blas.html), [LAPACK](scientific-libs/lapack.html), [ELPA](scientific-libs/elpa.html), [ScaLAPACK](scientific-libs/scalapack.html), [HPL](apps/hpl.html), and [Quantum ESPRESSO](apps/qe.html). [BLIS](scientific-libs/blis.html) RVV assembly beats patched OpenBLAS **~1.29×** on single-thread DGEMM (N=4096), but HPL linked to BLIS is correct yet only **0.35–0.53×** OpenBLAS-RVV. [FFTW `r5v`](scientific-libs/fftw.html) wins **1.06–1.60×** in isolation but **~0%** inside a real QE SCF; [GROMACS](apps/gromacs.html) sees **1.23×** on isolated `PME 3D-FFT` and **3.31×** whole-app with a hand-written RVV `Force` backend. [LAMMPS](apps/lammps.html) RVV-Kokkos whole-app MD scales to **7.21×** (eam, Kokkos/OpenMP) / **5.94×** (rhodo, MPI) across 8 cores; hand RVV Pair reaches **1.27×** on EAM ([Kokkos](scientific-libs/kokkos.html)). ONNX `accuracy_level=4` unlocks **9–10×** int4 decode — [ONNX Runtime](apps/onnx.html) / [MLAS](scientific-libs/mlas.html). [llama.cpp](apps/llamacpp.html): 10/10 Q4_0 models validated; IME wins prefill (up to **~2.5×**), RVV wins token-gen; IME1 scale-build **+4.3%** pp512.
 
 ## Scientific libs
 
@@ -50,6 +50,7 @@ Library-level probes — performance *and* numerical correctness:
 - **[ELPA](scientific-libs/elpa.html)** — dense eigensolver (CP2K / VASP class workloads)
 - **[MLAS](scientific-libs/mlas.html)** — ONNX Runtime QNBit int4 GEMM; isolated IME kernel rates on X60
 - **[FFTW](scientific-libs/fftw.html)** — RVV `r5v` backend A/B; QE FFT-axis shows ~0% end-to-end despite micro wins
+- **[Kokkos](scientific-libs/kokkos.html)** — LAMMPS OpenMP/Serial; no RVV SIMD abi; hand RVV Pair (LJ micro **~1.64×**, EAM **1.27×**)
 - **[ScaLAPACK](scientific-libs/scalapack.html)** — distributed `PDSYEV`; stock RVV hangs, patched **1.09×**
 
 ## Apps
@@ -61,7 +62,7 @@ End-to-end application benchmarks on the same boards and EESSI toolchain:
 - **[ONNX Runtime](apps/onnx.html)** — int4 `MatMulNBits` LLM decode; `accuracy_level=4` unlocks X60 IME (**9–10×**)
 - **[llama.cpp](apps/llamacpp.html)** — Q4_0 IME vs RVV; Q4_K_M study (m1gemv regresses); fork [`x60-ime-rvv`](https://github.com/opensolvers/llama.cpp/tree/x60-ime-rvv) (scale-build, softmax, M1 GEMV)
 - **[GROMACS](apps/gromacs.html)** — PME MD; FFT-axis **1.23×** on `PME 3D-FFT`; RVV `Force` backend **3.31×** whole-app
-- **[LAMMPS](apps/lammps.html)** — RVV-Kokkos whole-app MD; five upstream benches; Kokkos **7.21×** (eam) / MPI **5.94×** (rhodo) on 8 cores
+- **[LAMMPS](apps/lammps.html)** — RVV-Kokkos whole-app MD; five upstream benches; Kokkos **7.21×** (eam) / MPI **5.94×** (rhodo); hand RVV EAM **1.27×**
 
 ## Boards
 

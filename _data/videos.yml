@@ -1,4 +1,28 @@
 # YouTube videos — add new entries here (newest first).
+- id: onnx-ime-int4-rv2
+  title: "10× ONNX on RISC-V: One Missing Attribute Unlocks X60 IME"
+  description: >
+    ONNX Runtime int4 MatMulNBits on Orange Pi RV2 spent ~32 s until
+    accuracy_level=4 selected the X60 IME path — 9.1× (1T) and 10.3× (8T).
+    Config beat kernels; a hand RVV “fast path” was −28% and reverted.
+  youtube_id: IV3TV57eGAs
+  date: 2026-07-29
+  duration: PT3M14S
+  boards:
+    - Orange Pi RV2
+  topics:
+    - ONNX Runtime
+    - IME
+    - MatMulNBits
+    - MLAS
+    - accuracy_level
+  related_pages:
+    - title: ONNX Runtime app notes
+      url: /apps/onnx.html
+    - title: Orange Pi RV2 board notes
+      url: /boards/RV2.html
+    - title: MLAS
+      url: /scientific-libs/mlas.html
 - id: gromacs-rvv-force-rv2
   title: "3.31× GROMACS on RISC-V: Hand-Written RVV Force Backend (Orange Pi RV2)"
   description: >

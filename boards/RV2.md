@@ -4,6 +4,7 @@ The Orange Pi RV2 is built on the SpaceMiT **K1** SoC: eight **SpacemiT X60** co
 
 ## Video walkthrough
 
+- **[10× ONNX on RISC-V: One Missing Attribute Unlocks X60 IME](https://www.youtube.com/watch?v=IV3TV57eGAs)** — `accuracy_level=4` → CompInt8 / `smt.vmadot`; 9.1× / 10.3×
 - **[3.31× GROMACS on RISC-V: Hand-Written RVV Force Backend](https://www.youtube.com/watch?v=COayFhBa0as)** — Force owns ~90% of runtime; `impl_riscv_rvv/` → 3.31× whole-app
 - **[NaN Linpack on RISC-V: Fixing OpenBLAS gemv_n on Orange Pi RV2 (EESSI)](https://www.youtube.com/watch?v=W_-8cKA-CCU)** — stock RVV HPL FAILED with residual `nan`
 

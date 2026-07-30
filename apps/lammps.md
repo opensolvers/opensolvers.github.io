@@ -52,6 +52,30 @@ LAMMPS `Loop time` and `Performance:` (katom-step/s). Speedup vs that bench’s 
 
 Kokkos = `-k on t 8 -sf kk` / `OMP_NUM_THREADS=8`. MPI = `mpirun -np 8`.
 
+### Cross-board — Banana Pi BPI-F3
+
+Same RVV-Kokkos `lmp` binary (copied from the RV2 overlay) and the same five `bench/` inputs on [Banana Pi F3](../boards/F3.html) (3.7 GB RAM), EESSI `foss/2025b` for runtime libs:
+
+| Benchmark | Mode | Loop (s) | katom-step/s | vs serial |
+| --------- | ---- | -------: | -----------: | --------: |
+| **lj** | serial | 13.92 | 229.9 | 1.00× |
+| | kokkos8 | 2.457 | 1303 | **5.66×** |
+| | mpi8 | 3.078 | 1040 | 4.52× |
+| **eam** | serial | 35.26 | 90.7 | 1.00× |
+| | kokkos8 | 5.601 | 571.3 | **6.29×** |
+| | mpi8 | 7.538 | 424.5 | 4.68× |
+| **chain** | serial | 7.545 | 424.1 | 1.00× |
+| | kokkos8 | 2.242 | 1427 | 3.37× |
+| | mpi8 | 1.588 | 2015 | **4.75×** |
+| **chute** | serial | 5.670 | 564.3 | 1.00× |
+| | kokkos8 | 1.603 | 1996 | 3.54× |
+| | mpi8 | 1.381 | 2317 | **4.11×** |
+| **rhodo** | serial | 281.4 | 11.4 | 1.00× |
+| | kokkos8 | 57.72 | 55.4 | 4.87× |
+| | mpi8 | 55.20 | 58.0 | **5.10×** |
+
+Same mode ranking as the RV2 (Kokkos on `lj`/`eam`; MPI on `chain`/`chute`/`rhodo`). Absolute serial throughputs are a bit higher on this F3 image; 8-core scaling factors are in the same ballpark.
+
 ### Two regimes on 8 cores
 
 - **Compute-bound pair potentials (`lj`, `eam`)** favour **Kokkos/OpenMP** — RVV force kernels + shared-memory threads hit **6.2× / 7.2×**, beating MPI. `eam` is the best threaded scaler (**7.21×**).

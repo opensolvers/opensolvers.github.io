@@ -41,6 +41,24 @@ Serial, 48×48×48 PME grid. GROMACS cycle accounting (WALL):
 
 RVV wins **~1.23×** on the isolated 3D-FFT step; **`Force` confirms the A/B** (821.35 vs 819.97 s, 0.17% noise). Whole-app effect is small because `Force` dominates.
 
+### Cross-board — Banana Pi BPI-F3
+
+Same `md.tpr` + same r5v/scalar `libfftw3f` binaries (copied from the RV2), `GROMACS/2026.2-foss-2025b`, FlexiBLAS→scalar OpenBLAS, 1 rank / 1 thread on [Banana Pi F3](../boards/F3.html):
+
+| FFT backend | Avg potential energy | Δ vs scalar |
+| ----------- | -------------------: | ----------: |
+| Scalar | **−236622 kJ/mol** | — |
+| r5v / RVV | **−236883 kJ/mol** | **0.11%** |
+
+| Activity | Scalar | r5v (RVV) | Speedup | Kind |
+| -------- | -----: | --------: | ------: | ---- |
+| **`PME 3D-FFT`** | 19.965 s | 17.513 s | **1.14×** | **FFT (swapped axis)** |
+| `PME mesh` (total) | 68.746 s | 66.387 s | 1.04× | FFT + spread/gather/solve |
+| **`Force`** | 803.54 s | 803.83 s | 1.00× | scalar control |
+| `Neighbor search` | 6.465 s | 6.472 s | 1.00× | scalar control |
+
+Same story as the RV2: `Force` flat, RVV wins on `PME 3D-FFT` (~1.14× here vs 1.23× on the RV2 — same binaries, board/run noise at the ~2% PME fraction), whole-app barely moves.
+
 ---
 
 ## Force axis — RVV SIMD backend (`rvv-backend/`)

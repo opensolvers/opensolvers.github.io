@@ -62,6 +62,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 
 | Date | Decision |
 |------|----------|
+| 2026-07-30 | Sync BPI-F3 cross-board results: IME (~45 GOP/s), BLIS, FFTW, GROMACS FFT, LAMMPS, ScaLAPACK hang, LJ micro **1.57×** |
 | 2026-07-29 | Publish ONNX IME int4 video (`IV3TV57eGAs`) — `_data/videos.yml`, homepage, ONNX, RV2 |
 | 2026-07-28 | Add **Kokkos** scientific-lib page + sync LAMMPS hand RVV Pair (`lj` ~1.64× micro / ~1.02× in-app; `eam/rvv` **1.27×**) |
 | 2026-07-24 | Add **LAMMPS** app page from benchmarks `lammps/` — RVV-Kokkos 5-bench scaling (Kokkos up to **7.21×**, MPI up to **5.94×**); nav + RV2 + homepage |

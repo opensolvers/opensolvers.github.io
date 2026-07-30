@@ -69,7 +69,7 @@ End-to-end application benchmarks on the same boards and EESSI toolchain:
 
 - **[StarFive VisionFive 2](boards/VisionFive2.html)** — JH7110 SoC, 4× SiFive U74 (`rv64gc`). U74 OpenBLAS tuning: HPL **3.13 → 5.28 GFLOP/s**.
 - **[Orange Pi RV2](boards/RV2.html)** — SpaceMiT K1, 8× X60 (RVV). Fixed OpenBLAS: HPL **FAILED (`nan`) → 10.53 GFLOP/s**; BLIS DGEMM **1.29×** / HPL **0.35–0.53×**; [llama.cpp](apps/llamacpp.html) IME vs RVV (10 models); IME1 scale-build **+4.3%**; GROMACS Force **3.31×**; [LAMMPS](apps/lammps.html) Kokkos **7.21×**; ELPA **34.81 s** (vs 54.92 s scalar); **BXE-2-32 GPGPU closed** (vendor BXM-only DDK).
-- **[Banana Pi F3](boards/F3.html)** — same K1 / X60 SoC, **3.7 GB RAM**. HPL **FAILED (`nan`) → 11.52 GFLOP/s**; NumPy DGEMM up to **17.51 GFLOP/s** on patched RVV; same GPU closure as RV2.
+- **[Banana Pi F3](boards/F3.html)** — same K1 / X60 SoC, **3.7 GB RAM**. HPL **FAILED (`nan`) → 11.52 GFLOP/s**; IME peak **~45 GOP/s**; FFTW r5v **1.60×**; GROMACS FFT **1.14×**; LAMMPS Kokkos **6.29×** (eam); NumPy DGEMM **17.51 GFLOP/s**; same GPU closure as RV2.
 
 Use the menu above to jump to a board, app, or scientific lib page.
 

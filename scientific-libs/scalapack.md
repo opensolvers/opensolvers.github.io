@@ -18,6 +18,17 @@ Companion to [ELPA](elpa.html): same problem class, different library and parall
 
 The unpatched vector `gemv_n` NaN does not just corrupt the result — it **hangs** the solver, because `pdsyev`'s serial tridiagonal QR iteration never converges on NaN. The patched build is correct and **1.09×** faster than scalar.
 
+## Cross-board — Banana Pi BPI-F3
+
+`na=3000`, 2×4 grid, 8 ranks × 1 thread on [Banana Pi F3](../boards/F3.html), EESSI `ScaLAPACK/2.2.2-gompi-2025b-fb`:
+
+| Backend | Time | Result |
+| ------- | ---: | ------ |
+| Stock CVMFS 0.3.30, default RVV (`ZVL256B`) | — | **HANG** (killed at 240 s) |
+| Scalar (`RISCV64_GENERIC`) | **106.00 s** | finite=1 (`ev0=2695.86620`) |
+
+Same hang on unpatched vector `gemv_n` as the RV2; scalar finishes cleanly and a little faster than the RV2's 116.87 s. (Patched RVV was not re-built on that F3 image; OpenBLAS / ELPA F3 sections already confirm the fix on this SoC.)
+
 ## Why the speedup is modest
 
 Versus ~2.4× for raw `dgemm` and ~1.58× for threaded [ELPA](elpa.html) on the same machine: at 8 ranks the node-local BLAS blocks are small, MPI communication plus the serial tridiagonal solve dominate wall time. The RVV-accelerable BLAS-3 fraction is small — the conservative, communication-bound end of the BLAS-backend spectrum.

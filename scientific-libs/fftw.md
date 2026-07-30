@@ -34,6 +34,21 @@ Median MFLOPS; higher = faster. Under the **`FFTW_MEASURE`** planner (the defaul
 
 Largest gain on cache-resident transforms (**1.60×** @ N=256); tapers to **~1.06×** as transforms become memory-bandwidth-bound (≥64K).
 
+## Cross-board — Banana Pi BPI-F3
+
+Same `tests/bench` A/B and the **same** r5v/scalar `libfftw3.so.3.6.10` binaries built on the RV2, on [Banana Pi F3](../boards/F3.html):
+
+| size | estimate r5v / scal | **MEASURE r5v / scal** | **r5v speedup (MEASURE)** |
+| ---: | ------------------: | ---------------------: | ------------------------: |
+| 256 | 2196 / 1386 | **2518 / 1576** | **1.60×** |
+| 1024 | 720 / 746 | **1634 / 1273** | **1.28×** |
+| 4096 | 302 / 361 | **1276 / 1033** | **1.24×** |
+| 16384 | 424 / 330 | **943 / 817** | **1.15×** |
+| 65536 | 178 / 169 | 723 / 741 | **0.98×** |
+| 262144 | 203 / 160 | **729 / 685** | **1.06×** |
+
+Matches the RV2 within a few percent at every cache-resident size (1.60× @ 256 identical). At N≥64K both boards are bandwidth-bound; the F3's 0.98× at N=65536 is within run-to-run noise of the RV2's 1.06×.
+
 ## Planner choice matters more than codelets
 
 The biggest lever on this hardware is **planner choice** — worth **3–5×**, independent of RVV. `FFTW_ESTIMATE` grossly under-plans large transforms:

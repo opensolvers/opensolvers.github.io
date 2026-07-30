@@ -69,6 +69,8 @@ Microbench (force-on-i, SoA tiles, `taskset -c 0`, EESSI GCC 14.3):
 | 2048 | 98426 | 58.7 | 35.8 | **1.64×** | 6.75×10⁻¹⁴ |
 | 4096 | 196644 | 58.9 | 36.4 | **1.62×** | 4.10×10⁻¹⁴ |
 
+[Banana Pi F3](../boards/F3.html) cross-check (same microbench, EESSI GCC 14.3, n=2048): scalar 58.8 ns/pair, RVV 37.4 ns/pair — **1.57×**, max‖Δf‖ 6.75×10⁻¹⁴. Matches the RV2 within board noise.
+
 In-app LJ is gather/scatter limited; stock is already `-march=…cv…` auto-vec’d.
 
 ### EAM — [`lammps/rvv-eam`](https://github.com/opensolvers/benchmarks/tree/main/lammps/rvv-eam)

@@ -53,6 +53,21 @@ BLIS `061c2eb` (`rv64iv`, OpenMP) vs patched RVV OpenBLAS `0.3.33.dev` (`zvl128b
 - **8 threads:** OpenBLAS scales slightly better (BLIS **0.80–0.89×**). Both get ~3.5–5× from 8 cores; BLIS's OpenMP path leaves headroom vs OpenBLAS threading.
 - **Correctness first:** both backends numerically identical on DGEMM; BLIS TRSM verified independently.
 
+## Cross-board — Banana Pi BPI-F3
+
+Same BLIS `061c2eb` (`rv64iv`, OpenMP) vs stock CVMFS `OpenBLAS/0.3.30-GCC-14.3.0` (no local patched OpenBLAS on that image), [Banana Pi F3](../boards/F3.html) (3.7 GB RAM):
+
+| Threads | N | BLIS | OpenBLAS 0.3.30 | BLIS / OpenBLAS |
+| ------: | --: | ---: | --------------: | --------------: |
+| 1 | 1024 | 2.13 | 3.01 | 0.71× |
+| 1 | 2048 | 2.85 | 2.96 | 0.96× |
+| 1 | 4096 | 3.08 | 2.89 | **1.07×** |
+| 8 | 1024 | 8.94 | 10.10 | 0.89× |
+| 8 | 2048 | 9.92 | 10.82 | 0.92× |
+| 8 | 4096 | 10.34 | 10.96 | 0.94× |
+
+`verify_ctrsm`: **2400 cases, 0 fails, worst_resid=2.55×10⁻⁷** (1- and 8-thread) — identical to the RV2. Single-thread BLIS peaks match (~3.0–3.1 GFLOP/s @ N=4096); stock CVMFS OpenBLAS on the F3 is stronger at small N than the RV2's patched local build, so the F3 BLIS/OpenBLAS ratio at N=1024×1 is lower.
+
 ## End-to-end: HPL on BLIS
 
 Linking HPL against the same RVV `libblis.a` ([HPL app](../apps/hpl.html#hpl-on-blis--end-to-end-validation)): all configs **PASSED**, but BLIS is **0.35–0.53×** patched OpenBLAS-RVV (4.02 / 5.57 GFLOP/s; full-memory best **5.87** at N=25600, 2×4).

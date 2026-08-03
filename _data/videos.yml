@@ -1,4 +1,29 @@
 # YouTube videos — add new entries here (newest first).
+- id: qe-blas-real-dft
+  title: "Quantum ESPRESSO on RISC-V: Stock BLAS MPI_ABORTs a Real DFT on BPI-F3"
+  description: >
+    Stock EESSI OpenBLAS aborts Quantum ESPRESSO in inverse_s (MPI_ABORT) —
+    the same gemv_n bug that NaN’d HPL. Patched RVV: −14.57861334 Ry, then a
+    64-atom SCF 144.8 → 110.3 s (1.31×). calbec ~2×; fftw ~1.01×. Measured on
+    Banana Pi F3.
+  youtube_id: guf9WCAyYPM
+  date: 2026-08-03
+  duration: PT3M21S
+  boards:
+    - Banana Pi F3
+  topics:
+    - Quantum ESPRESSO
+    - OpenBLAS
+    - FlexiBLAS
+    - EESSI
+    - DFT
+  related_pages:
+    - title: Quantum ESPRESSO app notes
+      url: /apps/qe.html
+    - title: Banana Pi F3 board notes
+      url: /boards/F3.html
+    - title: BLAS / OpenBLAS
+      url: /scientific-libs/blas.html
 - id: onnx-ime-int4-rv2
   title: "10× ONNX on RISC-V: One Missing Attribute Unlocks X60 IME"
   description: >

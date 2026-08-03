@@ -1,5 +1,7 @@
 # Quantum ESPRESSO
 
+**Video:** [Stock BLAS MPI_ABORTs a Real DFT on BPI-F3](https://www.youtube.com/watch?v=guf9WCAyYPM) — [all videos](../videos.html)
+
 [Quantum ESPRESSO](https://www.quantum-espresso.org/) `pw.x` plane-wave DFT SCF — a **whole-application** BLAS backend A/B. Swaps only the OpenBLAS implementation (via FlexiBLAS) under one unchanged `pw.x` binary; QE comes from the EESSI module (`QuantumESPRESSO/7.5-foss-2025b`).
 
 Benchmark source: [opensolvers/benchmarks/qe](https://github.com/opensolvers/benchmarks/tree/main/qe) — inputs, a Si supercell generator, and `run-qe-ab.sh` / `run-perf-ab.sh` runners.

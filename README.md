@@ -16,6 +16,7 @@ Those core-level fixes and tunings are what HPC already runs at scale: the same 
 
 Walkthroughs on our [YouTube channel](https://www.youtube.com/@opensolvers) — see the full list on the [Videos](videos.html) page.
 
+- **[Quantum ESPRESSO on BPI-F3](https://www.youtube.com/watch?v=guf9WCAyYPM)** — stock OpenBLAS MPI_ABORTs a real DFT; patched gemv_n → 1.31× SCF (calbec ~2×, fftw flat)
 - **[10× ONNX on RISC-V (Orange Pi RV2)](https://www.youtube.com/watch?v=IV3TV57eGAs)** — one missing `accuracy_level=4` unlocks X60 IME; 9.1× / 10.3× on int4 MatMulNBits
 - **[3.31× GROMACS on RISC-V (Orange Pi RV2)](https://www.youtube.com/watch?v=COayFhBa0as)** — hand-written RVV Force backend; FFT micro wins dilute until Force owns the wall clock (0.380 → 1.256 ns/day)
 - **[NaN Linpack on RISC-V (Orange Pi RV2)](https://www.youtube.com/watch?v=W_-8cKA-CCU)** — stock RVV OpenBLAS fails HPL with residual `nan`; gemv_n fix via EESSI + FlexiBLAS (10.53 GFLOP/s PASSED)

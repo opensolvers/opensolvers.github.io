@@ -1,7 +1,7 @@
 theme: jekyll-theme-cayman
 title: OpenSolvers
 tagline: Open scientific software & AI inference on real RISC-V hardware
-description: Open-source scientific software benchmarks on RISC-V boards — HPL, BLAS, Quantum ESPRESSO, llama.cpp, GROMACS, LAMMPS, and library-level probes via EESSI.
+description: Open-source scientific software benchmarks on RISC-V boards — HPL, BLAS, Quantum ESPRESSO, llama.cpp, GROMACS, LAMMPS, OpenFOAM, waLBerla, and library-level probes via EESSI.
 url: https://www.opensolvers.com
 lang: en
 twitter:
@@ -42,6 +42,10 @@ navigation_apps:
     url: /apps/gromacs.html
   - title: LAMMPS
     url: /apps/lammps.html
+  - title: OpenFOAM
+    url: /apps/openfoam.html
+  - title: waLBerla
+    url: /apps/walberla.html
 
 navigation_scientific_libs:
   - title: BLAS

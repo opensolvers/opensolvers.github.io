@@ -146,6 +146,21 @@ Speedups are **parallel scaling** on one RVV-vectorized binary (not RVV-vs-scala
 
 See [Kokkos](../scientific-libs/kokkos.html) — portable OpenMP/Serial for LAMMPS; **no RVV SIMD backend** in 4.6.2; hand RVV LJ microbench **~1.64×**, EAM plugin **1.27×**.
 
+## OpenFOAM
+
+See [OpenFOAM](../apps/openfoam.html) — motorBike `simpleFoam` (4 ranks): GCC auto-vec **~0%**; hand RVV Amul **~50% slower** (whole solve **~3–4%** worse); GS RVV mild regression. Sparse gather on short rows.
+
+## waLBerla
+
+See [waLBerla](../apps/walberla.html) — contiguous auto-vec campaign:
+
+| Probe | Result |
+| ----- | ------ |
+| BasicLBM ISA-tag (`rv64gc` → `rv64gcv`) | ~**1–4%** |
+| HeatEquation Jacobi np1 | **1.64×** |
+| UniformGrid `--not-fused` collide | **1.54×** (WALL **1.30×**) |
+| SoA auto-vec vs hand `simd::double4_t` | ~**9×** favour auto-vec |
+
 ## ScaLAPACK
 
 See [ScaLAPACK](../scientific-libs/scalapack.html) — `PDSYEV` on 2×4 grid: stock RVV **hangs**; patched RVV **107.23 s** vs scalar **116.87 s** (**1.09×**).

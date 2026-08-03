@@ -20,7 +20,7 @@ Context file for structural and content decisions on [opensolvers.com](https://w
 ## Navigation groups
 
 1. **Home** · **Videos** · **GitHub** (external → `opensolvers/benchmarks`; GitHub uses logo icon)
-2. **Apps** — HPL, Quantum ESPRESSO, ONNX Runtime, **llama.cpp**, GROMACS, **LAMMPS**
+2. **Apps** — HPL, Quantum ESPRESSO, ONNX Runtime, **llama.cpp**, GROMACS, **LAMMPS**, **OpenFOAM**, **waLBerla**
 3. **Scientific libs** — BLAS (incl. OpenBLAS verification), **BLIS**, NumPy, LAPACK, ELPA, MLAS, FFTW, **Kokkos**, ScaLAPACK
 4. **Boards** — VisionFive 2, OrangePi RV2, BananaPi F3
 
@@ -45,7 +45,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 
 | Source | Used for |
 |--------|----------|
-| [opensolvers/benchmarks](https://github.com/opensolvers/benchmarks) | OpenBLAS (`OpenBLAS/`), **BLIS (`BLIS/`)**, HPL (`hpl/` incl. BLIS-linked validation), ELPA/ScaLAPACK (`elpa/`, `scalapack/`), QE/FFTW (`qe/`, `fftw/`), GROMACS (`gromacs/` incl. `rvv-backend/`), **LAMMPS (`lammps/` RVV-Kokkos + `rvv-lj`/`rvv-eam`)**, **Kokkos (`kokkos/`)**, ONNX/MLAS (`onnx/`), **llama.cpp (`llamacpp/` 10-model IME vs RVV)**, NumPy (`numpy/`), **IME (`ime/` scale-build opt + paper)**, **GPU (`gpu/` BXE-2-32 vendor closed + open Mesa deferred)** |
+| [opensolvers/benchmarks](https://github.com/opensolvers/benchmarks) | OpenBLAS, BLIS, HPL, ELPA/ScaLAPACK, QE/FFTW, GROMACS, LAMMPS/Kokkos, **OpenFOAM (`openfoam/`)**, **waLBerla (`walberla/`)**, ONNX/MLAS, llama.cpp, NumPy, IME, GPU |
 | [opensolvers/llama.cpp](https://github.com/opensolvers/llama.cpp) (`x60-ime-rvv`) | SpaceMiT X60 IME/RVV staging fork — kernels + how-to on [apps/llamacpp](apps/llamacpp.html) |
 | [EESSI/docs#818](https://github.com/EESSI/docs/pull/818) | VisionFive 2 / U74 OpenBLAS + HPL |
 | [EESSI/docs#819](https://github.com/EESSI/docs/pull/819) | Orange Pi RV2 / X60 RVV `gemv_n` fix + HPL |
@@ -62,6 +62,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 
 | Date | Decision |
 |------|----------|
+| 2026-08-03 | Add **OpenFOAM** (motorBike sparse Amul/GS RVV regress) + **waLBerla** (HeatEq **1.64×**, UniformGrid collide **1.54×**) app pages |
 | 2026-07-30 | Sync BPI-F3 cross-board results: IME (~45 GOP/s), BLIS, FFTW, GROMACS FFT, LAMMPS, ScaLAPACK hang, LJ micro **1.57×** |
 | 2026-08-03 | Publish QE BLAS A/B video (`guf9WCAyYPM`) — `_data/videos.yml`, homepage, QE, F3 |
 | 2026-07-29 | Publish ONNX IME int4 video (`IV3TV57eGAs`) — `_data/videos.yml`, homepage, ONNX, RV2 |

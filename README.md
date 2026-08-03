@@ -1,6 +1,6 @@
 ---
 title: OpenSolvers — RISC-V scientific software benchmarks
-description: Benchmark notes for open-source scientific libraries, applications, and AI inference engines on consumer RISC-V boards — HPL, BLAS, Quantum ESPRESSO, llama.cpp, GROMACS, LAMMPS, EESSI, and FlexiBLAS.
+description: Benchmark notes for open-source scientific libraries, applications, and AI inference engines on consumer RISC-V boards — HPL, BLAS, Quantum ESPRESSO, llama.cpp, GROMACS, LAMMPS, OpenFOAM, waLBerla, EESSI, and FlexiBLAS.
 permalink: /
 ---
 
@@ -39,7 +39,7 @@ Each RISC-V board exposes several compute paths. We benchmark and tune them inde
 | **Custom** | Custom ISA extensions beyond standard RVV | X60 **IME** / **XsmtVdot** (`smt.vmadot`) int8 on [RV2](boards/RV2.html) / [F3](boards/F3.html); [ONNX Runtime](apps/onnx.html) int4 via MLAS |
 | **GPU** | Integrated Imagination GPUs (OpenCL / Vulkan) | **IMG BXE-4-32 MC1** on [VisionFive 2](boards/VisionFive2.html) (JH7110); **IMG BXE-2-32** on [RV2](boards/RV2.html) / [F3](boards/F3.html) (K1) — silicon is compute-capable, but **vendor DDK is BXM-only** (GPGPU closed; open Mesa `pvr` deferred) |
 
-Recent highlights on the Orange Pi RV2 (SpaceMiT X60, RVV): fixing an OpenBLAS `gemv_n` bug restores correctness across [BLAS](scientific-libs/blas.html), [LAPACK](scientific-libs/lapack.html), [ELPA](scientific-libs/elpa.html), [ScaLAPACK](scientific-libs/scalapack.html), [HPL](apps/hpl.html), and [Quantum ESPRESSO](apps/qe.html). [BLIS](scientific-libs/blis.html) RVV assembly beats patched OpenBLAS **~1.29×** on single-thread DGEMM (N=4096), but HPL linked to BLIS is correct yet only **0.35–0.53×** OpenBLAS-RVV. [FFTW `r5v`](scientific-libs/fftw.html) wins **1.06–1.60×** in isolation but **~0%** inside a real QE SCF; [GROMACS](apps/gromacs.html) sees **1.23×** on isolated `PME 3D-FFT` and **3.31×** whole-app with a hand-written RVV `Force` backend. [LAMMPS](apps/lammps.html) RVV-Kokkos whole-app MD scales to **7.21×** (eam, Kokkos/OpenMP) / **5.94×** (rhodo, MPI) across 8 cores; hand RVV Pair reaches **1.27×** on EAM ([Kokkos](scientific-libs/kokkos.html)). ONNX `accuracy_level=4` unlocks **9–10×** int4 decode — [ONNX Runtime](apps/onnx.html) / [MLAS](scientific-libs/mlas.html). [llama.cpp](apps/llamacpp.html): 10/10 Q4_0 models validated; IME wins prefill (up to **~2.5×**), RVV wins token-gen; IME1 scale-build **+4.3%** pp512.
+Recent highlights on the Orange Pi RV2 (SpaceMiT X60, RVV): fixing an OpenBLAS `gemv_n` bug restores correctness across [BLAS](scientific-libs/blas.html), [LAPACK](scientific-libs/lapack.html), [ELPA](scientific-libs/elpa.html), [ScaLAPACK](scientific-libs/scalapack.html), [HPL](apps/hpl.html), and [Quantum ESPRESSO](apps/qe.html). [BLIS](scientific-libs/blis.html) RVV assembly beats patched OpenBLAS **~1.29×** on single-thread DGEMM (N=4096), but HPL linked to BLIS is correct yet only **0.35–0.53×** OpenBLAS-RVV. [FFTW `r5v`](scientific-libs/fftw.html) wins **1.06–1.60×** in isolation but **~0%** inside a real QE SCF; [GROMACS](apps/gromacs.html) sees **1.23×** on isolated `PME 3D-FFT` and **3.31×** whole-app with a hand-written RVV `Force` backend. [LAMMPS](apps/lammps.html) RVV-Kokkos whole-app MD scales to **7.21×** (eam, Kokkos/OpenMP) / **5.94×** (rhodo, MPI) across 8 cores; hand RVV Pair reaches **1.27×** on EAM ([Kokkos](scientific-libs/kokkos.html)). [OpenFOAM](apps/openfoam.html) motorBike: sparse Amul/GS RVV **regresses**; [waLBerla](apps/walberla.html) contiguous HeatEquation **1.64×** / UniformGrid collide **1.54×**. ONNX `accuracy_level=4` unlocks **9–10×** int4 decode — [ONNX Runtime](apps/onnx.html) / [MLAS](scientific-libs/mlas.html). [llama.cpp](apps/llamacpp.html): 10/10 Q4_0 models validated; IME wins prefill (up to **~2.5×**), RVV wins token-gen; IME1 scale-build **+4.3%** pp512.
 
 ## Scientific libs
 
@@ -65,11 +65,13 @@ End-to-end application benchmarks on the same boards and EESSI toolchain:
 - **[llama.cpp](apps/llamacpp.html)** — Q4_0 IME vs RVV; Q4_K_M study (m1gemv regresses); fork [`x60-ime-rvv`](https://github.com/opensolvers/llama.cpp/tree/x60-ime-rvv) (scale-build, softmax, M1 GEMV)
 - **[GROMACS](apps/gromacs.html)** — PME MD; FFT-axis **1.23×** on `PME 3D-FFT`; RVV `Force` backend **3.31×** whole-app
 - **[LAMMPS](apps/lammps.html)** — RVV-Kokkos whole-app MD; five upstream benches; Kokkos **7.21×** (eam) / MPI **5.94×** (rhodo); hand RVV EAM **1.27×**
+- **[OpenFOAM](apps/openfoam.html)** — motorBike `simpleFoam`; auto-vec **~0%**; hand RVV Amul/GS **regress** (sparse gather)
+- **[waLBerla](apps/walberla.html)** — HeatEquation **1.64×**; UniformGrid collide **1.54×**; BasicLBM ISA-tag ~**1–4%**; prefer SoA auto-vec over hand simd
 
 ## Boards
 
 - **[StarFive VisionFive 2](boards/VisionFive2.html)** — JH7110 SoC, 4× SiFive U74 (`rv64gc`). U74 OpenBLAS tuning: HPL **3.13 → 5.28 GFLOP/s**.
-- **[Orange Pi RV2](boards/RV2.html)** — SpaceMiT K1, 8× X60 (RVV). Fixed OpenBLAS: HPL **FAILED (`nan`) → 10.53 GFLOP/s**; BLIS DGEMM **1.29×** / HPL **0.35–0.53×**; [llama.cpp](apps/llamacpp.html) IME vs RVV (10 models); IME1 scale-build **+4.3%**; GROMACS Force **3.31×**; [LAMMPS](apps/lammps.html) Kokkos **7.21×**; ELPA **34.81 s** (vs 54.92 s scalar); **BXE-2-32 GPGPU closed** (vendor BXM-only DDK).
+- **[Orange Pi RV2](boards/RV2.html)** — SpaceMiT K1, 8× X60 (RVV). Fixed OpenBLAS: HPL **FAILED (`nan`) → 10.53 GFLOP/s**; BLIS DGEMM **1.29×** / HPL **0.35–0.53×**; [llama.cpp](apps/llamacpp.html) IME vs RVV (10 models); IME1 scale-build **+4.3%**; GROMACS Force **3.31×**; [LAMMPS](apps/lammps.html) Kokkos **7.21×**; [waLBerla](apps/walberla.html) HeatEq **1.64×**; [OpenFOAM](apps/openfoam.html) Amul/GS RVV regress; ELPA **34.81 s** (vs 54.92 s scalar); **BXE-2-32 GPGPU closed** (vendor BXM-only DDK).
 - **[Banana Pi F3](boards/F3.html)** — same K1 / X60 SoC, **3.7 GB RAM**. HPL **FAILED (`nan`) → 11.52 GFLOP/s**; IME peak **~45 GOP/s**; FFTW r5v **1.60×**; GROMACS FFT **1.14×**; LAMMPS Kokkos **6.29×** (eam); NumPy DGEMM **17.51 GFLOP/s**; same GPU closure as RV2.
 
 Use the menu above to jump to a board, app, or scientific lib page.

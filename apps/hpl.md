@@ -5,7 +5,9 @@ description: High Performance Linpack cross-board summary — VisionFive 2 U74 t
 
 # HPL results overview
 
-Cross-board summary of **High Performance Linpack (HPL)** on consumer RISC-V hardware through the EESSI stack. Configs and an A/B runner (`run-hpl-ab.sh`) are in [opensolvers/benchmarks/hpl](https://github.com/opensolvers/benchmarks/tree/main/hpl).
+**HPL** (High Performance Linpack) is the classic dense linear-algebra benchmark behind the TOP500: factor a large matrix and solve Ax=b with LU. It stress-tests BLAS (especially GEMM) end-to-end.
+
+Cross-board summary on consumer RISC-V hardware through the EESSI stack. Configs and an A/B runner (`run-hpl-ab.sh`) are in [opensolvers/benchmarks/hpl](https://github.com/opensolvers/benchmarks/tree/main/hpl).
 
 **Toolchain:** GCC 14.3.0, OpenBLAS 0.3.30, HPL 2.3.0. EESSI `2025.06-001` on [`dev.eessi.io/riscv`](https://www.eessi.io/docs/repositories/dev.eessi.io-riscv/).
 

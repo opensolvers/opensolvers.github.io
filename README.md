@@ -59,14 +59,14 @@ Library-level probes — performance *and* numerical correctness:
 
 End-to-end application benchmarks on the same boards and EESSI toolchain:
 
-- **[HPL](apps/hpl.html)** — High Performance Linpack; OpenBLAS A/B + BLIS-linked validation from [opensolvers/benchmarks](https://github.com/opensolvers/benchmarks)
-- **[Quantum ESPRESSO](apps/qe.html)** — plane-wave DFT SCF (`pw.x`); whole-application BLAS backend A/B with per-routine timers
-- **[ONNX Runtime](apps/onnx.html)** — int4 `MatMulNBits` LLM decode; `accuracy_level=4` unlocks X60 IME (**9–10×**)
-- **[llama.cpp](apps/llamacpp.html)** — Q4_0 IME vs RVV; Q4_K_M study (m1gemv regresses); fork [`x60-ime-rvv`](https://github.com/opensolvers/llama.cpp/tree/x60-ime-rvv) (scale-build, softmax, M1 GEMV)
-- **[GROMACS](apps/gromacs.html)** — PME MD; FFT-axis **1.23×** on `PME 3D-FFT`; RVV `Force` backend **3.31×** whole-app
-- **[LAMMPS](apps/lammps.html)** — RVV-Kokkos whole-app MD; five upstream benches; Kokkos **7.21×** (eam) / MPI **5.94×** (rhodo); hand RVV EAM **1.27×**
-- **[OpenFOAM](apps/openfoam.html)** — motorBike `simpleFoam`; auto-vec **~0%**; hand RVV Amul/GS **regress** (sparse gather)
-- **[waLBerla](apps/walberla.html)** — HeatEquation **1.64×**; UniformGrid collide **1.54×**; BasicLBM ISA-tag ~**1–4%**; prefer SoA auto-vec over hand simd
+- **[HPL](apps/hpl.html)** — Classic TOP500 Linpack: dense LU to solve Ax=b. OpenBLAS A/B + BLIS-linked validation from [opensolvers/benchmarks](https://github.com/opensolvers/benchmarks)
+- **[Quantum ESPRESSO](apps/qe.html)** — Plane-wave density-functional theory for materials and molecules (`pw.x` SCF). Whole-app BLAS backend A/B with per-routine timers
+- **[ONNX Runtime](apps/onnx.html)** — Cross-platform ML inference engine. int4 `MatMulNBits` LLM decode; `accuracy_level=4` unlocks X60 IME (**9–10×**)
+- **[llama.cpp](apps/llamacpp.html)** — Lightweight local LLM inference (GGML / GGUF). Q4_0 IME vs RVV; fork [`x60-ime-rvv`](https://github.com/opensolvers/llama.cpp/tree/x60-ime-rvv) (scale-build, softmax, M1 GEMV)
+- **[GROMACS](apps/gromacs.html)** — Biomolecular molecular dynamics (proteins, lipids, solvents) with PME. FFT-axis **1.23×**; RVV `Force` **3.31×** whole-app
+- **[LAMMPS](apps/lammps.html)** — Classical MD for materials, soft matter, and biomolecules. RVV-Kokkos **7.21×** (eam) / MPI **5.94×** (rhodo); hand RVV EAM **1.27×**
+- **[OpenFOAM](apps/openfoam.html)** — Open-source CFD toolbox (finite-volume continuum flow). motorBike `simpleFoam`: auto-vec **~0%**; hand RVV Amul/GS **regress**
+- **[waLBerla](apps/walberla.html)** — Lattice Boltzmann / structured-grid PDE framework for fluids and multiphysics. HeatEquation **1.64×**; UniformGrid collide **1.54×**
 
 ## Boards
 

@@ -5,7 +5,7 @@ description: End-to-end llama.cpp on Orange Pi RV2 — Q4_0 IME vs RVV, Q4_K_M m
 
 # llama.cpp
 
-[llama.cpp](https://github.com/ggml-org/llama.cpp) Q4_0 / Q8_0 inference on the SpaceMiT X60 — end-to-end validation of the **IME `smt.vmadot`** path against a plain **RVV** build on the Orange Pi RV2.
+[llama.cpp](https://github.com/ggml-org/llama.cpp) is a lightweight C/C++ runtime for local large-language-model inference (GGML / GGUF) without a heavy framework stack. We run Q4_0 / Q8_0 workloads on the SpaceMiT X60 — end-to-end **IME `smt.vmadot`** vs plain **RVV** on the Orange Pi RV2.
 
 Benchmark source: [opensolvers/benchmarks/llamacpp](https://github.com/opensolvers/benchmarks/tree/main/llamacpp) — model list, `validate_model.sh` / `run_all.sh`, and `model_validation.tsv`. Kernel-level IME work: [IME on RV2](../boards/RV2.html#ime-integer-matrix-extension) / [benchmarks/ime](https://github.com/opensolvers/benchmarks/tree/main/ime). Related ORT int4 path: [ONNX Runtime](onnx.html).
 

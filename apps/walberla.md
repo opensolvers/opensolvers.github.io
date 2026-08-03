@@ -5,7 +5,7 @@ description: waLBerla 7.2 RVV / auto-vec campaign on Orange Pi RV2 — BasicLBM 
 
 # waLBerla
 
-[waLBerla](https://www.walberla.net/) **7.2** lattice-Boltzmann / PDE tutorials on the Orange Pi RV2 (SpaceMiT K1 / X60, RVV 1.0, VLEN=256), under EESSI `dev.eessi.io/riscv` (`2025.06-001`, `foss-2025b`).
+[waLBerla](https://www.walberla.net/) (widely applicable Lattice Boltzmann from Erlangen) is a C++ framework for lattice Boltzmann methods and structured-grid PDEs — fluids, multiphase flow, and related multiphysics. We measure **7.2** tutorials on the Orange Pi RV2 (SpaceMiT K1 / X60, RVV 1.0, VLEN=256), under EESSI `dev.eessi.io/riscv` (`2025.06-001`, `foss-2025b`).
 
 Benchmark source: [opensolvers/benchmarks/walberla](https://github.com/opensolvers/benchmarks/tree/walberla-rvv-autovec-results/walberla).
 

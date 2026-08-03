@@ -5,7 +5,7 @@ description: OpenFOAM v2506 simpleFoam motorBike on Orange Pi RV2 — GCC auto-v
 
 # OpenFOAM
 
-[OpenFOAM](https://www.openfoam.com/) **v2506** on the Orange Pi RV2 (SpaceMiT K1 / X60, RVV 1.0) — measured A/Bs on the canonical **motorBike** tutorial (`simpleFoam`, 4 MPI ranks, existing mesh, `endTime=50`).
+[OpenFOAM](https://www.openfoam.com/) is an open-source CFD toolbox: finite-volume solvers for continuum fluid flow, heat transfer, and multiphase physics on unstructured meshes. We run **v2506** on the Orange Pi RV2 (SpaceMiT K1 / X60, RVV 1.0) — A/Bs on the canonical **motorBike** tutorial (`simpleFoam`, 4 MPI ranks, existing mesh, `endTime=50`).
 
 Benchmark source: [opensolvers/benchmarks/openfoam](https://github.com/opensolvers/benchmarks/tree/main/openfoam).
 

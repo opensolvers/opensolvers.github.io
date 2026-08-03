@@ -5,7 +5,7 @@ description: RVV-Kokkos LAMMPS whole-app MD on Orange Pi RV2 — five upstream b
 
 # LAMMPS
 
-[LAMMPS](https://www.lammps.org/) molecular dynamics on the SpaceMiT X60 — a **whole-application throughput** probe with an **RVV-vectorized Kokkos** build, not a drop-in library A/B like [GROMACS](gromacs.html) FFT or [QE](qe.html) BLAS.
+[LAMMPS](https://www.lammps.org/) (Large-scale Atomic/Molecular Massively Parallel Simulator) is a classical molecular-dynamics code for materials, soft matter, granular flow, and biomolecules — modular pair potentials and long-range solvers. On the SpaceMiT X60 we use it as a **whole-application throughput** probe with an **RVV-vectorized Kokkos** build, not a drop-in library A/B like [GROMACS](gromacs.html) FFT or [QE](qe.html) BLAS.
 
 Benchmark source: [opensolvers/benchmarks/lammps](https://github.com/opensolvers/benchmarks/tree/main/lammps) — `run-lammps-bench.sh` runs the five upstream `bench/` inputs × three modes (serial / Kokkos-OpenMP / MPI). Hand RVV Pair plugins: [`rvv-lj/`](https://github.com/opensolvers/benchmarks/tree/main/lammps/rvv-lj), [`rvv-eam/`](https://github.com/opensolvers/benchmarks/tree/main/lammps/rvv-eam). Kokkos learnings: [Kokkos](../scientific-libs/kokkos.html).
 

@@ -2,7 +2,7 @@
 
 **Video:** [10× ONNX on RISC-V: One Missing Attribute Unlocks X60 IME](https://www.youtube.com/watch?v=IV3TV57eGAs) — [all videos](../videos.html)
 
-[ONNX Runtime](https://onnxruntime.ai/) int4 **`MatMulNBits`** inference on SpaceMiT X60 — a whole-graph LLM decode probe through ORT's MLAS `SQNBit` path and the X60 **IME** (`smt.vmadot`).
+[ONNX Runtime](https://onnxruntime.ai/) is a cross-platform engine for running ONNX machine-learning graphs — from classical models to quantized LLM layers. On SpaceMiT X60 we probe int4 **`MatMulNBits`** LLM decode through ORT's MLAS `SQNBit` path and the X60 **IME** (`smt.vmadot`).
 
 Benchmark source: [opensolvers/benchmarks/onnx](https://github.com/opensolvers/benchmarks/tree/main/onnx) — Llama-7B-proportioned FFN stack, `patch_accuracy_level.py`, and `onnxruntime_perf_test` runners.
 

@@ -10,7 +10,8 @@ Context file for structural and content decisions on [opensolvers.com](https://w
 
 | Area | Path | Purpose |
 |------|------|---------|
-| Homepage | `README.md` → `/` | Intro, scientific libs, apps, board summaries |
+| Homepage | `README.md` → `/` | Intro, scientific libs, apps, board summaries; Contact + newsletter subscribe |
+| Newsletter | `_includes/mailmoose-subscribe.html` | Mailmoose list `opensolvers` (`POST …/lists/opensolvers/subscribe`) |
 | Videos | `videos.md` → `/videos.html` | YouTube walkthroughs (`_data/videos.yml`) |
 | Sponsors | `sponsors.md` → `/sponsors.html` | Tier table + backer/logo list; CTA to GitHub Sponsors |
 | Boards | `boards/` | Per-board hardware + benchmark notes |
@@ -62,6 +63,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 
 | Date | Decision |
 |------|----------|
+| 2026-08-08 | Homepage Contact: Mailmoose **opensolvers** newsletter subscribe form (`_includes/mailmoose-subscribe.html`) |
 | 2026-08-03 | Add **OpenFOAM** (motorBike sparse Amul/GS RVV regress) + **waLBerla** (HeatEq **1.64×**, UniformGrid collide **1.54×**) app pages |
 | 2026-07-30 | Sync BPI-F3 cross-board results: IME (~45 GOP/s), BLIS, FFTW, GROMACS FFT, LAMMPS, ScaLAPACK hang, LJ micro **1.57×** |
 | 2026-08-03 | Publish QE BLAS A/B video (`guf9WCAyYPM`) — `_data/videos.yml`, homepage, QE, F3 |

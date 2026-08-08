@@ -1,0 +1,155 @@
+{%- comment -%}
+  OpenSolvers newsletter via Mailmoose.
+  POST https://api.mailmoose.app/lists/opensolvers/subscribe
+  Body: { email, firstName? } + honeypot "website"
+{%- endcomment -%}
+<div class="mm-subscribe" id="mm-opensolvers-subscribe" lang="en">
+  <h3 class="mm-subscribe-title">Newsletter</h3>
+  <p class="mm-subscribe-lead">
+    Occasional updates on RISC-V benchmarks, kernel fixes, and new board results.
+  </p>
+
+  <form id="mm-opensolvers-form" action="https://api.mailmoose.app/lists/opensolvers/subscribe" method="POST" accept-charset="UTF-8" novalidate>
+    <input
+      class="mm-subscribe-hp"
+      type="text"
+      name="website"
+      tabindex="-1"
+      autocomplete="off"
+      aria-hidden="true"
+    />
+
+    <div class="mm-subscribe-field">
+      <label for="mm-opensolvers-firstName">
+        First name <span class="mm-subscribe-optional">(optional)</span>
+      </label>
+      <input
+        id="mm-opensolvers-firstName"
+        name="firstName"
+        type="text"
+        autocomplete="given-name"
+        maxlength="80"
+        placeholder="Ada"
+      />
+    </div>
+
+    <div class="mm-subscribe-field">
+      <label for="mm-opensolvers-email">Email</label>
+      <input
+        id="mm-opensolvers-email"
+        name="email"
+        type="email"
+        autocomplete="email"
+        required
+        maxlength="254"
+        placeholder="you@example.com"
+      />
+    </div>
+
+    <button type="submit" class="mm-subscribe-submit" id="mm-opensolvers-submit">Keep me posted</button>
+
+    <p class="mm-subscribe-consent">
+      You’ll get a confirmation email first. You’re only on the list after clicking the link (double opt-in). Unsubscribe anytime.
+    </p>
+
+    <p class="mm-subscribe-status" id="mm-opensolvers-status" role="status" aria-live="polite" hidden></p>
+  </form>
+</div>
+
+<script>
+(function () {
+  var API = "https://api.mailmoose.app/lists/opensolvers/subscribe";
+  var root = document.getElementById("mm-opensolvers-subscribe");
+  if (!root) return;
+
+  var form = document.getElementById("mm-opensolvers-form");
+  var statusEl = document.getElementById("mm-opensolvers-status");
+  var submitBtn = document.getElementById("mm-opensolvers-submit");
+  if (!form || !statusEl || !submitBtn) return;
+
+  function setStatus(kind, message) {
+    statusEl.hidden = false;
+    statusEl.className = "mm-subscribe-status is-" + kind;
+    statusEl.textContent = message;
+  }
+
+  form.addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    var email = ((form.email && form.email.value) || "").trim();
+    var firstName = ((form.firstName && form.firstName.value) || "").trim();
+    var honeypot = ((form.website && form.website.value) || "").trim();
+
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setStatus("error", "Please enter a valid email address.");
+      if (form.email) form.email.focus();
+      return;
+    }
+
+    submitBtn.disabled = true;
+    setStatus("pending", "Sending confirmation email…");
+
+    var body = { email: email };
+    if (firstName) body.firstName = firstName;
+    if (honeypot) body.website = honeypot;
+
+    fetch(API, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(body),
+    })
+      .then(function (res) {
+        return res.json().catch(function () {
+          return {};
+        }).then(function (data) {
+          return { res: res, data: data };
+        });
+      })
+      .then(function (result) {
+        var res = result.res;
+        var data = result.data || {};
+
+        if (res.ok && data.ok !== false) {
+          form.reset();
+          setStatus(
+            "success",
+            "Check your inbox and click the confirmation link to finish signing up."
+          );
+          return;
+        }
+
+        if (res.status === 400) {
+          setStatus("error", "That email address doesn’t look valid. Please try again.");
+          return;
+        }
+
+        if (res.status === 502) {
+          setStatus(
+            "error",
+            "We couldn’t send the confirmation email right now. Please try again shortly."
+          );
+          return;
+        }
+
+        setStatus(
+          "error",
+          typeof data.error === "string" && data.error
+            ? data.error
+            : "Something went wrong. Please try again."
+        );
+      })
+      .catch(function () {
+        setStatus(
+          "error",
+          "Couldn’t reach the server. Check your connection and try again."
+        );
+      })
+      .then(function () {
+        submitBtn.disabled = false;
+      });
+  });
+})();
+</script>

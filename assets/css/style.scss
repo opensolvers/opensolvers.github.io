@@ -181,3 +181,115 @@
 .video-card-links li {
   margin: 0.25rem 0;
 }
+
+/* Mailmoose newsletter subscribe (homepage Contact) */
+.mm-subscribe {
+  max-width: 28rem;
+  margin: 1.75rem 0 0;
+  padding: 1.25rem 1.35rem;
+  border: 1px solid #e9ebec;
+  border-radius: 0.35rem;
+  background: #f6f8fa;
+}
+
+.mm-subscribe-title {
+  margin: 0 0 0.35rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.mm-subscribe-lead {
+  margin: 0 0 1rem;
+  color: #606c71;
+  font-size: 0.95rem;
+}
+
+.mm-subscribe-hp {
+  position: absolute !important;
+  left: -9999px !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+  opacity: 0 !important;
+}
+
+.mm-subscribe-field {
+  margin: 0 0 0.75rem;
+}
+
+.mm-subscribe-field label {
+  display: block;
+  margin: 0 0 0.3rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.mm-subscribe-optional {
+  font-weight: 400;
+  color: #606c71;
+}
+
+.mm-subscribe-field input[type="text"],
+.mm-subscribe-field input[type="email"] {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  padding: 0.55rem 0.65rem;
+  color: #24292e;
+  font: inherit;
+  background: #fff;
+  border: 1px solid #d0d7de;
+  border-radius: 0.25rem;
+}
+
+.mm-subscribe-field input:focus {
+  outline: 2px solid rgba(21, 120, 120, 0.45);
+  outline-offset: 1px;
+}
+
+.mm-subscribe-submit {
+  display: inline-block;
+  width: 100%;
+  margin: 0.15rem 0 0.75rem;
+  padding: 0.65rem 1rem;
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  background: #157878;
+  border: none;
+  border-radius: 0.25rem;
+}
+
+.mm-subscribe-submit:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.mm-subscribe-consent {
+  margin: 0;
+  color: #606c71;
+  font-size: 0.8rem;
+}
+
+.mm-subscribe-status {
+  margin: 0.85rem 0 0;
+  font-size: 0.9rem;
+}
+
+.mm-subscribe-status[hidden] {
+  display: none !important;
+}
+
+.mm-subscribe-status.is-pending {
+  color: #606c71;
+}
+
+.mm-subscribe-status.is-success {
+  color: #157878;
+}
+
+.mm-subscribe-status.is-error {
+  color: #8b1e1e;
+}

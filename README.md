@@ -80,3 +80,5 @@ Use the menu above to jump to a board, app, or scientific lib page.
 
 - **Public:** open an [issue on opensolvers/benchmarks](https://github.com/opensolvers/benchmarks/issues) — questions, bugs, and board/benchmark requests are welcome there.
 - **More private:** [sponsor OpenSolvers](https://github.com/sponsors/opensolvers) and use GitHub Sponsors **Contact** (after sponsoring). Details and tiers are on the [Sponsors](sponsors.html) page.
+
+{% include mailmoose-subscribe.html %}

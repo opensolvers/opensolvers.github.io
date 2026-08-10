@@ -23,6 +23,8 @@ Cross-board summary on consumer RISC-V hardware through the EESSI stack. Configs
 
 **After** — fixed OpenBLAS via EasyBuild + FlexiBLAS backend swap (no HPL rebuild). See [BLAS overview](../scientific-libs/blas.html).
 
+Related (separate axis): [GCC 15.2 X60 mtune](../scientific-libs/gcc.html) rebuilds OpenBLAS under `-mtune=spacemit-x60` vs `generic-ooo` — modest HPL N=3000 **+0.8%** on RV2 (local proof, not EESSI yet).
+
 ## Orange Pi RV2 — detailed results
 
 **Video:** [NaN Linpack on RISC-V: Fixing OpenBLAS gemv_n on Orange Pi RV2 (EESSI)](https://www.youtube.com/watch?v=W_-8cKA-CCU) — [all videos](../videos.html)

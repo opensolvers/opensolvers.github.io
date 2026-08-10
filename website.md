@@ -22,7 +22,7 @@ Context file for structural and content decisions on [opensolvers.com](https://w
 
 1. **Home** · **Videos** · **GitHub** (external → `opensolvers/benchmarks`; GitHub uses logo icon)
 2. **Apps** — HPL, Quantum ESPRESSO, ONNX Runtime, **llama.cpp**, GROMACS, **LAMMPS**, **OpenFOAM**, **waLBerla**
-3. **Scientific libs** — BLAS (incl. OpenBLAS verification), **BLIS**, NumPy, LAPACK, ELPA, MLAS, FFTW, **Kokkos**, ScaLAPACK
+3. **Scientific libs** — BLAS (incl. OpenBLAS verification), **BLIS**, NumPy, LAPACK, ELPA, MLAS, FFTW, **GCC**, **Kokkos**, ScaLAPACK
 4. **Boards** — VisionFive 2, OrangePi RV2, BananaPi F3
 
 Nav config: `_config.yml` (`navigation`, `navigation_boards`, `navigation_apps`, `navigation_scientific_libs`). Rendered in `_includes/header.html`. Cayman theme requires `_layouts/default.html` override to include the header.
@@ -46,7 +46,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 
 | Source | Used for |
 |--------|----------|
-| [opensolvers/benchmarks](https://github.com/opensolvers/benchmarks) | OpenBLAS, BLIS, HPL, ELPA/ScaLAPACK, QE/FFTW, GROMACS, LAMMPS/Kokkos, **OpenFOAM (`openfoam/`)**, **waLBerla (`walberla/`)**, ONNX/MLAS, llama.cpp, NumPy, IME, GPU |
+| [opensolvers/benchmarks](https://github.com/opensolvers/benchmarks) | OpenBLAS, BLIS, HPL, ELPA/ScaLAPACK, QE/FFTW, GROMACS, LAMMPS/Kokkos, OpenFOAM, waLBerla, **GCC 15.2 (`gcc-15.2/`)**, ONNX/MLAS, llama.cpp, NumPy, IME, GPU |
 | [opensolvers/llama.cpp](https://github.com/opensolvers/llama.cpp) (`x60-ime-rvv`) | SpaceMiT X60 IME/RVV staging fork — kernels + how-to on [apps/llamacpp](apps/llamacpp.html) |
 | [EESSI/docs#818](https://github.com/EESSI/docs/pull/818) | VisionFive 2 / U74 OpenBLAS + HPL |
 | [EESSI/docs#819](https://github.com/EESSI/docs/pull/819) | Orange Pi RV2 / X60 RVV `gemv_n` fix + HPL |
@@ -63,6 +63,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 
 | Date | Decision |
 |------|----------|
+| 2026-08-10 | Add **GCC 15.2** SpacemiT X60 mtune page (canaries **−8.7%** / **−7.7%**; DGEMM **+2–4%**; HPL **+0.8%**) — EasyBuild patch + RV2 A/Bs |
 | 2026-08-08 | Homepage Contact: Mailmoose **opensolvers** newsletter subscribe form (`_includes/mailmoose-subscribe.html`) |
 | 2026-08-03 | Add **OpenFOAM** (motorBike sparse Amul/GS RVV regress) + **waLBerla** (HeatEq **1.64×**, UniformGrid collide **1.54×**) app pages |
 | 2026-07-30 | Sync BPI-F3 cross-board results: IME (~45 GOP/s), BLIS, FFTW, GROMACS FFT, LAMMPS, ScaLAPACK hang, LJ micro **1.57×** |

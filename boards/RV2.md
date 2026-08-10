@@ -146,6 +146,18 @@ Speedups are **parallel scaling** on one RVV-vectorized binary (not RVV-vs-scala
 
 See [Kokkos](../scientific-libs/kokkos.html) — portable OpenMP/Serial for LAMMPS; **no RVV SIMD backend** in 4.6.2; hand RVV LJ microbench **~1.64×**, EAM plugin **1.27×**.
 
+## GCC 15.2 mtune
+
+See [GCC](../scientific-libs/gcc.html) — EasyBuild-facing SpacemiT X60 patch for stock **15.2.0**; A/B vs `-mtune=generic-ooo` on this board:
+
+| Probe | Δ% (x60 vs ooo) |
+| ----- | --------------: |
+| Canaries `fma_chain` / `div_mix` | **−8.7%** / **−7.7%** ns/call |
+| OpenBLAS DGEMM N=512–2048 | **+2.2–3.8%** GF/s |
+| HPL N=3000 | **+0.8%** (both PASSED) |
+
+Local proof only — not an EESSI PR yet.
+
 ## OpenFOAM
 
 See [OpenFOAM](../apps/openfoam.html) — motorBike `simpleFoam` (4 ranks): GCC auto-vec **~0%**; hand RVV Amul **~50% slower** (whole solve **~3–4%** worse); GS RVV mild regression. Sparse gather on short rows.

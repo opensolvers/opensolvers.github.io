@@ -146,15 +146,15 @@ Speedups are **parallel scaling** on one RVV-vectorized binary (not RVV-vs-scala
 
 See [Kokkos](../scientific-libs/kokkos.html) — portable OpenMP/Serial for LAMMPS; **no RVV SIMD backend** in 4.6.2; hand RVV LJ microbench **~1.64×**, EAM plugin **1.27×**.
 
-## GCC 15.2 mtune
+## GCC mtune
 
-See [GCC](../scientific-libs/gcc.html) — EasyBuild-facing SpacemiT X60 patch for stock **15.2.0**; A/B vs `-mtune=generic-ooo` on this board:
+See [GCC](../scientific-libs/gcc.html) — EasyBuild-facing SpacemiT X60 patches for stock **14.3.0** (EESSI GCCcore) and **15.2.0**; A/B vs `-mtune=generic-ooo` on this board:
 
-| Probe | Δ% (x60 vs ooo) |
-| ----- | --------------: |
-| Canaries `fma_chain` / `div_mix` | **−8.7%** / **−7.7%** ns/call |
-| OpenBLAS DGEMM N=512–2048 | **+2.2–3.8%** GF/s |
-| HPL N=3000 | **+0.8%** (both PASSED) |
+| Probe | 14.3 | 15.2 |
+| ----- | ---: | ---: |
+| Canaries `fma_chain` / `div_mix` | **−5.0%** / **−6.7%** | **−8.7%** / **−7.7%** ns/call |
+| OpenBLAS DGEMM N=512–2048 | *(not re-run)* | **+2.2–3.8%** GF/s |
+| HPL N=3000 | *(not re-run)* | **+0.8%** (both PASSED) |
 
 Local proof only — not an EESSI PR yet.
 

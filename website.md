@@ -46,7 +46,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 
 | Source | Used for |
 |--------|----------|
-| [opensolvers/benchmarks](https://github.com/opensolvers/benchmarks) | OpenBLAS, BLIS, HPL, ELPA/ScaLAPACK, QE/FFTW, GROMACS, LAMMPS/Kokkos, OpenFOAM, waLBerla, **GCC 15.2 (`gcc-15.2/`)**, ONNX/MLAS, llama.cpp, NumPy, IME, GPU |
+| [opensolvers/benchmarks](https://github.com/opensolvers/benchmarks) | OpenBLAS, BLIS, HPL, ELPA/ScaLAPACK, QE/FFTW, GROMACS, LAMMPS/Kokkos, OpenFOAM, waLBerla, **GCC (`gcc-14.3/`, `gcc-15.2/`)**, ONNX/MLAS, llama.cpp, NumPy, IME, GPU |
 | [opensolvers/llama.cpp](https://github.com/opensolvers/llama.cpp) (`x60-ime-rvv`) | SpaceMiT X60 IME/RVV staging fork — kernels + how-to on [apps/llamacpp](apps/llamacpp.html) |
 | [EESSI/docs#818](https://github.com/EESSI/docs/pull/818) | VisionFive 2 / U74 OpenBLAS + HPL |
 | [EESSI/docs#819](https://github.com/EESSI/docs/pull/819) | Orange Pi RV2 / X60 RVV `gemv_n` fix + HPL |
@@ -63,6 +63,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 
 | Date | Decision |
 |------|----------|
+| 2026-08-11 | Extend **GCC** page with **14.3** EasyBuild patch + RV2 canaries (**−5.0%** / **−6.7%** on `fma_chain` / `div_mix`); keep 15.2 DGEMM/HPL |
 | 2026-08-10 | Add **GCC 15.2** SpacemiT X60 mtune page (canaries **−8.7%** / **−7.7%**; DGEMM **+2–4%**; HPL **+0.8%**) — EasyBuild patch + RV2 A/Bs |
 | 2026-08-08 | Homepage Contact: Mailmoose **opensolvers** newsletter subscribe form (`_includes/mailmoose-subscribe.html`) |
 | 2026-08-03 | Add **OpenFOAM** (motorBike sparse Amul/GS RVV regress) + **waLBerla** (HeatEq **1.64×**, UniformGrid collide **1.54×**) app pages |

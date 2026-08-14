@@ -38,7 +38,7 @@ Stock EESSI dispatches RVV `ZVL256B` on the X60, but the unpatched `gemv_n` kern
 | Stock EESSI, default RVV | 1×8 | 8000 | ~8.5 GFLOP/s, **FAILED** (`nan`) |
 | Fixed RVV, peak | 2×4 | 20000 | **10.53 GFLOP/s**, PASSED |
 
-Walkthrough: [EESSI/docs#819](https://github.com/EESSI/docs/pull/819).
+Walkthrough: [EESSI blog — Chasing a NaN (X60 OpenBLAS / HPL)](https://www.eessi.io/docs/blog/2026/07/12/risc-v-x60-openblas-hpl/).
 
 ### A/B — scalar vs patched RVV (`run-hpl-ab.sh`)
 

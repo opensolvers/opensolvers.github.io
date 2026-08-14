@@ -49,7 +49,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 | [opensolvers/benchmarks](https://github.com/opensolvers/benchmarks) | OpenBLAS, BLIS, HPL, ELPA/ScaLAPACK, QE/FFTW, GROMACS, LAMMPS/Kokkos, OpenFOAM, waLBerla, **GCC (`gcc-14.3/`, `gcc-15.2/`)**, ONNX/MLAS, llama.cpp, NumPy, IME, GPU |
 | [opensolvers/llama.cpp](https://github.com/opensolvers/llama.cpp) (`x60-ime-rvv`) | SpaceMiT X60 IME/RVV staging fork — kernels + how-to on [apps/llamacpp](apps/llamacpp.html) |
 | [EESSI/docs#818](https://github.com/EESSI/docs/pull/818) | VisionFive 2 / U74 OpenBLAS + HPL |
-| [EESSI/docs#819](https://github.com/EESSI/docs/pull/819) | Orange Pi RV2 / X60 RVV `gemv_n` fix + HPL |
+| [EESSI blog — X60 OpenBLAS / HPL](https://www.eessi.io/docs/blog/2026/07/12/risc-v-x60-openblas-hpl/) | Orange Pi RV2 / X60 RVV `gemv_n` fix + HPL (published from [docs#819](https://github.com/EESSI/docs/pull/819)) |
 | [easyconfigs#26436](https://github.com/easybuilders/easybuild-easyconfigs/pull/26436) | U74 OpenBLAS package |
 | [easyconfigs#26444](https://github.com/easybuilders/easybuild-easyconfigs/pull/26444) | X60 OpenBLAS package |
 
@@ -63,11 +63,13 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 
 | Date | Decision |
 |------|----------|
+| 2026-08-14 | Link published [EESSI X60 OpenBLAS/HPL blog](https://www.eessi.io/docs/blog/2026/07/12/risc-v-x60-openblas-hpl/) from HPL, BLAS, RV2, homepage |
 | 2026-08-11 | Extend **GCC** page with **14.3** EasyBuild patch + RV2 canaries (**−5.0%** / **−6.7%** on `fma_chain` / `div_mix`); keep 15.2 DGEMM/HPL |
 | 2026-08-10 | Add **GCC 15.2** SpacemiT X60 mtune page (canaries **−8.7%** / **−7.7%**; DGEMM **+2–4%**; HPL **+0.8%**) — EasyBuild patch + RV2 A/Bs |
 | 2026-08-08 | Homepage Contact: Mailmoose **opensolvers** newsletter subscribe form (`_includes/mailmoose-subscribe.html`) |
 | 2026-08-03 | Add **OpenFOAM** (motorBike sparse Amul/GS RVV regress) + **waLBerla** (HeatEq **1.64×**, UniformGrid collide **1.54×**) app pages |
 | 2026-07-30 | Sync BPI-F3 cross-board results: IME (~45 GOP/s), BLIS, FFTW, GROMACS FFT, LAMMPS, ScaLAPACK hang, LJ micro **1.57×** |
+| 2026-08-11 | Publish FFTW micro-vs-apps video (`FlumrCEUIBE`) — `_data/videos.yml`, homepage, FFTW |
 | 2026-08-03 | Publish QE BLAS A/B video (`guf9WCAyYPM`) — `_data/videos.yml`, homepage, QE, F3 |
 | 2026-07-29 | Publish ONNX IME int4 video (`IV3TV57eGAs`) — `_data/videos.yml`, homepage, ONNX, RV2 |
 | 2026-07-28 | Add **Kokkos** scientific-lib page + sync LAMMPS hand RVV Pair (`lj` ~1.64× micro / ~1.02× in-app; `eam/rvv` **1.27×**) |

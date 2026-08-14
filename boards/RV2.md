@@ -4,6 +4,7 @@ The Orange Pi RV2 is built on the SpaceMiT **K1** SoC: eight **SpacemiT X60** co
 
 ## Video walkthrough
 
+- **[When RVV FFT Wins 1.6× — and Gives 0% in Quantum ESPRESSO](https://www.youtube.com/watch?v=FlumrCEUIBE)** — planner trap; micro MEASURE ≠ QE `ESTIMATE`
 - **[10× ONNX on RISC-V: One Missing Attribute Unlocks X60 IME](https://www.youtube.com/watch?v=IV3TV57eGAs)** — `accuracy_level=4` → CompInt8 / `smt.vmadot`; 9.1× / 10.3×
 - **[3.31× GROMACS on RISC-V: Hand-Written RVV Force Backend](https://www.youtube.com/watch?v=COayFhBa0as)** — Force owns ~90% of runtime; `impl_riscv_rvv/` → 3.31× whole-app
 - **[NaN Linpack on RISC-V: Fixing OpenBLAS gemv_n on Orange Pi RV2 (EESSI)](https://www.youtube.com/watch?v=W_-8cKA-CCU)** — stock RVV HPL FAILED with residual `nan`
@@ -110,7 +111,7 @@ The fix backports the upstream `gemv_n` correction from OpenBLAS ≥ 0.3.31 ([Op
 3. Build fixed OpenBLAS: `eb --from-pr 26444 --robot` (via `EESSI-extend` user install, `EASYBUILD_OPTARCH='-march=rv64imafdcv_zvl256b'`).
 4. Register the new backend with FlexiBLAS and re-run the same `xhpl`.
 
-Full walkthrough: [EESSI/docs#819](https://github.com/EESSI/docs/pull/819) — *Chasing a NaN: correct RVV HPL on a RISC-V SpaceMiT X60 via EESSI*.
+Full walkthrough: [EESSI blog — *Chasing a NaN: correct RVV HPL on a RISC-V SpaceMiT X60*](https://www.eessi.io/docs/blog/2026/07/12/risc-v-x60-openblas-hpl/).
 
 ## BLIS vs OpenBLAS
 

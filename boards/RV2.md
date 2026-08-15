@@ -174,6 +174,17 @@ See [waLBerla](../apps/walberla.html) — contiguous auto-vec campaign:
 | UniformGrid `--not-fused` collide | **1.54×** (WALL **1.30×**) |
 | SoA auto-vec vs hand `simd::double4_t` | ~**9×** favour auto-vec |
 
+## PETSc
+
+See [PETSc](../scientific-libs/petsc.html) — FlexiBLAS A/B on overlay `PETSc/3.24.0-foss-2025b`:
+
+| Probe | Result |
+| ----- | ------ |
+| Jacobi-CG AIJ (n=400) | patched **~1.06×** vs scalar |
+| Dense MatMult n=2048 | patched **~1.70×**; stock RVV **NaN** |
+| SuperLU_DIST / UMFPACK | stock RVV **NaN**; patched finite |
+| MUMPS 2D/3D (these sizes) | finite on stock; **no** patched speedup |
+
 ## ScaLAPACK
 
 See [ScaLAPACK](../scientific-libs/scalapack.html) — `PDSYEV` on 2×4 grid: stock RVV **hangs**; patched RVV **107.23 s** vs scalar **116.87 s** (**1.09×**).

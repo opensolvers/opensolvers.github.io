@@ -22,7 +22,7 @@ Context file for structural and content decisions on [opensolvers.com](https://w
 
 1. **Home** · **Videos** · **GitHub** (external → `opensolvers/benchmarks`; GitHub uses logo icon)
 2. **Apps** — HPL, Quantum ESPRESSO, ONNX Runtime, **llama.cpp**, GROMACS, **LAMMPS**, **OpenFOAM**, **waLBerla**
-3. **Scientific libs** — BLAS (incl. OpenBLAS verification), **BLIS**, NumPy, LAPACK, ELPA, MLAS, FFTW, **GCC**, **Kokkos**, ScaLAPACK
+3. **Scientific libs** — BLAS (incl. OpenBLAS verification), **BLIS**, NumPy, LAPACK, ELPA, MLAS, FFTW, **GCC**, **Kokkos**, **PETSc**, ScaLAPACK
 4. **Boards** — VisionFive 2, OrangePi RV2, BananaPi F3
 
 Nav config: `_config.yml` (`navigation`, `navigation_boards`, `navigation_apps`, `navigation_scientific_libs`). Rendered in `_includes/header.html`. Cayman theme requires `_layouts/default.html` override to include the header.
@@ -46,7 +46,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 
 | Source | Used for |
 |--------|----------|
-| [opensolvers/benchmarks](https://github.com/opensolvers/benchmarks) | OpenBLAS, BLIS, HPL, ELPA/ScaLAPACK, QE/FFTW, GROMACS, LAMMPS/Kokkos, OpenFOAM, waLBerla, **GCC (`gcc-14.3/`, `gcc-15.2/`)**, ONNX/MLAS, llama.cpp, NumPy, IME, GPU |
+| [opensolvers/benchmarks](https://github.com/opensolvers/benchmarks) | OpenBLAS, BLIS, HPL, ELPA/ScaLAPACK, QE/FFTW, GROMACS, LAMMPS/Kokkos, OpenFOAM, waLBerla, GCC (`gcc-14.3/`, `gcc-15.2/`), **PETSc (`petsc/`)**, ONNX/MLAS, llama.cpp, NumPy, IME, GPU |
 | [opensolvers/llama.cpp](https://github.com/opensolvers/llama.cpp) (`x60-ime-rvv`) | SpaceMiT X60 IME/RVV staging fork — kernels + how-to on [apps/llamacpp](apps/llamacpp.html) |
 | [EESSI/docs#818](https://github.com/EESSI/docs/pull/818) | VisionFive 2 / U74 OpenBLAS + HPL |
 | [EESSI blog — X60 OpenBLAS / HPL](https://www.eessi.io/docs/blog/2026/07/12/risc-v-x60-openblas-hpl/) | Orange Pi RV2 / X60 RVV `gemv_n` fix + HPL (published from [docs#819](https://github.com/EESSI/docs/pull/819)) |
@@ -63,6 +63,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 
 | Date | Decision |
 |------|----------|
+| 2026-08-15 | Add **PETSc** FlexiBLAS A/B page (dense MatMult **~1.70×**; stock RVV NaN on dense / SuperLU / UMFPACK; Jacobi-CG ~**1.06×**) |
 | 2026-08-14 | Link published [EESSI X60 OpenBLAS/HPL blog](https://www.eessi.io/docs/blog/2026/07/12/risc-v-x60-openblas-hpl/) from HPL, BLAS, RV2, homepage |
 | 2026-08-11 | Extend **GCC** page with **14.3** EasyBuild patch + RV2 canaries (**−5.0%** / **−6.7%** on `fma_chain` / `div_mix`); keep 15.2 DGEMM/HPL |
 | 2026-08-10 | Add **GCC 15.2** SpacemiT X60 mtune page (canaries **−8.7%** / **−7.7%**; DGEMM **+2–4%**; HPL **+0.8%**) — EasyBuild patch + RV2 A/Bs |

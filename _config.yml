@@ -1,7 +1,7 @@
 theme: jekyll-theme-cayman
 title: OpenSolvers
 tagline: Open scientific software & AI inference on real RISC-V hardware
-description: Open-source scientific software benchmarks on RISC-V boards — HPL, BLAS, Quantum ESPRESSO, llama.cpp, GROMACS, LAMMPS, OpenFOAM, waLBerla, and library-level probes via EESSI.
+description: Open-source scientific software benchmarks on RISC-V boards — HPL, BLAS, Quantum ESPRESSO, llama.cpp, GROMACS, LAMMPS, OpenFOAM, waLBerla, PETSc, and library-level probes via EESSI.
 url: https://www.opensolvers.com
 lang: en
 twitter:
@@ -66,6 +66,8 @@ navigation_scientific_libs:
     url: /scientific-libs/gcc.html
   - title: Kokkos
     url: /scientific-libs/kokkos.html
+  - title: PETSc
+    url: /scientific-libs/petsc.html
   - title: ScaLAPACK
     url: /scientific-libs/scalapack.html
 

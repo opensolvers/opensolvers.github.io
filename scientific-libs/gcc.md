@@ -5,6 +5,8 @@ description: GCC 14.3 and 15.2 EasyBuild patches for SpacemiT X60 — Orange Pi 
 
 # GCC — SpacemiT X60 mtune
 
+**Video:** [GCC 15.2 on RISC-V: Teaching mtune=spacemit-x60 (−8.7% Canaries, +3.8% DGEMM)](https://www.youtube.com/watch?v=guKeNzHXm70) — [all videos](../videos.html)
+
 [GCC](https://gcc.gnu.org/) pipeline/tune work for the SpacemiT **X60**: EasyBuild-facing patches that teach stock GCC about `-mtune=spacemit-x60`, plus Orange Pi RV2 A/Bs that isolate **mtune only**.
 
 | Line | Role | Source |

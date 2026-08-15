@@ -1,4 +1,52 @@
 # YouTube videos — add new entries here (newest first).
+- id: gcc-152-x60-mtune
+  title: "GCC 15.2 on RISC-V: Teaching mtune=spacemit-x60 (−8.7% Canaries, +3.8% DGEMM)"
+  description: >
+    Stock GCC 15.2 doesn’t know SpacemiT X60. One EasyBuild-facing patch adds
+    -mtune=spacemit-x60; A/B vs generic-ooo on Orange Pi RV2 (same -march).
+    Scheduler canaries −8.7% / −7.7%; OpenBLAS DGEMM +2.2–3.8%; HPL +0.8%.
+  youtube_id: guKeNzHXm70
+  date: 2026-08-15
+  duration: PT3M25S
+  boards:
+    - Orange Pi RV2
+  topics:
+    - GCC
+    - mtune
+    - SpacemiT X60
+    - OpenBLAS
+    - HPL
+  related_pages:
+    - title: GCC notes
+      url: /scientific-libs/gcc.html
+    - title: Orange Pi RV2 board notes
+      url: /boards/RV2.html
+    - title: HPL app notes
+      url: /apps/hpl.html
+- id: fftw-micro-vs-apps
+  title: "When RVV FFT Wins 1.6× — and Gives 0% in Quantum ESPRESSO"
+  description: >
+    RVV FFTW is real on SpaceMiT X60 (1.60× at N=256 under MEASURE), but the
+    same lib in Quantum ESPRESSO yields 1.002× whole SCF. Planner trap:
+    ESTIMATE→MEASURE is worth 3–5×; QE uses ESTIMATE across ~3260 small FFTs.
+  youtube_id: FlumrCEUIBE
+  date: 2026-08-11
+  duration: PT3M31S
+  boards:
+    - Orange Pi RV2
+  topics:
+    - FFTW
+    - RVV
+    - Quantum ESPRESSO
+    - planner
+    - microbenchmark
+  related_pages:
+    - title: FFTW notes
+      url: /scientific-libs/fftw.html
+    - title: Quantum ESPRESSO app notes
+      url: /apps/qe.html
+    - title: Orange Pi RV2 board notes
+      url: /boards/RV2.html
 - id: qe-blas-real-dft
   title: "Quantum ESPRESSO on RISC-V: Stock BLAS MPI_ABORTs a Real DFT on BPI-F3"
   description: >

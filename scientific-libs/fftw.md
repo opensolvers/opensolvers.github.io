@@ -1,10 +1,12 @@
 # FFTW
 
+**Video:** [When RVV FFT Wins 1.6× — and Gives 0% in Quantum ESPRESSO](https://www.youtube.com/watch?v=FlumrCEUIBE) — [all videos](../videos.html)
+
 [FFTW](https://www.fftw.org/) 3.3.10 with the **RISC-V Vector (`r5v`) SIMD backend** — a clean A/B against a scalar build of the *same source* with identical compiler and flags. The only variable is `--enable-r5v` (from [rdolbeau's `r5v-test-release-005`](https://github.com/rdolbeau)).
 
 Benchmark source: [opensolvers/benchmarks/fftw](https://github.com/opensolvers/benchmarks/tree/main/fftw) — `build-fftw-r5v.sh` and `bench-fftw-ab.sh`.
 
-Relevant to [Quantum ESPRESSO](../apps/qe.html) and [GROMACS](../apps/gromacs.html): real apps spend large fractions on FFT. A FlexiBLAS swap does not touch FFT — swap the library via `LD_PRELOAD` instead (see `run-qe-fft-ab.sh` in the benchmarks repo). **Video:** [3.31× GROMACS Force backend](https://www.youtube.com/watch?v=COayFhBa0as) (why FFT micro wins can dilute).
+Relevant to [Quantum ESPRESSO](../apps/qe.html) and [GROMACS](../apps/gromacs.html): real apps spend large fractions on FFT. A FlexiBLAS swap does not touch FFT — swap the library via `LD_PRELOAD` instead (see `run-qe-fft-ab.sh` in the benchmarks repo). Also: [3.31× GROMACS Force backend](https://www.youtube.com/watch?v=COayFhBa0as) (why FFT micro wins can dilute).
 
 ## Orange Pi RV2 (SpaceMiT X60, 1 thread)
 

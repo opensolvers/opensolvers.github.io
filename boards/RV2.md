@@ -4,6 +4,7 @@ The Orange Pi RV2 is built on the SpaceMiT **K1** SoC: eight **SpacemiT X60** co
 
 ## Video walkthrough
 
+- **[GCC 15.2 on RISC-V: Teaching mtune=spacemit-x60 (−8.7% Canaries, +3.8% DGEMM)](https://www.youtube.com/watch?v=guKeNzHXm70)** — one flag; canaries to DGEMM/HPL dilution
 - **[When RVV FFT Wins 1.6× — and Gives 0% in Quantum ESPRESSO](https://www.youtube.com/watch?v=FlumrCEUIBE)** — planner trap; micro MEASURE ≠ QE `ESTIMATE`
 - **[10× ONNX on RISC-V: One Missing Attribute Unlocks X60 IME](https://www.youtube.com/watch?v=IV3TV57eGAs)** — `accuracy_level=4` → CompInt8 / `smt.vmadot`; 9.1× / 10.3×
 - **[3.31× GROMACS on RISC-V: Hand-Written RVV Force Backend](https://www.youtube.com/watch?v=COayFhBa0as)** — Force owns ~90% of runtime; `impl_riscv_rvv/` → 3.31× whole-app

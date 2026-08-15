@@ -63,6 +63,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 
 | Date | Decision |
 |------|----------|
+| 2026-08-15 | Publish GCC 15.2 mtune video (`guKeNzHXm70`) — `_data/videos.yml`, homepage, GCC, RV2 |
 | 2026-08-15 | Add **PETSc** FlexiBLAS A/B page (dense MatMult **~1.70×**; stock RVV NaN on dense / SuperLU / UMFPACK; Jacobi-CG ~**1.06×**); sync hand RVV SpMV (stencil **~3.6×** vs `MatMult`; CSR gather no win) |
 | 2026-08-14 | Link published [EESSI X60 OpenBLAS/HPL blog](https://www.eessi.io/docs/blog/2026/07/12/risc-v-x60-openblas-hpl/) from HPL, BLAS, RV2, homepage |
 | 2026-08-11 | Extend **GCC** page with **14.3** EasyBuild patch + RV2 canaries (**−5.0%** / **−6.7%** on `fma_chain` / `div_mix`); keep 15.2 DGEMM/HPL |

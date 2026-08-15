@@ -53,7 +53,7 @@ Bit-identical on [Orange Pi RV2](../boards/RV2.html) and [Banana Pi F3](../board
 | Forced scalar | 0 | 0 | 0 | 42.06549 (reference) |
 | Patched RVV (`gemv_n` fix) | 0 | 0 | 0 | 42.06549 (matches) |
 
-Fault is in **`dgemv` only** — plain `dgemm` and `dtrsm` look fine on the broken `gemv_n` build, which is why [HPL](../apps/hpl.html) and [Quantum ESPRESSO](../apps/qe.html) can fail while a GEMM micro-benchmark passes.
+Fault is in **`dgemv` only** — plain `dgemm` and `dtrsm` look fine on the broken `gemv_n` build, which is why [HPL](../apps/hpl.html), [Quantum ESPRESSO](../apps/qe.html), and [PETSc](petsc.html) dense/direct paths can fail while a GEMM micro-benchmark passes.
 
 A second bug — RVV `_rvv_v1` TRSM kernels not VLEN-agnostic ([OpenBLAS#5928](https://github.com/OpenMathLib/OpenBLAS/pull/5928)) — is caught by `verify_ctrsm` on `ZVL128B` builds where `GEMM_UNROLL_M ≠ VSETVL_MAX`.
 

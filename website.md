@@ -21,8 +21,8 @@ Context file for structural and content decisions on [opensolvers.com](https://w
 ## Navigation groups
 
 1. **Home** · **Videos** · **GitHub** (external → `opensolvers/benchmarks`; GitHub uses logo icon)
-2. **Apps** — HPL, Quantum ESPRESSO, ONNX Runtime, **llama.cpp**, GROMACS, **LAMMPS**, **OpenFOAM**, **waLBerla**
-3. **Scientific libs** — BLAS (incl. OpenBLAS verification), **BLIS**, NumPy, LAPACK, ELPA, MLAS, FFTW, **GCC**, **Kokkos**, **PETSc**, ScaLAPACK
+2. **Apps** — HPL, Quantum ESPRESSO, ONNX Runtime, **llama.cpp**, GROMACS, **LAMMPS**, **OpenFOAM**, **waLBerla**, **GCC**
+3. **Scientific libs** — BLAS (incl. OpenBLAS verification), **BLIS**, NumPy, LAPACK, ELPA, MLAS, FFTW, **Kokkos**, **PETSc**, ScaLAPACK
 4. **Boards** — VisionFive 2, OrangePi RV2, BananaPi F3
 
 Nav config: `_config.yml` (`navigation`, `navigation_boards`, `navigation_apps`, `navigation_scientific_libs`). Rendered in `_includes/header.html`. Cayman theme requires `_layouts/default.html` override to include the header.
@@ -63,6 +63,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 
 | Date | Decision |
 |------|----------|
+| 2026-08-15 | Move **GCC** from scientific-libs nav row to **Apps** nav row (page stays at `scientific-libs/gcc.html`) |
 | 2026-08-15 | Publish GCC 15.2 mtune video (`guKeNzHXm70`) — `_data/videos.yml`, homepage, GCC, RV2 |
 | 2026-08-15 | Add **PETSc** FlexiBLAS A/B page (dense MatMult **~1.70×**; stock RVV NaN on dense / SuperLU / UMFPACK; Jacobi-CG ~**1.06×**); sync hand RVV SpMV (stencil **~3.6×** vs `MatMult`; CSR gather no win) |
 | 2026-08-14 | Link published [EESSI X60 OpenBLAS/HPL blog](https://www.eessi.io/docs/blog/2026/07/12/risc-v-x60-openblas-hpl/) from HPL, BLAS, RV2, homepage |

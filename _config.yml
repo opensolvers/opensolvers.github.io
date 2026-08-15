@@ -46,6 +46,8 @@ navigation_apps:
     url: /apps/openfoam.html
   - title: waLBerla
     url: /apps/walberla.html
+  - title: GCC
+    url: /scientific-libs/gcc.html
 
 navigation_scientific_libs:
   - title: BLAS
@@ -62,8 +64,6 @@ navigation_scientific_libs:
     url: /scientific-libs/mlas.html
   - title: FFTW
     url: /scientific-libs/fftw.html
-  - title: GCC
-    url: /scientific-libs/gcc.html
   - title: Kokkos
     url: /scientific-libs/kokkos.html
   - title: PETSc

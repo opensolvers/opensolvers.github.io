@@ -54,7 +54,6 @@ Library-level probes — performance *and* numerical correctness:
 - **[ELPA](scientific-libs/elpa.html)** — dense eigensolver (CP2K / VASP class workloads)
 - **[MLAS](scientific-libs/mlas.html)** — ONNX Runtime QNBit int4 GEMM; isolated IME kernel rates on X60
 - **[FFTW](scientific-libs/fftw.html)** — RVV `r5v` backend A/B; QE FFT-axis shows ~0% end-to-end despite micro wins
-- **[GCC](scientific-libs/gcc.html)** — GCC 14.3 / 15.2 SpacemiT X60 EasyBuild patches; canaries **−5–9%** (`fma_chain` / `div_mix`); 15.2 DGEMM **+2–4%**; HPL **+0.8%**
 - **[Kokkos](scientific-libs/kokkos.html)** — LAMMPS OpenMP/Serial; no RVV SIMD abi; hand RVV Pair (LJ micro **~1.64×**, EAM **1.27×**)
 - **[PETSc](scientific-libs/petsc.html)** — FlexiBLAS dense MatMult **~1.70×** (stock RVV NaN); hand RVV stencil SpMV **~3.6×** vs `MatMult`; CSR gather no win
 - **[ScaLAPACK](scientific-libs/scalapack.html)** — distributed `PDSYEV`; stock RVV hangs, patched **1.09×**
@@ -71,6 +70,7 @@ End-to-end application benchmarks on the same boards and EESSI toolchain:
 - **[LAMMPS](apps/lammps.html)** — Classical MD for materials, soft matter, and biomolecules. RVV-Kokkos **7.21×** (eam) / MPI **5.94×** (rhodo); hand RVV EAM **1.27×**
 - **[OpenFOAM](apps/openfoam.html)** — Open-source CFD toolbox (finite-volume continuum flow). motorBike `simpleFoam`: auto-vec **~0%**; hand RVV Amul/GS **regress**
 - **[waLBerla](apps/walberla.html)** — Lattice Boltzmann / structured-grid PDE framework for fluids and multiphysics. HeatEquation **1.64×**; UniformGrid collide **1.54×**
+- **[GCC](scientific-libs/gcc.html)** — GCC 14.3 / 15.2 SpacemiT X60 EasyBuild patches; canaries **−5–9%** (`fma_chain` / `div_mix`); 15.2 DGEMM **+2–4%**; HPL **+0.8%**
 
 ## Boards
 

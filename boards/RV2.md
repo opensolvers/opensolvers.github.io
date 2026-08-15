@@ -176,7 +176,7 @@ See [waLBerla](../apps/walberla.html) — contiguous auto-vec campaign:
 
 ## PETSc
 
-See [PETSc](../scientific-libs/petsc.html) — FlexiBLAS A/B on overlay `PETSc/3.24.0-foss-2025b`:
+See [PETSc](../scientific-libs/petsc.html) — FlexiBLAS A/B + hand RVV SpMV on overlay `PETSc/3.24.0-foss-2025b`:
 
 | Probe | Result |
 | ----- | ------ |
@@ -184,6 +184,8 @@ See [PETSc](../scientific-libs/petsc.html) — FlexiBLAS A/B on overlay `PETSc/3
 | Dense MatMult n=2048 | patched **~1.70×**; stock RVV **NaN** |
 | SuperLU_DIST / UMFPACK | stock RVV **NaN**; patched finite |
 | MUMPS 2D/3D (these sizes) | finite on stock; **no** patched speedup |
+| Hand RVV CSR SpMV | ≈ **no win** vs scalar CSR / trails `MatMult` |
+| Structured 5-pt stencil RVV | **~3.6×** vs PETSc `MatMult` |
 
 ## ScaLAPACK
 

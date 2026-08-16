@@ -182,14 +182,28 @@
   margin: 0.25rem 0;
 }
 
-/* Mailmoose newsletter subscribe (homepage Contact) */
-.mm-subscribe {
-  max-width: 28rem;
+/* Mailmoose contact + newsletter (homepage Contact) */
+.mm-forms {
+  display: grid;
+  gap: 1.25rem;
   margin: 1.75rem 0 0;
+}
+
+@media (min-width: 52rem) {
+  .mm-forms {
+    grid-template-columns: 1fr 1fr;
+    align-items: stretch;
+  }
+}
+
+.mm-subscribe {
+  max-width: none;
+  margin: 0;
   padding: 1.25rem 1.35rem;
   border: 1px solid #e9ebec;
   border-radius: 0.35rem;
   background: #f6f8fa;
+  box-sizing: border-box;
 }
 
 .mm-subscribe-title {

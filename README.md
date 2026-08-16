@@ -82,8 +82,10 @@ Use the menu above to jump to a board, app, or scientific lib page.
 
 ## Contact
 
-- **Public:** open an [issue on opensolvers/benchmarks](https://github.com/opensolvers/benchmarks/issues) — questions, bugs, and board/benchmark requests are welcome there.
-- **More private:** [sponsor OpenSolvers](https://github.com/sponsors/opensolvers) and use GitHub Sponsors **Contact** (after sponsoring). Details and tiers are on the [Sponsors](sponsors.html) page.
+Use the **message box below** for questions, board ideas, or collaboration notes — it goes to the OpenSolvers inbox and we reply by email.
+
+- **Public / bugs:** open an [issue on opensolvers/benchmarks](https://github.com/opensolvers/benchmarks/issues) when a threaded discussion helps.
+- **Sponsors:** [sponsor OpenSolvers](https://github.com/sponsors/opensolvers) and use GitHub Sponsors **Contact** after sponsoring — see the [Sponsors](sponsors.html) page.
 
 <div class="mm-forms">
 {% include mailmoose-contact.html %}

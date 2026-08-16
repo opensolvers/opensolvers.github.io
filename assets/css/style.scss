@@ -231,7 +231,8 @@
 }
 
 .mm-subscribe-field input[type="text"],
-.mm-subscribe-field input[type="email"] {
+.mm-subscribe-field input[type="email"],
+.mm-subscribe-field textarea {
   display: block;
   width: 100%;
   max-width: 100%;
@@ -241,11 +242,23 @@
   background: #fff;
   border: 1px solid #d0d7de;
   border-radius: 0.25rem;
+  box-sizing: border-box;
 }
 
-.mm-subscribe-field input:focus {
+.mm-subscribe-field textarea {
+  min-height: 7rem;
+  resize: vertical;
+  line-height: 1.45;
+}
+
+.mm-subscribe-field input:focus,
+.mm-subscribe-field textarea:focus {
   outline: 2px solid rgba(21, 120, 120, 0.45);
   outline-offset: 1px;
+}
+
+.mm-contact {
+  margin-top: 1.75rem;
 }
 
 .mm-subscribe-submit {

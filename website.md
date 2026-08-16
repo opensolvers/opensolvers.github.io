@@ -10,7 +10,8 @@ Context file for structural and content decisions on [opensolvers.com](https://w
 
 | Area | Path | Purpose |
 |------|------|---------|
-| Homepage | `README.md` → `/` | Intro, scientific libs, apps, board summaries; Contact + newsletter subscribe |
+| Homepage | `README.md` → `/` | Intro, scientific libs, apps, board summaries; Contact form + newsletter subscribe |
+| Contact | `_includes/mailmoose-contact.html` | Mailmoose CRM inbox (`POST …/lists/opensolvers/contact`) |
 | Newsletter | `_includes/mailmoose-subscribe.html` | Mailmoose list `opensolvers` (`POST …/lists/opensolvers/subscribe`) |
 | Videos | `videos.md` → `/videos.html` | YouTube walkthroughs (`_data/videos.yml`) |
 | Sponsors | `sponsors.md` → `/sponsors.html` | Tier table + backer/logo list; CTA to GitHub Sponsors |
@@ -63,6 +64,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 
 | Date | Decision |
 |------|----------|
+| 2026-08-16 | Homepage Contact: Mailmoose **opensolvers** inbox form (`_includes/mailmoose-contact.html` → `POST …/lists/opensolvers/contact`) |
 | 2026-08-15 | Move **GCC** from scientific-libs nav row to **Apps** nav row (page stays at `scientific-libs/gcc.html`) |
 | 2026-08-15 | Publish GCC 15.2 mtune video (`guKeNzHXm70`) — `_data/videos.yml`, homepage, GCC, RV2 |
 | 2026-08-15 | Add **PETSc** FlexiBLAS A/B page (dense MatMult **~1.70×**; stock RVV NaN on dense / SuperLU / UMFPACK; Jacobi-CG ~**1.06×**); sync hand RVV SpMV (stencil **~3.6×** vs `MatMult`; CSR gather no win) |

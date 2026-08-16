@@ -1,0 +1,197 @@
+{%- comment -%}
+  OpenSolvers contact → Mailmoose CRM inbox.
+  POST https://api.mailmoose.app/lists/opensolvers/contact
+  Body: { email, message, firstName?, subject? } + honeypots website / botcheck
+{%- endcomment -%}
+<div class="mm-subscribe mm-contact" id="mm-opensolvers-contact" lang="en">
+  <h3 class="mm-subscribe-title">Send a message</h3>
+  <p class="mm-subscribe-lead">
+    Questions, board ideas, or collaboration notes — goes to the OpenSolvers inbox.
+  </p>
+
+  <form id="mm-opensolvers-contact-form" action="https://api.mailmoose.app/lists/opensolvers/contact" method="POST" accept-charset="UTF-8" novalidate>
+    <input
+      class="mm-subscribe-hp"
+      type="text"
+      name="website"
+      tabindex="-1"
+      autocomplete="off"
+      aria-hidden="true"
+    />
+    <input
+      class="mm-subscribe-hp"
+      type="text"
+      name="botcheck"
+      tabindex="-1"
+      autocomplete="off"
+      aria-hidden="true"
+    />
+
+    <div class="mm-subscribe-field">
+      <label for="mm-opensolvers-contact-name">
+        Name <span class="mm-subscribe-optional">(optional)</span>
+      </label>
+      <input
+        id="mm-opensolvers-contact-name"
+        name="name"
+        type="text"
+        autocomplete="name"
+        maxlength="80"
+        placeholder="Ada"
+      />
+    </div>
+
+    <div class="mm-subscribe-field">
+      <label for="mm-opensolvers-contact-email">Email</label>
+      <input
+        id="mm-opensolvers-contact-email"
+        name="email"
+        type="email"
+        autocomplete="email"
+        required
+        maxlength="254"
+        placeholder="you@example.com"
+      />
+    </div>
+
+    <div class="mm-subscribe-field">
+      <label for="mm-opensolvers-contact-subject">
+        Subject <span class="mm-subscribe-optional">(optional)</span>
+      </label>
+      <input
+        id="mm-opensolvers-contact-subject"
+        name="subject"
+        type="text"
+        maxlength="160"
+        placeholder="Board request / collaboration / …"
+      />
+    </div>
+
+    <div class="mm-subscribe-field">
+      <label for="mm-opensolvers-contact-message">Message</label>
+      <textarea
+        id="mm-opensolvers-contact-message"
+        name="message"
+        required
+        maxlength="8000"
+        rows="5"
+        placeholder="How can we help?"
+      ></textarea>
+    </div>
+
+    <button type="submit" class="mm-subscribe-submit" id="mm-opensolvers-contact-submit">Send message</button>
+
+    <p class="mm-subscribe-consent">
+      We’ll reply by email. For public bug reports, prefer a
+      <a href="https://github.com/opensolvers/benchmarks/issues">GitHub issue</a>.
+    </p>
+
+    <p class="mm-subscribe-status" id="mm-opensolvers-contact-status" role="status" aria-live="polite" hidden></p>
+  </form>
+</div>
+
+<script>
+(function () {
+  var API = "https://api.mailmoose.app/lists/opensolvers/contact";
+  var root = document.getElementById("mm-opensolvers-contact");
+  if (!root) return;
+
+  var form = document.getElementById("mm-opensolvers-contact-form");
+  var statusEl = document.getElementById("mm-opensolvers-contact-status");
+  var submitBtn = document.getElementById("mm-opensolvers-contact-submit");
+  if (!form || !statusEl || !submitBtn) return;
+
+  function setStatus(kind, message) {
+    statusEl.hidden = false;
+    statusEl.className = "mm-subscribe-status is-" + kind;
+    statusEl.textContent = message;
+  }
+
+  form.addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    var email = ((form.email && form.email.value) || "").trim();
+    var name = ((form.name && form.name.value) || "").trim();
+    var subject = ((form.subject && form.subject.value) || "").trim();
+    var message = ((form.message && form.message.value) || "").trim();
+    var honeypot =
+      (((form.website && form.website.value) || "") +
+        ((form.botcheck && form.botcheck.value) || "")).trim();
+
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setStatus("error", "Please enter a valid email address.");
+      if (form.email) form.email.focus();
+      return;
+    }
+
+    if (message.length < 2) {
+      setStatus("error", "Please enter a short message.");
+      if (form.message) form.message.focus();
+      return;
+    }
+
+    submitBtn.disabled = true;
+    setStatus("pending", "Sending…");
+
+    var body = { email: email, message: message };
+    if (name) body.name = name;
+    if (subject) body.subject = subject;
+    if (honeypot) body.website = honeypot;
+
+    fetch(API, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(body),
+    })
+      .then(function (res) {
+        return res
+          .json()
+          .catch(function () {
+            return {};
+          })
+          .then(function (data) {
+            return { res: res, data: data };
+          });
+      })
+      .then(function (result) {
+        var res = result.res;
+        var data = result.data || {};
+
+        if (res.ok && data.ok !== false) {
+          form.reset();
+          setStatus("success", "Thanks — we received your message and will reply by email.");
+          return;
+        }
+
+        if (res.status === 400) {
+          setStatus(
+            "error",
+            typeof data.error === "string" && data.error
+              ? data.error
+              : "Please check the form and try again."
+          );
+          return;
+        }
+
+        setStatus(
+          "error",
+          typeof data.error === "string" && data.error
+            ? data.error
+            : "Something went wrong. Please try again."
+        );
+      })
+      .catch(function () {
+        setStatus(
+          "error",
+          "Couldn’t reach the server. Check your connection and try again."
+        );
+      })
+      .then(function () {
+        submitBtn.disabled = false;
+      });
+  });
+})();
+</script>

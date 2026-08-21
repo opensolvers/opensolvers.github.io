@@ -32,8 +32,10 @@ The generated model had **zero** `accuracy_level` attributes across all 16 nodes
 | Single thread (`-x1`) | 31,956 ms | **3,522 ms** | **9.1×** |
 | 8 threads (`-x8`) | 6,074 ms | **590 ms** | **10.3×** |
 
+**RV2 re-verify** (2026-08-20, same models/build): x1 **29,851 → 3,532 ms = 8.5×**; x8 **6,569 → 960 ms = 6.8×**. CompInt8 path confirmed; x8 was softer than the original board run (CPU usage ~99% on ACC4_x8 vs ~199% previously).
+
 - Peak RSS: ~1023 MB → **842 MB** (no fp32 dequant buffers).
-- x1→x8 scaling on the fixed path: **~6×** across 8 cores.
+- x1→x8 scaling on the fixed path (original): **~6×** across 8 cores.
 
 ## How it was confirmed
 

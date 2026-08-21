@@ -7,7 +7,7 @@ description: PETSc 3.24 on Orange Pi RV2 — FlexiBLAS A/Bs (dense MatMult ~1.70
 
 [PETSc](https://petsc.org/) (Portable, Extensible Toolkit for Scientific Computation) is a parallel library for sparse and dense linear algebra, Krylov solvers, and preconditioners — the backbone of many CFD, structural, and multiphysics codes. On the Orange Pi RV2 (SpaceMiT X60, RVV 1.0, VLEN=256) we probe two axes: **FlexiBLAS** backend A/Bs under one unchanged PETSc binary, and a **hand RVV SpMV** probe against PETSc `MatMult`.
 
-Benchmark source: [opensolvers/benchmarks/petsc](https://github.com/opensolvers/benchmarks/tree/petsc-flexiblas-ab/petsc).
+Benchmark source: [opensolvers/benchmarks/petsc](https://github.com/opensolvers/benchmarks/tree/main/petsc).
 
 > **Change one variable (FlexiBLAS).** Hold problem + solver fixed; swap only the backend (patched OpenBLAS vs stock RVV vs scalar). Check finite residuals before trusting wall time.
 
@@ -47,7 +47,7 @@ Harness: `petsc_ksp_bench.c`, `petsc_dense_bench.c`, `petsc_direct_bench.c`, `pe
 2. **Structure-aware stencil** (same operator, contiguous loads) is the real PETSc-local win: **~3.6×** vs `MatMult`, with a further **~1.19×** from hand RVV over scalar stencil.
 3. For upstream PETSc on RVV: invest in **MFD / stencil / BAIJ** kernels, not a naive CSR `vluxei` SpMV for PDE-style matrices.
 
-Log: [`petsc-spmv-rvv-ab-20260815T081626Z.txt`](https://github.com/opensolvers/benchmarks/blob/petsc-flexiblas-ab/petsc/results/petsc-spmv-rvv-ab-20260815T081626Z.txt).
+Log: [`petsc-spmv-rvv-ab-20260815T081626Z.txt`](https://github.com/opensolvers/benchmarks/blob/main/petsc/results/petsc-spmv-rvv-ab-20260815T081626Z.txt).
 
 ---
 
@@ -108,4 +108,4 @@ Patched / scalar ≈ **3.5×** (tiny iteration count; still shows BLAS on the Ma
 4. **Jacobi-CG AIJ** remains a weak BLAS A/B (~1.06×).
 5. **Hand RVV SpMV:** CSR gather is a dead end on short-row PDE matrices; stencil / structure-aware kernels are where RVV pays.
 
-**Measured:** 2026-08-14 (FlexiBLAS) / 2026-08-15 (SpMV) on Orange Pi RV2. Logs in [benchmarks/petsc/results/](https://github.com/opensolvers/benchmarks/tree/petsc-flexiblas-ab/petsc/results).
+**Measured:** 2026-08-14 (FlexiBLAS) / 2026-08-15 (SpMV) on Orange Pi RV2. Logs in [benchmarks/petsc/results/](https://github.com/opensolvers/benchmarks/tree/main/petsc/results).

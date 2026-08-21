@@ -150,13 +150,13 @@ See [Kokkos](../scientific-libs/kokkos.html) — portable OpenMP/Serial for LAMM
 
 ## GCC mtune
 
-See [GCC](../scientific-libs/gcc.html) — EasyBuild-facing SpacemiT X60 patches for stock **14.3.0** (EESSI GCCcore) and **15.2.0**; A/B vs `-mtune=generic-ooo` on this board:
+See [GCC](../scientific-libs/gcc.html) — EasyBuild-facing SpacemiT X60 patches for stock **14.3.0** and **15.2.0**; A/B vs `-mtune=generic-ooo`:
 
 | Probe | 14.3 | 15.2 |
 | ----- | ---: | ---: |
 | Canaries `fma_chain` / `div_mix` | **−5.0%** / **−6.7%** | **−8.7%** / **−7.7%** ns/call |
-| OpenBLAS DGEMM N=512–2048 | *(not re-run)* | **+2.2–3.8%** GF/s |
-| HPL N=3000 | *(not re-run)* | **+0.8%** (both PASSED) |
+| OpenBLAS DGEMM N=512–2048 | **−3…−7%** | **+2.2–3.8%** GF/s |
+| HPL N=3000 | **+6.8%** | **+0.8%** (both PASSED) |
 
 Local proof only — not an EESSI PR yet.
 
@@ -187,6 +187,17 @@ See [PETSc](../scientific-libs/petsc.html) — FlexiBLAS A/B + hand RVV SpMV on 
 | MUMPS 2D/3D (these sizes) | finite on stock; **no** patched speedup |
 | Hand RVV CSR SpMV | ≈ **no win** vs scalar CSR / trails `MatMult` |
 | Structured 5-pt stencil RVV | **~3.6×** vs PETSc `MatMult` |
+
+## Soft-matter / Coulomb / MPI (2026-08-21)
+
+| Probe | Result |
+| ----- | ------ |
+| [ESPResSo](../apps/espresso.html) P3M FFT | r5v **~1.12×** |
+| [ScaFaCoS](../scientific-libs/scafacos.html) P3M FFT | r5v **~0.99×** |
+| [MetalWalls](../apps/metalwalls.html) tip4p | FFT/BLAS ~**1.00–1.02×** |
+| [PLUMED](../scientific-libs/plumed.html) SPRINT | patched RVV **1.25×** |
+| [Voro++](../scientific-libs/voro.html) auto-vec | **~0.99×** (negative) |
+| [OSU](../scientific-libs/osu.html) on-node MPI | **1.12 μs** @ 1 B; ~**2 GB/s** uni BW |
 
 ## ScaLAPACK
 

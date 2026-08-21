@@ -22,8 +22,8 @@ Context file for structural and content decisions on [opensolvers.com](https://w
 ## Navigation groups
 
 1. **Home** · **Videos** · **GitHub** (external → `opensolvers/benchmarks`; GitHub uses logo icon)
-2. **Apps** — HPL, Quantum ESPRESSO, ONNX Runtime, **llama.cpp**, GROMACS, **LAMMPS**, **OpenFOAM**, **waLBerla**, **GCC**
-3. **Scientific libs** — BLAS (incl. OpenBLAS verification), **BLIS**, NumPy, LAPACK, ELPA, MLAS, FFTW, **Kokkos**, **PETSc**, ScaLAPACK
+2. **Apps** — HPL, Quantum ESPRESSO, ONNX Runtime, **llama.cpp**, GROMACS, **LAMMPS**, **OpenFOAM**, **waLBerla**, **ESPResSo**, **MetalWalls**, **GCC**
+3. **Scientific libs** — BLAS, **BLIS**, NumPy, LAPACK, ELPA, MLAS, FFTW, **Kokkos**, **PETSc**, **PLUMED**, **ScaFaCoS**, **Voro++**, **OSU**, ScaLAPACK
 4. **Boards** — VisionFive 2, OrangePi RV2, BananaPi F3
 
 Nav config: `_config.yml` (`navigation`, `navigation_boards`, `navigation_apps`, `navigation_scientific_libs`). Rendered in `_includes/header.html`. Cayman theme requires `_layouts/default.html` override to include the header.
@@ -47,7 +47,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 
 | Source | Used for |
 |--------|----------|
-| [opensolvers/benchmarks](https://github.com/opensolvers/benchmarks) | OpenBLAS, BLIS, HPL, ELPA/ScaLAPACK, QE/FFTW, GROMACS, LAMMPS/Kokkos, OpenFOAM, waLBerla, GCC (`gcc-14.3/`, `gcc-15.2/`), **PETSc (`petsc/`)**, ONNX/MLAS, llama.cpp, NumPy, IME, GPU |
+| [opensolvers/benchmarks](https://github.com/opensolvers/benchmarks) | OpenBLAS, BLIS, HPL, ELPA/ScaLAPACK, QE/FFTW, GROMACS, LAMMPS/Kokkos, OpenFOAM, waLBerla, GCC, PETSc, **PLUMED**, **ESPResSo**, **MetalWalls**, **ScaFaCoS**, **Voro++**, **OSU**, ONNX/MLAS, llama.cpp, NumPy, IME, GPU |
 | [opensolvers/llama.cpp](https://github.com/opensolvers/llama.cpp) (`x60-ime-rvv`) | SpaceMiT X60 IME/RVV staging fork — kernels + how-to on [apps/llamacpp](apps/llamacpp.html) |
 | [EESSI/docs#818](https://github.com/EESSI/docs/pull/818) | VisionFive 2 / U74 OpenBLAS + HPL |
 | [EESSI blog — X60 OpenBLAS / HPL](https://www.eessi.io/docs/blog/2026/07/12/risc-v-x60-openblas-hpl/) | Orange Pi RV2 / X60 RVV `gemv_n` fix + HPL (published from [docs#819](https://github.com/EESSI/docs/pull/819)) |
@@ -64,6 +64,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 
 | Date | Decision |
 |------|----------|
+| 2026-08-22 | Sync new RV2 benches: **ESPResSo** (~1.12×), **MetalWalls**, **PLUMED** (1.25×), **ScaFaCoS** (~0.99×), **Voro++** (~0.99×), **OSU** MPI baseline; QE high-mem **1.46×**; ONNX re-verify; GCC 14.3 DGEMM/HPL |
 | 2026-08-16 | Homepage Contact: Mailmoose **opensolvers** inbox form (`_includes/mailmoose-contact.html` → `POST …/lists/opensolvers/contact`) |
 | 2026-08-15 | Move **GCC** from scientific-libs nav row to **Apps** nav row (page stays at `scientific-libs/gcc.html`) |
 | 2026-08-15 | Publish GCC 15.2 mtune video (`guKeNzHXm70`) — `_data/videos.yml`, homepage, GCC, RV2 |

@@ -1,6 +1,6 @@
 ---
 title: GCC SpacemiT X60 mtune
-description: GCC 14.3 and 15.2 EasyBuild patches for SpacemiT X60 — Orange Pi RV2 mtune A/Bs vs generic-ooo (scheduler canaries; OpenBLAS DGEMM and HPL on 15.2).
+description: GCC 14.3 and 15.2 EasyBuild patches for SpacemiT X60 — Orange Pi RV2 mtune A/Bs vs generic-ooo (canaries; OpenBLAS DGEMM and HPL on both lines).
 ---
 
 # GCC — SpacemiT X60 mtune
@@ -11,14 +11,14 @@ description: GCC 14.3 and 15.2 EasyBuild patches for SpacemiT X60 — Orange Pi 
 
 | Line | Role | Source |
 | ---- | ---- | ------ |
-| **14.3.0** | EESSI’s current GCCcore | [benchmarks/gcc-14.3](https://github.com/opensolvers/benchmarks/tree/gcc-14.3-spacemit-x60/gcc-14.3) |
-| **15.2.0** | Next foss line + OpenBLAS/HPL mtune | [benchmarks/gcc-15.2](https://github.com/opensolvers/benchmarks/tree/main/gcc-15.2) |
+| **14.3.0** | EESSI’s current GCCcore | [benchmarks/gcc-14.3](https://github.com/opensolvers/benchmarks/tree/main/gcc-14.3) |
+| **15.2.0** | Next foss line | [benchmarks/gcc-15.2](https://github.com/opensolvers/benchmarks/tree/main/gcc-15.2) |
 
 Upstream staging: [`spacemit-x60-gcc-tune`](https://github.com/opensolvers/spacemit-x60-gcc-tune).
 
 > **Change one variable.** Same `-march` — only GCC **mtune** (and the patch that defines X60) differs: `spacemit-x60` vs `generic-ooo`.
 
-> **Bottom line (RV2):** canaries move the same way on both lines (`fma_chain` / `div_mix` strongest). **14.3:** **−5.0%** / **−6.7%**. **15.2:** **−8.7%** / **−7.7%**, plus OpenBLAS DGEMM **+2.2–3.8%** and HPL N=3000 **+0.8%**. Local proof only — **not** an EESSI PR yet.
+> **Bottom line (RV2):** canaries move both ways on `fma_chain` / `div_mix`. **14.3:** **−5.0%** / **−6.7%** ns/call; DGEMM **−3…−7%**; HPL **+6.8%**. **15.2:** **−8.7%** / **−7.7%**; DGEMM **+2–4%**; HPL **+0.8%**. Local proof only — **not** an EESSI PR yet.
 
 Related board notes: [Orange Pi RV2](../boards/RV2.html). BLAS / Linpack context: [BLAS](blas.html), [HPL](../apps/hpl.html).
 
@@ -43,26 +43,20 @@ Finished RV2 semantics: **atomic@12**, **memory_cost=4**, **vector_cost** wired,
 
 | GCC | Patch | Apply |
 | --- | ----- | ----- |
-| 14.3.0 | [`GCC-14.3.0-spacemit-x60.patch`](https://github.com/opensolvers/benchmarks/blob/gcc-14.3-spacemit-x60/gcc-14.3/GCC-14.3.0-spacemit-x60.patch) | `patch -p1` from `gcc-14.3.0` root |
+| 14.3.0 | [`GCC-14.3.0-spacemit-x60.patch`](https://github.com/opensolvers/benchmarks/blob/main/gcc-14.3/GCC-14.3.0-spacemit-x60.patch) | `patch -p1` from `gcc-14.3.0` root |
 | 15.2.0 | [`GCC-15.2.0-spacemit-x60.patch`](https://github.com/opensolvers/benchmarks/blob/main/gcc-15.2/GCC-15.2.0-spacemit-x60.patch) | `patch -p1` from `gcc-15.2.0` root |
 
-EasyBuild sketch (illustrative — not submitted):
-
 ```python
-# GCCcore-14.3.0 / GCC-14.3.0
-patches = ['GCC-14.3.0-spacemit-x60.patch']
-
-# GCCcore-15.2.0 / GCC-15.2.0
-patches = ['GCC-15.2.0-spacemit-x60.patch']
+patches = ['GCC-14.3.0-spacemit-x60.patch']  # or GCC-15.2.0-…
 ```
 
-Do **not** set `EASYBUILD_OPTARCH=-mtune=spacemit-x60` until hosts actually run the patched GCCcore. Binutils IME encode stays a separate patch. Notes: [`gcc-14.3/EASYBUILD-NOTE.md`](https://github.com/opensolvers/benchmarks/blob/gcc-14.3-spacemit-x60/gcc-14.3/EASYBUILD-NOTE.md), [`gcc-15.2/EASYBUILD-NOTE.md`](https://github.com/opensolvers/benchmarks/blob/main/gcc-15.2/EASYBUILD-NOTE.md).
+Do **not** set `EASYBUILD_OPTARCH=-mtune=spacemit-x60` until hosts actually run the patched GCCcore. Binutils IME encode stays a separate patch.
 
 ---
 
 ## Scheduler canaries (Orange Pi RV2)
 
-Mean ns/call — **lower is better**. Same four kernels; 14.3 source set `rv2-gcc143-x60-ab`, 15.2 `rv2-gcc152-x60-ab-clean`.
+Mean ns/call — **lower is better**.
 
 | Kernel | 14.3 Δ% (x60 vs ooo) | 15.2 Δ% (x60 vs ooo) |
 | ------ | -------------------: | -------------------: |
@@ -71,29 +65,25 @@ Mean ns/call — **lower is better**. Same four kernels; 14.3 source set `rv2-gc
 | `div_mix` | **−6.73%** | **−7.7%** |
 | `sh1add` | **−0.20%** | **−1.0%** |
 
-Direction matches across versions; `fma_chain` is a bit weaker / noisier on 14.3. `sh1add` near flat — expected with `type=shadd` deferred.
-
-Full tables: [14.3 canaries](https://github.com/opensolvers/benchmarks/tree/gcc-14.3-spacemit-x60/gcc-14.3/results/canaries), [15.2 canaries](https://github.com/opensolvers/benchmarks/tree/main/gcc-15.2/results/canaries).
-
 ---
 
-## OpenBLAS DGEMM + HPL (15.2 only)
+## OpenBLAS DGEMM + HPL
 
-OpenBLAS/HPL mtune A/Bs were run on the **15.2** line only so far. Same `-march=rv64gcv_zba_zbb_zbc_zvl256b`; OpenBLAS `TARGET=RISCV64_ZVL256B`, static, OpenMP; only `-mtune` differs. DGEMM: 1 thread, core 0. HPL: N=3000, NB=192, 2×4 — host built with EESSI; linked OpenBLAS is the A/B axis.
+Same `-march=rv64gcv_zba_zbb_zbc_zvl256b`; OpenBLAS `TARGET=RISCV64_ZVL256B`, static; only `-mtune` differs. HPL N=3000, NB=192, 2×4 — both PASSED.
 
-| Axis | Δ% (x60 vs ooo) |
-| ---- | --------------: |
-| DGEMM N=512 / 1024 / 2048 | **+2.2% / +2.3% / +3.8%** GF/s |
-| HPL N=3000 | **+0.8%** Gflops (both PASSED) |
+| Axis | 14.3 Δ% (x60 vs ooo) | 15.2 Δ% (x60 vs ooo) |
+| ---- | -------------------: | -------------------: |
+| DGEMM N=512 | **−6.9%** | **+2.2%** |
+| DGEMM N=1024 | **−6.7%** | **+2.3%** |
+| DGEMM N=2048 | **−3.0%** | **+3.8%** |
+| HPL N=3000 | **+6.8%** | **+0.8%** |
 
-Checksums matched across mtune for all DGEMM sizes. Summaries: [benchmarks `gcc-15.2/results/openblas-hpl/`](https://github.com/opensolvers/benchmarks/tree/main/gcc-15.2/results/openblas-hpl).
-
-Absolute single-thread DGEMM (~2.2–2.4 GF/s) is modest for ZVL256B; the point of the run is **mtune isolation**, not peak system HPL.
+**Sign flip on DGEMM:** 14.3 x60 mtune *slows* single-thread DGEMM vs `generic-ooo` on this run; 15.2 speeds it up. HPL still nudges positive on both. Summaries: [gcc-14.3/results/openblas-hpl](https://github.com/opensolvers/benchmarks/tree/main/gcc-14.3/results/openblas-hpl), [gcc-15.2/results/openblas-hpl](https://github.com/opensolvers/benchmarks/tree/main/gcc-15.2/results/openblas-hpl).
 
 ---
 
 ## Reading
 
-X60-aware scheduling moves micro kernels that care about FMA / divide mix on both **14.3** (today’s EESSI GCCcore) and **15.2**. The 15.2 line also shows a few percent in OpenBLAS DGEMM and a sub-percent HPL sanity run. Useful for a current or future EESSI `foss` bump — not a substitute for the OpenBLAS `gemv_n` correctness fix or hand RVV app kernels.
+X60-aware scheduling moves micro kernels that care about FMA / divide mix on both lines. End-to-end DGEMM/HPL deltas are small and **version-dependent** — useful for a future EESSI `foss` bump, not a substitute for the OpenBLAS `gemv_n` correctness fix or hand RVV app kernels.
 
 **Measured:** 2026-08 on Orange Pi RV2 (SpaceMiT X60).

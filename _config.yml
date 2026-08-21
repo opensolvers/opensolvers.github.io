@@ -1,7 +1,7 @@
 theme: jekyll-theme-cayman
 title: OpenSolvers
 tagline: Open scientific software & AI inference on real RISC-V hardware
-description: Open-source scientific software benchmarks on RISC-V boards — HPL, BLAS, Quantum ESPRESSO, llama.cpp, GROMACS, LAMMPS, OpenFOAM, waLBerla, PETSc, and library-level probes via EESSI.
+description: Open-source scientific software benchmarks on RISC-V boards — HPL, BLAS, Quantum ESPRESSO, llama.cpp, GROMACS, LAMMPS, OpenFOAM, waLBerla, ESPResSo, PETSc, PLUMED, and library-level probes via EESSI.
 url: https://www.opensolvers.com
 lang: en
 twitter:
@@ -46,6 +46,10 @@ navigation_apps:
     url: /apps/openfoam.html
   - title: waLBerla
     url: /apps/walberla.html
+  - title: ESPResSo
+    url: /apps/espresso.html
+  - title: MetalWalls
+    url: /apps/metalwalls.html
   - title: GCC
     url: /scientific-libs/gcc.html
 
@@ -68,6 +72,14 @@ navigation_scientific_libs:
     url: /scientific-libs/kokkos.html
   - title: PETSc
     url: /scientific-libs/petsc.html
+  - title: PLUMED
+    url: /scientific-libs/plumed.html
+  - title: ScaFaCoS
+    url: /scientific-libs/scafacos.html
+  - title: Voro++
+    url: /scientific-libs/voro.html
+  - title: OSU
+    url: /scientific-libs/osu.html
   - title: ScaLAPACK
     url: /scientific-libs/scalapack.html
 

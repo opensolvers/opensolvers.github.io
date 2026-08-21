@@ -7,7 +7,7 @@ description: waLBerla 7.2 RVV / auto-vec campaign on Orange Pi RV2 — BasicLBM 
 
 [waLBerla](https://www.walberla.net/) (widely applicable Lattice Boltzmann from Erlangen) is a C++ framework for lattice Boltzmann methods and structured-grid PDEs — fluids, multiphase flow, and related multiphysics. We measure **7.2** tutorials on the Orange Pi RV2 (SpaceMiT K1 / X60, RVV 1.0, VLEN=256), under EESSI `dev.eessi.io/riscv` (`2025.06-001`, `foss-2025b`).
 
-Benchmark source: [opensolvers/benchmarks/walberla](https://github.com/opensolvers/benchmarks/tree/walberla-rvv-autovec-results/walberla).
+Benchmark source: [opensolvers/benchmarks/walberla](https://github.com/opensolvers/benchmarks/tree/main/walberla).
 
 > **Change one variable.** Same source / OpenMPI / prm — only the **ISA tag / `-march`** differs: stock EESSI (`rv64gc`, no `v`) vs local rebuild (`-march=rv64gcv`, ELF tag includes `v1p0` + `zve*` / `zvl*`).
 
@@ -87,6 +87,6 @@ This is the **contiguous-stencil** counterpart to OpenFOAM’s sparse Amul/GS st
 
 ## Reproduce
 
-See [benchmarks/walberla](https://github.com/opensolvers/benchmarks/tree/walberla-rvv-autovec-results/walberla) for prm files, build scripts, and `results/`.
+See [benchmarks/walberla](https://github.com/opensolvers/benchmarks/tree/main/walberla) for prm files, build scripts, and `results/`.
 
 **Measured:** 2026-08-02 on Orange Pi RV2.

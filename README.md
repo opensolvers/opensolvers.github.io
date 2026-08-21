@@ -56,6 +56,10 @@ Library-level probes — performance *and* numerical correctness:
 - **[FFTW](scientific-libs/fftw.html)** — RVV `r5v` backend A/B; QE FFT-axis shows ~0% end-to-end despite micro wins
 - **[Kokkos](scientific-libs/kokkos.html)** — LAMMPS OpenMP/Serial; no RVV SIMD abi; hand RVV Pair (LJ micro **~1.64×**, EAM **1.27×**)
 - **[PETSc](scientific-libs/petsc.html)** — FlexiBLAS dense MatMult **~1.70×** (stock RVV NaN); hand RVV stencil SpMV **~3.6×** vs `MatMult`; CSR gather no win
+- **[PLUMED](scientific-libs/plumed.html)** — SPRINT / CONTACT_MATRIX FlexiBLAS A/B; patched RVV **1.25×** vs scalar
+- **[ScaFaCoS](scientific-libs/scafacos.html)** — P3M Coulomb FFT A/B; r5v **~0.99×** (near-field dilutes)
+- **[Voro++](scientific-libs/voro.html)** — RVV auto-vec **~0.99×** (negative control; irregular cell loops)
+- **[OSU](scientific-libs/osu.html)** — on-node MPI baseline: **1.12 μs** latency, ~**2 GB/s** uni BW
 - **[ScaLAPACK](scientific-libs/scalapack.html)** — distributed `PDSYEV`; stock RVV hangs, patched **1.09×**
 
 ## Apps
@@ -63,19 +67,21 @@ Library-level probes — performance *and* numerical correctness:
 End-to-end application benchmarks on the same boards and EESSI toolchain:
 
 - **[HPL](apps/hpl.html)** — Classic TOP500 Linpack: dense LU to solve Ax=b. OpenBLAS A/B + BLIS-linked validation from [opensolvers/benchmarks](https://github.com/opensolvers/benchmarks)
-- **[Quantum ESPRESSO](apps/qe.html)** — Plane-wave density-functional theory for materials and molecules (`pw.x` SCF). Whole-app BLAS backend A/B with per-routine timers
-- **[ONNX Runtime](apps/onnx.html)** — Cross-platform ML inference engine. int4 `MatMulNBits` LLM decode; `accuracy_level=4` unlocks X60 IME (**9–10×**)
+- **[Quantum ESPRESSO](apps/qe.html)** — Plane-wave DFT (`pw.x`); BLAS A/B up to **1.46×** on 216-atom cell (RV2 high-mem)
+- **[ONNX Runtime](apps/onnx.html)** — int4 `MatMulNBits`; `accuracy_level=4` unlocks X60 IME (**9–10×**; re-verify **8.5×** / **6.8×**)
 - **[llama.cpp](apps/llamacpp.html)** — Lightweight local LLM inference (GGML / GGUF). Q4_0 IME vs RVV; fork [`x60-ime-rvv`](https://github.com/opensolvers/llama.cpp/tree/x60-ime-rvv) (scale-build, softmax, M1 GEMV)
 - **[GROMACS](apps/gromacs.html)** — Biomolecular molecular dynamics (proteins, lipids, solvents) with PME. FFT-axis **1.23×**; RVV `Force` **3.31×** whole-app
 - **[LAMMPS](apps/lammps.html)** — Classical MD for materials, soft matter, and biomolecules. RVV-Kokkos **7.21×** (eam) / MPI **5.94×** (rhodo); hand RVV EAM **1.27×**
 - **[OpenFOAM](apps/openfoam.html)** — Open-source CFD toolbox (finite-volume continuum flow). motorBike `simpleFoam`: auto-vec **~0%**; hand RVV Amul/GS **regress**
 - **[waLBerla](apps/walberla.html)** — Lattice Boltzmann / structured-grid PDE framework for fluids and multiphysics. HeatEquation **1.64×**; UniformGrid collide **1.54×**
-- **[GCC](scientific-libs/gcc.html)** — GCC 14.3 / 15.2 SpacemiT X60 EasyBuild patches; canaries **−5–9%** (`fma_chain` / `div_mix`); 15.2 DGEMM **+2–4%**; HPL **+0.8%**
+- **[ESPResSo](apps/espresso.html)** — Soft-matter MD with P3M; FFTW r5v **~1.12×**
+- **[MetalWalls](apps/metalwalls.html)** — Electrochemical MD; tip4p FFT/BLAS A/Bs ~**1.00–1.02×**
+- **[GCC](scientific-libs/gcc.html)** — GCC 14.3 / 15.2 X60 mtune; canaries **−5–9%**; DGEMM sign flip (14.3 **−3…−7%**, 15.2 **+2–4%**); HPL **+0.8–6.8%**
 
 ## Boards
 
 - **[StarFive VisionFive 2](boards/VisionFive2.html)** — JH7110 SoC, 4× SiFive U74 (`rv64gc`). U74 OpenBLAS tuning: HPL **3.13 → 5.28 GFLOP/s**.
-- **[Orange Pi RV2](boards/RV2.html)** — SpaceMiT K1, 8× X60 (RVV). Fixed OpenBLAS: HPL **FAILED (`nan`) → 10.53 GFLOP/s**; [GCC](scientific-libs/gcc.html) mtune (14.3 / 15.2); 15.2 DGEMM **+2–4%**; BLIS DGEMM **1.29×** / HPL **0.35–0.53×**; [llama.cpp](apps/llamacpp.html) IME vs RVV (10 models); IME1 scale-build **+4.3%**; GROMACS Force **3.31×**; [LAMMPS](apps/lammps.html) Kokkos **7.21×**; [waLBerla](apps/walberla.html) HeatEq **1.64×**; [OpenFOAM](apps/openfoam.html) Amul/GS RVV regress; [PETSc](scientific-libs/petsc.html) dense **1.70×** / stencil SpMV **3.6×**; ELPA **34.81 s** (vs 54.92 s scalar); **BXE-2-32 GPGPU closed** (vendor BXM-only DDK).
+- **[Orange Pi RV2](boards/RV2.html)** — SpaceMiT K1, 8× X60 (RVV). Fixed OpenBLAS: HPL **FAILED (`nan`) → 10.53 GFLOP/s**; [QE](apps/qe.html) high-mem **1.46×** (216-atom); [GCC](scientific-libs/gcc.html) mtune; [ESPResSo](apps/espresso.html) FFT **1.12×**; [PLUMED](scientific-libs/plumed.html) **1.25×**; [PETSc](scientific-libs/petsc.html) dense **1.70×** / stencil SpMV **3.6×**; GROMACS Force **3.31×**; **BXE-2-32 GPGPU closed**.
 - **[Banana Pi F3](boards/F3.html)** — same K1 / X60 SoC, **3.7 GB RAM**. HPL **FAILED (`nan`) → 11.52 GFLOP/s**; IME peak **~45 GOP/s**; FFTW r5v **1.60×**; GROMACS FFT **1.14×**; LAMMPS Kokkos **6.29×** (eam); NumPy DGEMM **17.51 GFLOP/s**; same GPU closure as RV2.
 
 Use the menu above to jump to a board, app, or scientific lib page.

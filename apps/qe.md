@@ -52,6 +52,22 @@ Serial `pw.x` on [Orange Pi RV2](../boards/RV2.html), BLAS pinned to scalar Open
 
 Energy bit-identical. A microbenchmark FFT win does not automatically become an application win — see also [GROMACS](gromacs.html) for the FFT-axis mirror ( **1.23×** on isolated `PME 3D-FFT`, diluted by scalar `Force`).
 
+## Higher-memory probes (Orange Pi RV2, 7.7 GB)
+
+Same overlay `pw.x`, np=4, `-ndiag 1`, scalar vs patched RVV. These push past what fit on the ~4 GB BPI-F3:
+
+| Probe | atoms / bands / ecut | scalar WALL | patched WALL | **speedup** |
+| ----- | -------------------- | ----------: | -----------: | ----------: |
+| `si-super-64.in` (baseline) | 64 / 136 / 22 Ry | 70.56 s | 58.89 s | **1.20×** |
+| `si-super-64-nbnd272.in` | 64 / **272** / 22 Ry | 186.65 s | 140.84 s | **1.33×** |
+| `si-super-64-pbe.in` | 64 / 136 / 22 Ry **PBE** | 121.77 s | 90.11 s | **1.35×** |
+| `si-super-64-ecut40-nbnd272.in` | 64 / 272 / **40 Ry** | 411.94 s | 312.74 s | **1.32×** |
+| `si-super-216.in` | **216** / 453 / 22 Ry | 1510.31 s | 1033.37 s | **1.46×** |
+
+High-band 64-atom matches the older F3 **1.31×** table (now **1.33×** on RV2). The **216-atom** cell is the clearest whole-app win at **1.46×** — more GEMM-heavy and only feasible with the extra RAM. Best 216-atom breakdown: `calbec` **2.30×**, `rdiaghg` **1.52×**, `fftw` ~400 s unchanged.
+
+Two knobs raise the BLAS fraction: **more bands** (136 → 272: 1.20× → 1.33×) and **bigger supercells** (216-atom → **1.46×**).
+
 ## Where QE sits on the BLAS-dilution spectrum
 
 Same X60, patched RVV vs scalar:
@@ -61,9 +77,9 @@ Same X60, patched RVV vs scalar:
 | [OpenBLAS verification](../scientific-libs/blas.html#verification) (pure level-3) | ~2.3× | all BLAS-3 |
 | [HPL](hpl.html) (Linpack) | ~1.8× | BLAS-3 + `dgemv` panel factorization |
 | [ELPA](../scientific-libs/elpa.html) (eigensolver) | ~1.58× | BLAS-3 + BLAS-2 tridiagonalization |
-| **QE** (full DFT SCF) | **~1.2–1.3×** | BLAS + ~40–50% FFT + MPI |
+| **QE** (full DFT SCF) | **~1.2–1.5×** | BLAS + ~40–50% FFT + MPI |
 
-Each step down adds more non-BLAS / latency-bound work, diluting the BLAS-3 peak. And on the X60 today, **neither BLAS nor FFT drop-in swaps meaningfully move a real QE SCF** — BLAS wins are capped by the FFT half; FFT wins evaporate under `FFTW_ESTIMATE`.
+Each step down adds more non-BLAS / latency-bound work, diluting the BLAS-3 peak. FFT drop-in swaps still ~0% end-to-end under `FFTW_ESTIMATE`; BLAS wins grow when the cell is large enough that GEMM owns more of the wall.
 
 ## Reproducing
 

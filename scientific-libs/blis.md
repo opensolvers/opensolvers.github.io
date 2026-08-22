@@ -1,5 +1,7 @@
 # BLIS
 
+**Video:** [BLIS vs OpenBLAS on RISC-V: 1.29× DGEMM — Then 0.5× HPL](https://www.youtube.com/watch?v=zLMkNrl3NNw) — [all videos](../videos.html)
+
 [BLIS](https://github.com/flame/blis) (BLAS-like Library Instantiation Software, FLAME group) on RISC-V — a **vector-vs-vector** DGEMM comparison against patched RVV **OpenBLAS** on the SpaceMiT X60.
 
 BLIS ships hand-written RVV assembly level-3 microkernels under [`kernels/rviv/3/`](https://github.com/flame/blis/tree/master/kernels/rviv/3) (dynamic VLEN via `get_vlenb()`), selected by the **`rv64iv`** config target. This is not scalar-vs-vector — both libraries use RVV.

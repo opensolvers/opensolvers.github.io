@@ -1,4 +1,28 @@
 # YouTube videos — add new entries here (newest first).
+- id: blis-vs-openblas-rv2
+  title: "BLIS vs OpenBLAS on RISC-V: 1.29× DGEMM — Then 0.5× HPL"
+  description: >
+    Two RVV BLAS libraries on SpaceMiT X60 — BLIS vs patched OpenBLAS. Square
+    DGEMM 1T N=4096: BLIS 1.29× OpenBLAS; 8T OpenBLAS scales better. verify_ctrsm
+    2400/2400. HPL on static libblis.a is PASSED but only 0.35–0.53× OpenBLAS-RVV.
+  youtube_id: zLMkNrl3NNw
+  date: 2026-08-22
+  duration: PT2M23S
+  boards:
+    - Orange Pi RV2
+  topics:
+    - BLIS
+    - OpenBLAS
+    - DGEMM
+    - HPL
+    - RVV
+  related_pages:
+    - title: BLIS notes
+      url: /scientific-libs/blis.html
+    - title: Orange Pi RV2 board notes
+      url: /boards/RV2.html
+    - title: HPL app notes
+      url: /apps/hpl.html
 - id: gcc-152-x60-mtune
   title: "GCC 15.2 on RISC-V: Teaching mtune=spacemit-x60 (−8.7% Canaries, +3.8% DGEMM)"
   description: >

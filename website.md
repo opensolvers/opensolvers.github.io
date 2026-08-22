@@ -64,6 +64,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 
 | Date | Decision |
 |------|----------|
+| 2026-08-22 | Publish BLIS vs OpenBLAS video (`zLMkNrl3NNw`) — `_data/videos.yml`, homepage, BLIS, RV2 |
 | 2026-08-22 | Sync new RV2 benches: **ESPResSo** (~1.12×), **MetalWalls**, **PLUMED** (1.25×), **ScaFaCoS** (~0.99×), **Voro++** (~0.99×), **OSU** MPI baseline; QE high-mem **1.46×**; ONNX re-verify; GCC 14.3 DGEMM/HPL |
 | 2026-08-16 | Homepage Contact: Mailmoose **opensolvers** inbox form (`_includes/mailmoose-contact.html` → `POST …/lists/opensolvers/contact`) |
 | 2026-08-15 | Move **GCC** from scientific-libs nav row to **Apps** nav row (page stays at `scientific-libs/gcc.html`) |

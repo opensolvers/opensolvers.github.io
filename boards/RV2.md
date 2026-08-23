@@ -52,7 +52,7 @@ Microbenchmarks in [opensolvers/benchmarks/ime](https://github.com/opensolvers/b
 
 Peak **~42 GOP/s** single-core — vs ~5 GOP/s for a straightforward RVV int8 path. End-to-end int4 LLM decode through [ONNX Runtime](../apps/onnx.html) and isolated [MLAS](../scientific-libs/mlas.html) kernel rates use the same IME hardware; see also [papers/x60-ime-block-scale-optimization](https://github.com/opensolvers/benchmarks/blob/main/papers/x60-ime-block-scale-optimization.md) in the benchmarks repo.
 
-End-to-end [llama.cpp](../apps/llamacpp.html): **10/10** Q4_0 models (0.5B–7.6B) validated on this board — IME wins prefill ≥1.1B (up to ~2.5×), RVV wins token-gen. Staging fork: [`opensolvers/llama.cpp`](https://github.com/opensolvers/llama.cpp) branch [`x60-ime-rvv`](https://github.com/opensolvers/llama.cpp/tree/x60-ime-rvv).
+End-to-end [llama.cpp](../apps/llamacpp.html): **10/10** Q4_0 models (0.5B–7.6B) validated — IME wins prefill ≥1.1B (up to ~2.5×), RVV wins token-gen. Q8_0 **hybrid** restores decode (**6.68** vs **0.83** tg32 @ t4) at ~2× weight RAM. Staging fork: [`opensolvers/llama.cpp`](https://github.com/opensolvers/llama.cpp) branch [`x60-ime-rvv`](https://github.com/opensolvers/llama.cpp/tree/x60-ime-rvv).
 
 ### IME1 scale-build prefill optimization (llama.cpp)
 
@@ -185,9 +185,20 @@ See [PETSc](../scientific-libs/petsc.html) — FlexiBLAS A/B + hand RVV SpMV on 
 | Jacobi-CG AIJ (n=400) | patched **~1.06×** vs scalar |
 | Dense MatMult n=2048 | patched **~1.70×**; stock RVV **NaN** |
 | SuperLU_DIST / UMFPACK | stock RVV **NaN**; patched finite |
-| MUMPS 2D/3D (these sizes) | finite on stock; **no** patched speedup |
+| MUMPS 2D/3D (small) | finite on stock; little patched speedup |
+| MUMPS 3D n=80 (512k) | RVV ~**1.5×** vs scalar |
 | Hand RVV CSR SpMV | ≈ **no win** vs scalar CSR / trails `MatMult` |
 | Structured 5-pt stencil RVV | **~3.6×** vs PETSc `MatMult` |
+
+## FlexiBLAS language / ML stack (2026-08-22)
+
+| Probe | Result |
+| ----- | ------ |
+| [NumPy](../scientific-libs/numpy.html) DGEMM / EIGH | patched **3.13×** / **1.61×**; stock eig fails |
+| [Armadillo](../scientific-libs/armadillo.html) | DGEMM **1.82×**, EIG **1.63×** |
+| [R](../scientific-libs/r.html) | GEMM **1.80×**, EIGEN **1.45×** |
+| [scikit-learn](../scientific-libs/sklearn.html) | PCA **1.22×**, Ridge **1.90×** |
+| [MODFLOW](../apps/modflow.html) ex-gwf-lgrv-lgr | FlexiBLAS **~1.00×** (flat) |
 
 ## Soft-matter / Coulomb / MPI (2026-08-21)
 

@@ -17,14 +17,19 @@ OMP_NUM_THREADS=8 OPENBLAS_NUM_THREADS=8 python3 bench_blas.py [dgemm_N] [eigh_N
 
 Swap backends per run: `OPENBLAS_CORETYPE=RISCV64_GENERIC` or `FLEXIBLAS=/path/to/libopenblas.so`.
 
-## Orange Pi RV2 (8 threads, patched RVV)
+## Orange Pi RV2 — re-verify (2026-08-22)
 
-| Kernel | Scalar | Patched RVV | Speedup |
-| ------ | ------ | ----------- | ------- |
-| DGEMM N=4096 | 4.77 GFLOP/s | 11.52 GFLOP/s | **2.4×** |
-| EIGH N=2048 | 10.54 s | 6.72 s | **1.6×** |
+8 threads, SciPy-bundle 2025.07 (numpy 2.3.2), `N_dgemm=4096`, `N_eig=2048`:
 
-Both patched results finite. See [LAPACK](lapack.html) for the LAPACK angle.
+| Tag | DGEMM GFLOP/s | EIGH s | finite |
+| --- | ------------: | -----: | ------ |
+| scalar (`RISCV64_GENERIC`) | 4.87 | 10.61 | yes |
+| stock (default FlexiBLAS OpenBLAS) | 10.06 | — | eig **fails** (`LinAlgError`) |
+| patched RVV | **15.24** | **6.57** | yes |
+
+Patched vs scalar: DGEMM **3.13×**, EIGH **1.61×**. Stock RVV `dgemm` is fast but `eigvalsh` aborts (same `gemv_n` NaN path as [HPL](../apps/hpl.html)).
+
+Earlier RV2 A/B (same sizes): scalar 4.77 → patched 11.52 GFLOP/s (**2.4×**); EIGH **1.6×**. See [LAPACK](lapack.html).
 
 ## Banana Pi F3 (cross-board, 8 threads)
 

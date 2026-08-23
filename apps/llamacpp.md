@@ -1,6 +1,6 @@
 ---
 title: llama.cpp on RISC-V — X60 IME vs RVV
-description: End-to-end llama.cpp on Orange Pi RV2 — Q4_0 IME vs RVV, Q4_K_M m1gemv study, and opensolvers/llama.cpp x60-ime-rvv kernel work.
+description: End-to-end llama.cpp on Orange Pi RV2 — Q4_0 IME vs RVV, Q8_0 hybrid prefill/decode, Q4_K_M m1gemv study, and opensolvers/llama.cpp x60-ime-rvv.
 ---
 
 # llama.cpp
@@ -114,7 +114,21 @@ Raw TSV: [`model_validation.tsv`](https://github.com/opensolvers/benchmarks/blob
 
 ### IME1 Q8_0 / Q6_K GEMM ([#1](https://github.com/opensolvers/llama.cpp/pull/1))
 
-Adds an IME1 `smt.vmadot` int8 GEMM fast path for **Q8_0** and **Q6_K** `MUL_MAT` / `MUL_MAT_ID`. The i8i8 repack is **opt-in / prefill-oriented**, so default token-generation does not pay for a layout that only helps large-M GEMM. Verified on-board: **64 `smt.vmadot`** instructions in `libggml-cpu.so` under xsmtvdot-aware objdump.
+Adds an IME1 `smt.vmadot` int8 GEMM fast path for **Q8_0** and **Q6_K** `MUL_MAT` / `MUL_MAT_ID`. The i8i8 path is **prefill-oriented**; token-gen on IME-only stays slow until hybrid (below). On `qwen2.5-0.5b-q8_0.gguf`: **pp64 @ t4 = 62.7 t/s** (i8i8) vs **25.5** (stock `-x60-ime` RVV fallback) vs **56.8** (plain RVV @ t8). Verified on-board: **64 `smt.vmadot`** in `libggml-cpu.so`.
+
+### Hybrid prefill / decode (2026-08-23)
+
+One binary, two paths in `libggml-cpu` ([`apply-hybrid.py`](https://github.com/opensolvers/benchmarks/blob/main/ime/apply-hybrid.py)): weights stored **twice** (native GGUF + IME tiles). `M >= 4` → IME M4; `M < 4` (token-gen) → stock `ggml_compute_forward_mul_mat` on native weights. Env: `SPACEMIT_HYBRID=1` (optional `SPACEMIT_IME_MIN_M=4`); use **`LD_PRELOAD`** on the rebuilt `libggml-cpu.so`.
+
+| build | Q8_0 pp512 @ t4 | Q8_0 tg32 @ t4 |
+| ----- | --------------: | -------------: |
+| IME-only (q8_0) | 83.7 | **0.83** |
+| **Hybrid** | **90.1** | **6.68** |
+| RVV-only | 27.0 | 5.11 |
+
+Hybrid lifts Q8_0 decode ~**8×** vs IME-only while slightly improving pp. Cost: **~2× weight RAM** in spacemit buffers. Q4_0 on stock `~/x60-ime` already has decent tg (~7.3).
+
+Pipelining port (`load`/`smt.vmadot` interleave): kernel **~4–5%**; end-to-end pp512 within noise — synthetic kloop wins do not transfer (llama INNER is only 2 K-steps).
 
 ### IME1 scale-build ([#2](https://github.com/opensolvers/llama.cpp/pull/2))
 
@@ -198,7 +212,8 @@ Harnesses and TSVs: [benchmarks/llamacpp](https://github.com/opensolvers/benchma
 ## Takeaways
 
 1. **Q4_0:** IME wins prefill ≥1.1B (1.2–2.6×); RVV wins token-gen everywhere.
-2. **Q4_K_M:** plain RVV wins tg (and usually pp); m1gemv IME regresses until K-quants hit `smt.vmadot`.
-3. **Fork kernels:** Q8_0/Q6_K IME GEMM, +4.3% scale-build, RVV softmax (~2×), M1 GEMV (**6.45×** tg on Q8_0 — [#5](https://github.com/opensolvers/llama.cpp/pull/5)).
-4. **7B Q4_0 is the practical ceiling** on 8 GB no-swap; keep ctx modest on ≥3B.
-5. **Pick build by quant + workload** — not “IME always” or “RVV always”.
+2. **Q8_0:** i8i8 IME wins prefill; **hybrid** restores decode (~**6.7** tg32 vs **0.83** IME-only) at ~2× weight RAM.
+3. **Q4_K_M:** plain RVV wins tg (and usually pp); m1gemv IME regresses until K-quants hit `smt.vmadot`.
+4. **Fork kernels:** Q8_0/Q6_K IME GEMM, hybrid split, +4.3% scale-build, RVV softmax (~2×), M1 GEMV (**6.45×** tg on Q8_0 — [#5](https://github.com/opensolvers/llama.cpp/pull/5)).
+5. **7B Q4_0 is the practical ceiling** on 8 GB no-swap; keep ctx modest on ≥3B.
+6. **Pick build by quant + workload** — not “IME always” or “RVV always”.

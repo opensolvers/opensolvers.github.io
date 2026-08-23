@@ -50,6 +50,8 @@ navigation_apps:
     url: /apps/espresso.html
   - title: MetalWalls
     url: /apps/metalwalls.html
+  - title: MODFLOW
+    url: /apps/modflow.html
   - title: GCC
     url: /scientific-libs/gcc.html
 
@@ -60,6 +62,12 @@ navigation_scientific_libs:
     url: /scientific-libs/blis.html
   - title: NumPy
     url: /scientific-libs/numpy.html
+  - title: Armadillo
+    url: /scientific-libs/armadillo.html
+  - title: R
+    url: /scientific-libs/r.html
+  - title: scikit-learn
+    url: /scientific-libs/sklearn.html
   - title: LAPACK
     url: /scientific-libs/lapack.html
   - title: ELPA

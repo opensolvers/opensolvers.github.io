@@ -1,6 +1,6 @@
 ---
 title: PETSc on SpaceMiT X60
-description: PETSc 3.24 on Orange Pi RV2 — FlexiBLAS A/Bs (dense MatMult ~1.70×; stock RVV NaN on dense/direct) and hand RVV SpMV (structured stencil ~3.6× vs MatMult; CSR gather no win).
+description: PETSc 3.24 on Orange Pi RV2 — FlexiBLAS A/Bs (dense MatMult ~1.70×; MUMPS 3D n=80 ~1.5×; stock RVV NaN on dense/direct) and hand RVV SpMV (stencil ~3.6× vs MatMult).
 ---
 
 # PETSc
@@ -11,7 +11,7 @@ Benchmark source: [opensolvers/benchmarks/petsc](https://github.com/opensolvers/
 
 > **Change one variable (FlexiBLAS).** Hold problem + solver fixed; swap only the backend (patched OpenBLAS vs stock RVV vs scalar). Check finite residuals before trusting wall time.
 
-> **Bottom line:** sparse Jacobi-CG is a weak BLAS lever (**~1.06×**). Dense MatMult shows patched RVV **~1.70×** vs scalar — and **stock RVV NaNs** (same OpenBLAS `gemv_n` class as [HPL](../apps/hpl.html) / [ELPA](elpa.html)). Hand RVV on generic CSR SpMV ≈ **no win**; a structure-aware 5-point stencil is **~3.6×** vs PETSc `MatMult`.
+> **Bottom line:** sparse Jacobi-CG is a weak BLAS lever (**~1.06×**). Dense MatMult shows patched RVV **~1.70×** vs scalar — and **stock RVV NaNs** (same OpenBLAS `gemv_n` class as [HPL](../apps/hpl.html) / [ELPA](elpa.html)). MUMPS 3D stays flat at small fronts; at **n=80** (512k dofs) both RVV backends beat scalar ~**1.5×**. Hand RVV on generic CSR SpMV ≈ **no win**; a structure-aware 5-point stencil is **~3.6×** vs PETSc `MatMult`.
 
 Related: [BLAS](blas.html), [EESSI X60 blog](https://www.eessi.io/docs/blog/2026/07/12/risc-v-x60-openblas-hpl/).
 
@@ -100,12 +100,26 @@ Patched / scalar ≈ **3.5×** (tiny iteration count; still shows BLAS on the Ma
 
 ---
 
+### MUMPS 3D scale sweep (2026-08-22)
+
+`petsc_direct_bench`, 3 reps, 8 threads. Summary: [`mumps-3d-scale-ab-20260822.txt`](https://github.com/opensolvers/benchmarks/blob/main/petsc/results/mumps-3d-scale-ab-20260822.txt).
+
+| 3D n | dofs | scalar BEST | stock RVV | patched RVV | patched / scalar |
+| ---: | ---: | ----------: | --------: | ----------: | ---------------: |
+| 40 | 64k | 0.652 s | 0.674 s | 0.669 s | ~1.0× (flat) |
+| 60 | 216k | 2.772 s | 2.874 s | **2.681 s** | ~1.03× |
+| 80 | 512k | 12.585 s | **7.987 s** | 8.470 s | **1.49×** |
+
+At n=80 both RVV backends beat scalar (~**1.5×**); stock is slightly ahead of patched here. All runs `finite=1`, identical residuals. RVV wins once frontal dense blocks grow large enough.
+
+---
+
 ## Reading
 
 1. **Dense PETSc paths** expose FlexiBLAS clearly: patched RVV wins; stock RVV corrupts.
 2. **SuperLU_DIST / UMFPACK** need the patched OpenBLAS for correctness — same failure class as HPL / ELPA / QE.
-3. **MUMPS** stayed finite on stock at these sizes but showed **no** patched speedup (analysis / ordering / smaller dense fronts dominate).
+3. **MUMPS** stays finite on stock at small sizes with little/no patched speedup; at **3D n=80** RVV is ~**1.5×** scalar.
 4. **Jacobi-CG AIJ** remains a weak BLAS A/B (~1.06×).
 5. **Hand RVV SpMV:** CSR gather is a dead end on short-row PDE matrices; stencil / structure-aware kernels are where RVV pays.
 
-**Measured:** 2026-08-14 (FlexiBLAS) / 2026-08-15 (SpMV) on Orange Pi RV2. Logs in [benchmarks/petsc/results/](https://github.com/opensolvers/benchmarks/tree/main/petsc/results).
+**Measured:** 2026-08-14 (FlexiBLAS) / 2026-08-15 (SpMV) / 2026-08-22 (MUMPS scale) on Orange Pi RV2. Logs in [benchmarks/petsc/results/](https://github.com/opensolvers/benchmarks/tree/main/petsc/results).

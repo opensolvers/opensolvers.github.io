@@ -50,7 +50,7 @@ Microbenchmarks in [opensolvers/benchmarks/ime](https://github.com/opensolvers/b
 | 768×768×512 | ~5.2 GOP/s | **42 GOP/s** (peak) | **8.1×** |
 | 1024×1024×512 | 5.2 GOP/s | **32 GOP/s** | 6.2× |
 
-Peak **~42 GOP/s** single-core — vs ~5 GOP/s for a straightforward RVV int8 path. End-to-end int4 LLM decode through [ONNX Runtime](../apps/onnx.html) and isolated [MLAS](../scientific-libs/mlas.html) kernel rates use the same IME hardware; see also [papers/x60-ime-block-scale-optimization](https://github.com/opensolvers/benchmarks/blob/main/papers/x60-ime-block-scale-optimization.md) in the benchmarks repo.
+Peak **~42 GOP/s** single-core — vs ~5 GOP/s for a straightforward RVV int8 path. End-to-end ORT decode (Qwen / SmolLM2 / TinyLlama int4+int8) through [ONNX Runtime](../apps/onnx.html) and isolated [MLAS](../scientific-libs/mlas.html) kernel rates use the same IME hardware; see also [papers/x60-ime-block-scale-optimization](https://github.com/opensolvers/benchmarks/blob/main/papers/x60-ime-block-scale-optimization.md) in the benchmarks repo.
 
 End-to-end [llama.cpp](../apps/llamacpp.html): **10/10** Q4_0 models (0.5B–7.6B) validated — IME wins prefill ≥1.1B (up to ~2.5×), RVV wins token-gen. Q8_0 **hybrid** restores decode (**6.68** vs **0.83** tg32 @ t4) at ~2× weight RAM. Staging fork: [`opensolvers/llama.cpp`](https://github.com/opensolvers/llama.cpp) branch [`x60-ime-rvv`](https://github.com/opensolvers/llama.cpp/tree/x60-ime-rvv).
 

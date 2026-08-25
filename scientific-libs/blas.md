@@ -6,6 +6,32 @@ Verification microbenchmarks live in [opensolvers/benchmarks/OpenBLAS](https://g
 
 **Base stack:** GCC 14.3.0, OpenBLAS 0.3.30, EESSI `2025.06-001` ([`dev.eessi.io/riscv`](https://www.eessi.io/docs/repositories/dev.eessi.io-riscv/)).
 
+## OpenBLAS 0.3.34 — end-to-end verify (Orange Pi RV2, 2026-08-25)
+
+EESSI `2025.06-001` still ships **0.3.29 / 0.3.30** only. We built upstream tag **`v0.3.34`** locally with EESSI **GCC 14.3.0** (`TARGET=RISCV64_ZVL256B`; Ubuntu GCC 13 cannot compile ZVL256 SGEMM tuple intrinsics). Harness: [run-034-tests.sh](https://github.com/opensolvers/benchmarks/blob/main/OpenBLAS/run-034-tests.sh) in [opensolvers/benchmarks/OpenBLAS](https://github.com/opensolvers/benchmarks/tree/main/OpenBLAS).
+
+### Correctness (`difftest`, 1 thread)
+
+| Backend | `dgemv` NaN | `dgemm` NaN | `dtrsm` NaN | `dgemv` sum |
+| ------- | ----------- | ----------- | ----------- | ----------- |
+| **0.3.34 ZVL256B** | **0** | 0 | 0 | 42.06549 |
+| Stock EESSI 0.3.30 | **768** | 0 | 0 | 0 (broken) |
+| Stock EESSI 0.3.29 | 0 | 0 | 0 | 42.06549 |
+| Patched 0.3.30 ([#26444](https://github.com/easybuilders/easybuild-easyconfigs/pull/26444)) | 0 | 0 | 0 | 42.06549 |
+
+**SYRK PSD** ([OpenBLAS#5811](https://github.com/OpenMathLib/OpenBLAS/issues/5811) repro, N=K=50): `max_err=0`, `min_diag=+12.56`, **PASS** (fixes the 0.3.33 ZVL256 regression).
+
+**CTRSM sweep** (`verify_ctrsm`): **2400 cases, 0 fails** — new ZVL TRSM RVV kernels in 0.3.34 ([OpenBLAS#5895](https://github.com/OpenMathLib/OpenBLAS/pull/5895)).
+
+### Performance — `bench_dgemm` (N=2048, 8 threads)
+
+| Backend | GFLOP/s | `C[0]` |
+| ------- | ------- | ------ |
+| **0.3.34** | **15.54** | 245.24 |
+| Stock EESSI 0.3.30 | 9.81 | 245.24 |
+
+**~1.6×** over stock 0.3.30, bit-identical output. Verdict: **0.3.34 has a working RVV path on X60** — ready for an EESSI package bump when upstream lands in the stack.
+
 ## Improvements
 
 | Board / CPU | Problem (stock 0.3.30) | Fix | Result |
@@ -81,31 +107,5 @@ A second bug — RVV `_rvv_v1` TRSM kernels not VLEN-agnostic ([OpenBLAS#5928](h
 ## Notes
 
 - **U74** — performance kernel; stock OpenBLAS works but leaves FP throughput on the table.
-- **X60** — correctness fix first. Stock EESSI `DYNAMIC_ARCH` *does* dispatch RVV, but 0.3.30's broken `gemv_n` corrupts BLAS-2 paths. OpenBLAS **≥ 0.3.34** fixes this natively — **verified on Orange Pi RV2** (see below).
+- **X60** — correctness fix first. Stock EESSI `DYNAMIC_ARCH` *does* dispatch RVV, but 0.3.30's broken `gemv_n` corrupts BLAS-2 paths. OpenBLAS **≥ 0.3.34** fixes this natively — **verified on Orange Pi RV2** (see above).
 - Pin a valid `-march` via `EASYBUILD_OPTARCH` on the experimental `dev.eessi.io/riscv` toolchain (see board walkthroughs).
-
-## OpenBLAS 0.3.34 — end-to-end verify (Orange Pi RV2, 2026-08-25)
-
-EESSI `2025.06-001` still ships **0.3.29 / 0.3.30** only. We built upstream tag **`v0.3.34`** locally with EESSI **GCC 14.3.0** (`TARGET=RISCV64_ZVL256B`; Ubuntu GCC 13 cannot compile ZVL256 SGEMM tuple intrinsics). Harness: [run-034-tests.sh](https://github.com/opensolvers/benchmarks/blob/main/OpenBLAS/run-034-tests.sh) in [opensolvers/benchmarks/OpenBLAS](https://github.com/opensolvers/benchmarks/tree/main/OpenBLAS).
-
-### Correctness (`difftest`, 1 thread)
-
-| Backend | `dgemv` NaN | `dgemm` NaN | `dtrsm` NaN | `dgemv` sum |
-| ------- | ----------- | ----------- | ----------- | ----------- |
-| **0.3.34 ZVL256B** | **0** | 0 | 0 | 42.06549 |
-| Stock EESSI 0.3.30 | **768** | 0 | 0 | 0 (broken) |
-| Stock EESSI 0.3.29 | 0 | 0 | 0 | 42.06549 |
-| Patched 0.3.30 ([#26444](https://github.com/easybuilders/easybuild-easyconfigs/pull/26444)) | 0 | 0 | 0 | 42.06549 |
-
-**SYRK PSD** ([OpenBLAS#5811](https://github.com/OpenMathLib/OpenBLAS/issues/5811) repro, N=K=50): `max_err=0`, `min_diag=+12.56`, **PASS** (fixes the 0.3.33 ZVL256 regression).
-
-**CTRSM sweep** (`verify_ctrsm`): **2400 cases, 0 fails** — new ZVL TRSM RVV kernels in 0.3.34 ([OpenBLAS#5895](https://github.com/OpenMathLib/OpenBLAS/pull/5895)).
-
-### Performance — `bench_dgemm` (N=2048, 8 threads)
-
-| Backend | GFLOP/s | `C[0]` |
-| ------- | ------- | ------ |
-| **0.3.34** | **15.54** | 245.24 |
-| Stock EESSI 0.3.30 | 9.81 | 245.24 |
-
-**~1.6×** over stock 0.3.30, bit-identical output. Verdict: **0.3.34 has a working RVV path on X60** — ready for an EESSI package bump when upstream lands in the stack.

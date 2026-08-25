@@ -32,6 +32,7 @@ Small, self-contained programs in [opensolvers/benchmarks/OpenBLAS](https://gith
 | [`bench_dgemm.c`](https://github.com/opensolvers/benchmarks/blob/main/OpenBLAS/bench_dgemm.c) | Times square `C = A×B` (3 reps), reports GFLOP/s, prints `C[0]` |
 | [`difftest.c`](https://github.com/opensolvers/benchmarks/blob/main/OpenBLAS/difftest.c) | `dlopen`s a BLAS `.so`, runs level-1/2/3 routines, reports `sum` / NaN counts |
 | [`verify_ctrsm.c`](https://github.com/opensolvers/benchmarks/blob/main/OpenBLAS/verify_ctrsm.c) | Full-parameter TRSM correctness sweep (localizes [OpenBLAS#5928](https://github.com/OpenMathLib/OpenBLAS/pull/5928) VLEN bug in `_rvv_v1` kernels) |
+| [`run-034-tests.sh`](https://github.com/opensolvers/benchmarks/blob/main/OpenBLAS/run-034-tests.sh) | Build + verify OpenBLAS 0.3.34 on RV2 (`difftest`, SYRK PSD, CTRSM, DGEMM A/B) |
 
 Both switch backends at runtime via FlexiBLAS or `OPENBLAS_CORETYPE` — no recompile.
 
@@ -80,5 +81,31 @@ A second bug — RVV `_rvv_v1` TRSM kernels not VLEN-agnostic ([OpenBLAS#5928](h
 ## Notes
 
 - **U74** — performance kernel; stock OpenBLAS works but leaves FP throughput on the table.
-- **X60** — correctness fix first. Stock EESSI `DYNAMIC_ARCH` *does* dispatch RVV, but 0.3.30's broken `gemv_n` corrupts BLAS-2 paths. OpenBLAS **≥ 0.3.34** should fix this natively.
+- **X60** — correctness fix first. Stock EESSI `DYNAMIC_ARCH` *does* dispatch RVV, but 0.3.30's broken `gemv_n` corrupts BLAS-2 paths. OpenBLAS **≥ 0.3.34** fixes this natively — **verified on Orange Pi RV2** (see below).
 - Pin a valid `-march` via `EASYBUILD_OPTARCH` on the experimental `dev.eessi.io/riscv` toolchain (see board walkthroughs).
+
+## OpenBLAS 0.3.34 — end-to-end verify (Orange Pi RV2, 2026-08-25)
+
+EESSI `2025.06-001` still ships **0.3.29 / 0.3.30** only. We built upstream tag **`v0.3.34`** locally with EESSI **GCC 14.3.0** (`TARGET=RISCV64_ZVL256B`; Ubuntu GCC 13 cannot compile ZVL256 SGEMM tuple intrinsics). Harness: [run-034-tests.sh](https://github.com/opensolvers/benchmarks/blob/main/OpenBLAS/run-034-tests.sh) in [opensolvers/benchmarks/OpenBLAS](https://github.com/opensolvers/benchmarks/tree/main/OpenBLAS).
+
+### Correctness (`difftest`, 1 thread)
+
+| Backend | `dgemv` NaN | `dgemm` NaN | `dtrsm` NaN | `dgemv` sum |
+| ------- | ----------- | ----------- | ----------- | ----------- |
+| **0.3.34 ZVL256B** | **0** | 0 | 0 | 42.06549 |
+| Stock EESSI 0.3.30 | **768** | 0 | 0 | 0 (broken) |
+| Stock EESSI 0.3.29 | 0 | 0 | 0 | 42.06549 |
+| Patched 0.3.30 ([#26444](https://github.com/easybuilders/easybuild-easyconfigs/pull/26444)) | 0 | 0 | 0 | 42.06549 |
+
+**SYRK PSD** ([OpenBLAS#5811](https://github.com/OpenMathLib/OpenBLAS/issues/5811) repro, N=K=50): `max_err=0`, `min_diag=+12.56`, **PASS** (fixes the 0.3.33 ZVL256 regression).
+
+**CTRSM sweep** (`verify_ctrsm`): **2400 cases, 0 fails** — new ZVL TRSM RVV kernels in 0.3.34 ([OpenBLAS#5895](https://github.com/OpenMathLib/OpenBLAS/pull/5895)).
+
+### Performance — `bench_dgemm` (N=2048, 8 threads)
+
+| Backend | GFLOP/s | `C[0]` |
+| ------- | ------- | ------ |
+| **0.3.34** | **15.54** | 245.24 |
+| Stock EESSI 0.3.30 | 9.81 | 245.24 |
+
+**~1.6×** over stock 0.3.30, bit-identical output. Verdict: **0.3.34 has a working RVV path on X60** — ready for an EESSI package bump when upstream lands in the stack.

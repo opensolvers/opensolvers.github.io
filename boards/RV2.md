@@ -104,7 +104,7 @@ With the fixed backend, scalar-vs-RVV A/B ([benchmarks/hpl](https://github.com/o
 
 **Before** — stock EESSI OpenBLAS 0.3.30 (RVV `gemv_n` bug). **After** — fixed OpenBLAS built with `TARGET=RISCV64_ZVL256B` and a backported `gemv_n` patch ([easyconfigs#26444](https://github.com/easybuilders/easybuild-easyconfigs/pull/26444)), swapped in via FlexiBLAS — no HPL rebuild.
 
-The fix backports the upstream `gemv_n` correction from OpenBLAS ≥ 0.3.31 ([OpenBLAS#5408](https://github.com/OpenMathLib/OpenBLAS/pull/5408)). A future EESSI bump to OpenBLAS ≥ 0.3.34 should make the patch unnecessary.
+The fix backports the upstream `gemv_n` correction from OpenBLAS ≥ 0.3.31 ([OpenBLAS#5408](https://github.com/OpenMathLib/OpenBLAS/pull/5408)). **OpenBLAS 0.3.34** fixes this natively — verified end-to-end on RV2 ([BLAS page](../scientific-libs/blas.html#openblas-034--end-to-end-verify-orange-pi-rv2-2026-08-25)): `dgemv` NaN **0**, SYRK PSD **PASS**, CTRSM **2400/0 fails**, DGEMM **15.54 GFLOP/s** @ N=2048 t8 vs stock 0.3.30 **9.81**. A future EESSI bump to ≥ 0.3.34 should make the manual patch unnecessary.
 
 ### Reproducing the fixed run
 

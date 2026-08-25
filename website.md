@@ -64,6 +64,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 
 | Date | Decision |
 |------|----------|
+| 2026-08-26 | **OpenBLAS 0.3.34** end-to-end verify on RV2: `dgemv` NaN **0**, SYRK PSD **PASS**, CTRSM **2400/0**, DGEMM **15.54 GFLOP/s** @ t8 (vs stock 0.3.30 **9.81**); sync [BLAS](scientific-libs/blas.html), [RV2](boards/RV2.html) |
 | 2026-08-25 | Rewrite **ONNX Runtime** app as results-first story: Qwen/SmolLM2/TinyLlama int4+int8 decode table, then accuracy_level → Q4×16 → Blk128 → SQ8/Q8×16; sync homepage blurb |
 | 2026-08-23 | Sync FlexiBLAS language/ML + IME: **Armadillo** (1.82×), **R** (1.80×), **scikit-learn** (Ridge 1.90×), **MODFLOW** (~1.00×); NumPy re-verify **3.13×**; PETSc MUMPS 3D n=80 **~1.5×**; llama.cpp Q8_0 **hybrid** tg **6.68** |
 | 2026-08-22 | Publish BLIS vs OpenBLAS video (`zLMkNrl3NNw`) — `_data/videos.yml`, homepage, BLIS, RV2 |

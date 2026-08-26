@@ -32,6 +32,15 @@ EESSI `2025.06-001` still ships **0.3.29 / 0.3.30** only. We built upstream tag 
 
 **~1.6×** over stock 0.3.30, bit-identical output. Verdict: **0.3.34 has a working RVV path on X60** — ready for an EESSI package bump when upstream lands in the stack.
 
+### HPL end-to-end (same `xhpl`, FlexiBLAS → 0.3.34)
+
+| Config | OpenBLAS **0.3.34** | Patched 0.3.30 | 0.3.34 vs patched |
+| ------ | ------------------:| --------------:| -----------------:|
+| `HPL.dat` (N=8000, 1×8) | **11.04** GFLOP/s, PASSED | 7.72 GFLOP/s, PASSED | **1.43×** |
+| `HPL-sweep.dat` (N=20000, 2×4) | **10.97** GFLOP/s, PASSED | 10.27 GFLOP/s, PASSED | **1.07×** |
+
+Residuals ~3–4e-03. See [HPL](../apps/hpl.html) and [`run-hpl-034.sh`](https://github.com/opensolvers/benchmarks/blob/main/hpl/run-hpl-034.sh).
+
 ## Improvements
 
 | Board / CPU | Problem (stock 0.3.30) | Fix | Result |

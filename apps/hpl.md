@@ -40,6 +40,17 @@ Stock EESSI dispatches RVV `ZVL256B` on the X60, but the unpatched `gemv_n` kern
 
 Walkthrough: [EESSI blog — Chasing a NaN (X60 OpenBLAS / HPL)](https://www.eessi.io/docs/blog/2026/07/12/risc-v-x60-openblas-hpl/).
 
+### OpenBLAS 0.3.34 (2026-08-26)
+
+Upstream tag `v0.3.34` (`TARGET=RISCV64_ZVL256B`), swapped in via FlexiBLAS under the same EESSI `xhpl` — no HPL rebuild. Side-by-side with the patched 0.3.30 EasyBuild backend:
+
+| Config | OpenBLAS **0.3.34** | Patched 0.3.30 | 0.3.34 vs patched |
+| ------ | ------------------:| --------------:| -----------------:|
+| `HPL.dat` (N=8000, 1×8) | **11.04** GFLOP/s, PASSED | 7.72 GFLOP/s, PASSED | **1.43×** |
+| `HPL-sweep.dat` (N=20000, 2×4) | **10.97** GFLOP/s, PASSED | 10.27 GFLOP/s, PASSED | **1.07×** |
+
+Correct Linpack solve (residuals ~3–4e-03). Matches the [BLAS 0.3.34 verify](../scientific-libs/blas.html) (`dgemv` NaN **0**, SYRK/CTRSM PASS). Harness: [`run-hpl-034.sh`](https://github.com/opensolvers/benchmarks/blob/main/hpl/run-hpl-034.sh).
+
 ### A/B — scalar vs patched RVV (`run-hpl-ab.sh`)
 
 Same `xhpl`, backend swapped via FlexiBLAS. All **PASSED** with the fixed vector library:

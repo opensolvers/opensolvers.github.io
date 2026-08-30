@@ -4,9 +4,9 @@
 
 [FFTW](https://www.fftw.org/) 3.3.10 with the **RISC-V Vector (`r5v`) SIMD backend** — a clean A/B against a scalar build of the *same source* with identical compiler and flags. The only variable is `--enable-r5v` (from [rdolbeau's `r5v-test-release-005`](https://github.com/rdolbeau)).
 
-Benchmark source: [opensolvers/benchmarks/fftw](https://github.com/opensolvers/benchmarks/tree/main/fftw) — `build-fftw-r5v.sh` and `bench-fftw-ab.sh`.
+Benchmark source: [opensolvers/benchmarks/fftw](https://github.com/opensolvers/benchmarks/tree/main/fftw) — build/bench scripts, QE wisdom A/B (`run-qe-fft-wisdom-ab.sh`), and `r5v` simd patches.
 
-Relevant to [Quantum ESPRESSO](../apps/qe.html) and [GROMACS](../apps/gromacs.html): real apps spend large fractions on FFT. A FlexiBLAS swap does not touch FFT — swap the library via `LD_PRELOAD` instead (see `run-qe-fft-ab.sh` in the benchmarks repo). Also: [3.31× GROMACS Force backend](https://www.youtube.com/watch?v=COayFhBa0as) (why FFT micro wins can dilute).
+Relevant to [Quantum ESPRESSO](../apps/qe.html) and [GROMACS](../apps/gromacs.html): real apps spend large fractions on FFT. A FlexiBLAS swap does not touch FFT — swap the library via `LD_PRELOAD` instead. Also: [3.31× GROMACS Force backend](https://www.youtube.com/watch?v=COayFhBa0as) (why FFT micro wins can dilute).
 
 ## Orange Pi RV2 (SpaceMiT X60, 1 thread)
 
@@ -84,10 +84,56 @@ The microbench shows real RVV codelets (**1.06–1.60×**). Does that survive in
 
 **~0.2% wall, ~1.9% inside `fftw`** — even though `fftw` is ~45% of runtime. Why the 1.6× micro-win evaporates:
 
-- **QE plans with `FFTW_ESTIMATE`, not `MEASURE`.** The RVV advantage in section (2) is largely a planner effect; under `estimate` the two libs are near-parity — and `estimate` is what QE uses (it cannot afford `MEASURE` across thousands of transient transforms).
-- **3260 small mixed-radix transforms**, not the cache-resident power-of-two sizes where RVV shines.
+- **QE plans with `FFTW_ESTIMATE`, not `MEASURE`.** The RVV advantage above is largely a planner effect; under `estimate` the two libs are near-parity — and `estimate` is what QE uses by default.
+- **Thousands of small mixed-radix transforms**, not the cache-resident power-of-two sizes where RVV shines.
 
-On the X60, **neither the BLAS axis nor the FFT axis moves a real QE SCF** with today's drop-in vectorized libraries. Contrast [GROMACS](../apps/gromacs.html): swapping `libfftw3f` wins **1.23×** on the isolated `PME 3D-FFT` step (but `Force` = 90% of the run).
+Contrast [GROMACS](../apps/gromacs.html): swapping `libfftw3f` wins **1.23×** on the isolated `PME 3D-FFT` step (but `Force` = 90% of the run).
+
+## Wisdom / MEASURE in QE — ~6%, not another 3–5×
+
+Hypothesis: force `FFTW_MEASURE` (or cached wisdom) without patching QE, and the microbench planner gap should appear in SCF. Scripts: `fftw-est2meas-interposer.c` (`LD_PRELOAD` remaps ESTIMATE→MEASURE) + `run-qe-fft-wisdom-ab.sh`.
+
+### 1-D microbench still shows 3–5×
+
+Cold ESTIMATE vs MEASURE on power-of-two complex DFTs (r5v lib): e.g. N=4096 **~294 → ~1285 MFLOPS**. After importing MEASURE wisdom, `FFTW_ESTIMATE` matches MEASURE throughput with ~ms plan cost.
+
+### Serial QE 64-atom (`si-super-64.in`, r5v FFTW)
+
+Energy bit-identical (`−506.67980304 Ry`). WALL seconds:
+
+| step | `fftw` | `init_run` | `PWSCF` |
+| ---- | -----: | ---------: | -----: |
+| 1 ESTIMATE (stock QE) | 85.03 | 28.45 | 188.91 |
+| 2 MEASURE collect | 83.38 | 28.20 | 187.76 |
+| 3 ESTIMATE + MEASURE wisdom | 81.76 | 20.20 | 180.49 |
+| 4 MEASURE + wisdom | 80.08 | 19.91 | 178.63 |
+
+Best vs stock: **`fftw` / `PWSCF` ≈ 1.06×** (~10 s wall). PATIENT wisdom is within noise of MEASURE. The planner trap is real in isolation; QE's ~2362 many-DFTs barely move past MEASURE.
+
+### MPI (`NP=4` / `NP=8`, overlay QE 7.5)
+
+Same cell; r5v via `LD_PRELOAD` + `RTLD_DEEPBIND` (binary RPATH pins stock FFTW.MPI). Per-rank wisdom merged with `merge-fftw-wisdom`.
+
+| NP | best `fftw` vs ESTIMATE | best `PWSCF` |
+| -: | ----------------------: | -----------: |
+| 4 | ~3% | ~2% |
+| 8 | ~3% (`16.06` → `15.53` s) | ~6% (`44.93` → `42.21` s) |
+
+MPI already cuts wall ~3× vs serial; planner quality is not the remaining lever.
+
+## Hot codelets — XOR-conj helps a little; gather rewrites do not
+
+QE MPI wisdom is mostly **solvers**; only ~11 entries are `*_r5v256` codelets (`t2bv_8`, `t2fv_*`, `n2fv_16`, …). `t2bv_8` @ r5v256 has **10× `vrgather`** (index already CSE’d) — gather latency on K1, as Dolbeau noted in [FFTW#371](https://github.com/FFTW/fftw3/issues/371).
+
+| Experiment | Result |
+| ---------- | ------ |
+| Store-shuffle instead of `vrgather` (`VDUPL`/`FLIP_RI`/…) | **0.77–0.89×** — reverted |
+| XOR `VCONJ` + fused `VBYI` (kept) | **+1–7%** micro; QE NP=8 ESTIMATE **`fftw` 1.02×**, **`PWSCF` 1.04×** |
+| NEON-style `VFMAI` / `VZMUL` | within noise / slight `many` loss — reverted |
+| Slide/store `FLIP_RI` alone | gather still faster (~6.9 vs ~11–12 ns) |
+| Hand-split `t2bv_8` (`vlseg2`/`vsseg2`) | bit-exact, **~0.48×** vs stock — reverted |
+
+On X60, short `vrgather` beats the gather-avoidance tricks we tried. Further QE wall gains need a non-FFT hotspot or a larger algorithmic change.
 
 ## EasyBuild module
 
@@ -96,9 +142,11 @@ On the X60, **neither the BLAS axis nor the FFT axis moves a real QE SCF** with 
 ## Reproduce
 
 ```bash
-./build-fftw-r5v.sh    # needs $HOME/fftw-r5v.tar.gz on the board
-./bench-fftw-ab.sh     # writes fftw-proper.log
-./run-qe-fft-ab.sh     # QE FFT-axis A/B (LD_PRELOAD)
+./build-fftw-r5v.sh              # needs $HOME/fftw-r5v.tar.gz on the board
+./bench-fftw-ab.sh               # writes fftw-proper.log
+./run-qe-fft-ab.sh               # QE FFT-axis A/B (LD_PRELOAD)
+./run-qe-fft-wisdom-ab.sh …      # ESTIMATE → MEASURE → wisdom steps
+NP=8 ./run-qe-fft-wisdom-ab.sh … # MPI + merge-fftw-wisdom
 ```
 
 **Gotcha (Orange Pi RV2):** `module load GCCcore/14.3.0` does not repath `gcc` — EESSI's compat GCC 13.4.0 keeps winning. Prepend the real GCC 14 bindir explicitly (see `build-fftw-r5v.sh`). On [Banana Pi F3](../boards/F3.html) the plain `module load GCC/14.3.0` repaths correctly.

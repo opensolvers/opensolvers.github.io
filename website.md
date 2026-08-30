@@ -64,6 +64,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 
 | Date | Decision |
 |------|----------|
+| 2026-08-30 | Sync **FFTW** wisdom/MEASURE QE A/B (~6% serial / ~3–6% MPI) + XOR-conj simd (~2–4%); failed gather/FLIP/split notes — [FFTW](scientific-libs/fftw.html), [QE](apps/qe.html), [RV2](boards/RV2.html) |
 | 2026-08-26 | **OpenBLAS 0.3.34** HPL on RV2: `HPL.dat` **11.04** / sweep **10.97 GFLOP/s PASSED** (vs patched 0.3.30 7.72 / 10.27); sync [HPL](apps/hpl.html), [BLAS](scientific-libs/blas.html), [RV2](boards/RV2.html) |
 | 2026-08-26 | **OpenBLAS 0.3.34** end-to-end verify on RV2: `dgemv` NaN **0**, SYRK PSD **PASS**, CTRSM **2400/0**, DGEMM **15.54 GFLOP/s** @ t8 (vs stock 0.3.30 **9.81**); sync [BLAS](scientific-libs/blas.html), [RV2](boards/RV2.html) |
 | 2026-08-25 | Rewrite **ONNX Runtime** app as results-first story: Qwen/SmolLM2/TinyLlama int4+int8 decode table, then accuracy_level → Q4×16 → Blk128 → SQ8/Q8×16; sync homepage blurb |

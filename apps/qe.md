@@ -39,9 +39,9 @@ The stock vector backend aborts in `inverse_s` (overlap-matrix inversion / Lowdi
 
 ### Default band count (`nbnd=136`)
 
-**67.6 s → 57.0 s = 1.19×** overall (`calbec` 1.90×, `rdiaghg` 1.53×). BLAS routines speed up ~1.5–2.0×; the FFT half does not move with a FlexiBLAS swap. Swapping the FFT library directly ([FFTW](../scientific-libs/fftw.html) `run-qe-fft-ab.sh`) also yields **~0% end-to-end** — QE uses `FFTW_ESTIMATE` on thousands of small transforms, not the `MEASURE` planner where r5v wins **1.06–1.60×** in isolation.
+**67.6 s → 57.0 s = 1.19×** overall (`calbec` 1.90×, `rdiaghg` 1.53×). BLAS routines speed up ~1.5–2.0×; the FFT half does not move with a FlexiBLAS swap. Drop-in r5v FFTW under stock `FFTW_ESTIMATE` is also **~0%** end-to-end; forcing MEASURE/wisdom only adds **~3–6%** (next section) — not the microbench 3–5×.
 
-## FFT axis — RVV FFTW also ~0% end-to-end
+## FFT axis — RVV FFTW ~0% drop-in; wisdom ~6%
 
 Serial `pw.x` on [Orange Pi RV2](../boards/RV2.html), BLAS pinned to scalar OpenBLAS, FFT swapped via `LD_PRELOAD` ([`run-qe-fft-ab.sh`](https://github.com/opensolvers/benchmarks/blob/main/fftw/run-qe-fft-ab.sh)):
 
@@ -50,7 +50,7 @@ Serial `pw.x` on [Orange Pi RV2](../boards/RV2.html), BLAS pinned to scalar Open
 | `fftw` (~45% of run) | 112.24 s | 110.09 s | 1.019× |
 | **`PWSCF` (total)** | **248.49 s** | **248.10 s** | **1.002×** |
 
-Energy bit-identical. A microbenchmark FFT win does not automatically become an application win — see also [GROMACS](gromacs.html) for the FFT-axis mirror ( **1.23×** on isolated `PME 3D-FFT`, diluted by scalar `Force`).
+Energy bit-identical. Remapping ESTIMATE→MEASURE / importing wisdom ([`run-qe-fft-wisdom-ab.sh`](https://github.com/opensolvers/benchmarks/blob/main/fftw/run-qe-fft-wisdom-ab.sh)) recovers **~1.06×** on serial `PWSCF` and **~3–6%** under MPI NP=8 — the microbench planner gap does not carry over to QE's many-DFTs. A small XOR-`VCONJ` simd tweak adds another **~2–4%** on NP=8 ESTIMATE. Details: [FFTW](../scientific-libs/fftw.html). See also [GROMACS](gromacs.html) ( **1.23×** on isolated `PME 3D-FFT`, diluted by scalar `Force`).
 
 ## Higher-memory probes (Orange Pi RV2, 7.7 GB)
 
@@ -79,7 +79,7 @@ Same X60, patched RVV vs scalar:
 | [ELPA](../scientific-libs/elpa.html) (eigensolver) | ~1.58× | BLAS-3 + BLAS-2 tridiagonalization |
 | **QE** (full DFT SCF) | **~1.2–1.5×** | BLAS + ~40–50% FFT + MPI |
 
-Each step down adds more non-BLAS / latency-bound work, diluting the BLAS-3 peak. FFT drop-in swaps still ~0% end-to-end under `FFTW_ESTIMATE`; BLAS wins grow when the cell is large enough that GEMM owns more of the wall.
+Each step down adds more non-BLAS / latency-bound work, diluting the BLAS-3 peak. FFT drop-in under `FFTW_ESTIMATE` is still ~0%; wisdom/MEASURE tops out around **~6%** on this cell. BLAS wins grow when the cell is large enough that GEMM owns more of the wall.
 
 ## Reproducing
 

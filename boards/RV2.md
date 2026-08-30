@@ -123,7 +123,7 @@ End-to-end [HPL on BLIS](../apps/hpl.html#hpl-on-blis--end-to-end-validation): a
 
 ## FFTW RVV
 
-See [FFTW](../scientific-libs/fftw.html) — r5v wins **1.06–1.60×** in `tests/bench`, but **~0%** end-to-end in [Quantum ESPRESSO](../apps/qe.html) (`FFTW_ESTIMATE`).
+See [FFTW](../scientific-libs/fftw.html) — r5v wins **1.06–1.60×** in `tests/bench`; [QE](../apps/qe.html) drop-in under `FFTW_ESTIMATE` is **~0%**, MEASURE/wisdom **~6%**, XOR-conj simd **~2–4%** more on MPI NP=8.
 
 ## GROMACS
 

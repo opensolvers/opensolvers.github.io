@@ -200,11 +200,11 @@ See [PETSc](../scientific-libs/petsc.html) — FlexiBLAS A/B + hand RVV SpMV on 
 | [scikit-learn](../scientific-libs/sklearn.html) | PCA **1.22×**, Ridge **1.90×** |
 | [MODFLOW](../apps/modflow.html) ex-gwf-lgrv-lgr | FlexiBLAS **~1.00×** (flat) |
 
-## Soft-matter / Coulomb / MPI (2026-08-21)
+## Soft-matter / Coulomb / MPI
 
 | Probe | Result |
 | ----- | ------ |
-| [ESPResSo](../apps/espresso.html) P3M FFT | r5v **~1.12×** |
+| [ESPResSo](../apps/espresso.html) P3M FFT | r5v **~0%** (fair pins); **opt build ~1.74×** vs EESSI on dense Coulomb; MPI **~2.8×** @ 8 ranks |
 | [ScaFaCoS](../scientific-libs/scafacos.html) P3M FFT | r5v **~0.99×** |
 | [MetalWalls](../apps/metalwalls.html) tip4p | FFT/BLAS ~**1.00–1.02×** |
 | [PLUMED](../scientific-libs/plumed.html) SPRINT | patched RVV **1.25×** |

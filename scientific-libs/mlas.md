@@ -19,13 +19,17 @@ with `thread_pool=nullptr` so results are **single-thread kernel rates**, not OR
 
 ## Single-thread kernel rates (X60, one core)
 
+Stock CompInt8 before m1pack (historical baseline):
+
 | Shape (M×K×N) | Kernel rate | packed B |
 | ------------- | ----------: | -------: |
 | 1 × 4096 × 11008 | **0.47 GOP/s** | 22.5 MB |
 | 1 × 11008 × 4096 | **0.39 GOP/s** | 22.5 MB |
 | 1 × 4096 × 4096 | **0.48 GOP/s** | 8.4 MB |
 
-These isolate kernel efficiency. Production [ONNX](../apps/onnx.html) inference fans the same kernel across 8 cores (~**6×** scaling at M=1 decode).
+**Shipped m1pack** (Q4×16 panels + M1 asm; BlkLen=32) lands near **~9.5–10.4 GOP/s** on `1×4096×11008`. Panel loop (N-outer / M-inner, `StrideN=16`) adds **~19%** on `4×4096×11008` (2.10 → **2.51** GOP/s); M=1 neutral. TCM-resident packed B does **not** help ORT e2e on RV2 — see [RV2 IME/TCM](../boards/RV2.html#how-to-use-ime-and-when-not-to-use-tcm).
+
+These isolate kernel efficiency. Production [ONNX](../apps/onnx.html) inference fans the same kernel across cores (~**6×** scaling at M=1 decode).
 
 ## RISC-V pack gotcha
 

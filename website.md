@@ -64,6 +64,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 
 | Date | Decision |
 |------|----------|
+| 2026-09-02 | Sync **best IME** ladder on [RV2](boards/RV2.html#best-ime-results-step-2-panel--memory-2026-09-02): full **~42–48 GOP/s**, TCM+fused **68**, kloop **228**, 4c OpenMP **~80**; F3/homepage |
 | 2026-09-02 | Document **IME vs TCM** usage: IME yes (panel loop +19% ONNX M≥4); TCM microbench-only / **off for llama+ONNX e2e** on RV2 — [RV2](boards/RV2.html#how-to-use-ime-and-when-not-to-use-tcm), [llama.cpp](apps/llamacpp.html), [ONNX](apps/onnx.html), [MLAS](scientific-libs/mlas.html) |
 | 2026-08-31 | Sync **ESPResSo**: fair FFT A/B **~0%** RVV; **~1.74×** local opt vs EESSI on dense Coulomb (pair-loop patches); MPI **~2.8×** @ 8 ranks — [ESPResSo](apps/espresso.html), [RV2](boards/RV2.html), [benchmarks/espresso](https://github.com/opensolvers/benchmarks/tree/main/espresso) |
 | 2026-08-30 | Sync **FFTW** wisdom/MEASURE QE A/B (~6% serial / ~3–6% MPI) + XOR-conj simd (~2–4%); failed gather/FLIP/split notes — [FFTW](scientific-libs/fftw.html), [QE](apps/qe.html), [RV2](boards/RV2.html) |

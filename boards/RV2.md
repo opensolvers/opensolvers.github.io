@@ -54,6 +54,16 @@ Peak **~42 GOP/s** single-core — vs ~5 GOP/s for a straightforward RVV int8 pa
 
 End-to-end [llama.cpp](../apps/llamacpp.html): **10/10** Q4_0 models (0.5B–7.6B) validated — IME wins prefill ≥1.1B (up to ~2.5×), RVV wins token-gen. Q8_0 **hybrid** restores decode (**6.68** vs **0.83** tg32 @ t4) at ~2× weight RAM. Staging fork: [`opensolvers/llama.cpp`](https://github.com/opensolvers/llama.cpp) branch [`x60-ime-rvv`](https://github.com/opensolvers/llama.cpp/tree/x60-ime-rvv).
 
+### How to use IME (and when not to use TCM)
+
+| Lever | Use? | How | Expect on RV2 |
+| ----- | ---- | --- | ------------- |
+| **IME** (`smt.vmadot`) | **Yes** | CompInt8 / pack-time offline B; pin cluster 0 (`taskset -c 0` / `0-3`); prefer `-t4` over `-t8` for IME GEMM | ~42–45 GOP/s micro; real wins in [llama.cpp](../apps/llamacpp.html) prefill and [ONNX](../apps/onnx.html) decode |
+| Panel / memory (pre-TCM) | **Yes** | nc≈16-col B-panel, offline B, N-outer/M-inner | +10–20% on M≥4; M=1 mostly neutral ([benchmarks/ime](https://github.com/opensolvers/benchmarks/tree/main/ime), [ONNX panel](../apps/onnx.html#6-panel-loop-pre-tcm)) |
+| **TCM** (`/dev/tcm`, 512 KiB) | **Microbench only** | Offline B resident in TCM when packed weights **fit** | Up to **+55%** @768³ synthetic; **leave off** for LLM e2e |
+
+**TCM rule of thumb:** real GGUF / MatMulNBits weights are tens–hundreds of MiB, so apps can only **memcpy panels each GEMM** — that path loses (−15…−48% llama; −6…−10% ONNX when B fits; FFN packedB skips). For production inference on RV2: **IME on, TCM off** (`SPACEMIT_DISABLE_TCM=1`). Probe/shim details: [benchmarks/ime](https://github.com/opensolvers/benchmarks/tree/main/ime) (`tcm.c`, `spine_tcm_shim.c`). Full guide: [benchmarks README — IME and TCM](https://github.com/opensolvers/benchmarks#ime-and-tcm--when--how-to-use-them).
+
 ### IME1 scale-build prefill optimization (llama.cpp)
 
 llama.cpp's block-scaled Q4_0 kernel (`gemm_kernel_i8i4`) pays a per-block FP scale tax (~31–37% vs raw `s8s8s32`). Patch [`llama-ime1-scalebuild-opt.patch`](https://github.com/opensolvers/benchmarks/blob/main/ime/llama-ime1-scalebuild-opt.patch) rebuilds `As×Bs` scales with `vfmul.vv` (`LOAD_SCALE_4x16_FP16_OPT`) instead of the masked `vfmul.vf` chain.

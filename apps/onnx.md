@@ -83,6 +83,21 @@ Mirror the int4 panel trick for int8: Llama **i8i8** layout (16 columns × k-blo
 
 GenAI int8 exports often mis-wire the embed path (`weight_Q4`, `bits=4`, half-width reshape). Fix to `weight_Q8` / `bits=8` / full hidden before load — same class of “grep the artifact” bug as missing `accuracy_level`.
 
+### 6. Panel loop (pre-TCM)
+
+Port of the ime-bench step-2 lever into MLAS CompInt8: **N-panel outer** (16 cols, offline Q4×16 / Q8×16) → M-inner → K, with driver `StrideN=16` for `M≥4`. M=1 llama M1 asm keeps wide chunks.
+
+| Shape | m1pack | +panel | Δ |
+| ----- | -----: | -----: | --: |
+| 1×4096×11008 | 9.45 GOP/s | 9.45 | — |
+| **4×4096×11008** | 2.10 | **2.51** | **+19%** |
+
+Script: [`run-qnbit-panel-ab.sh`](https://github.com/opensolvers/benchmarks/blob/main/onnx/run-qnbit-panel-ab.sh). Helps prefill / batched decode; M=1 decode unchanged.
+
+### 7. TCM — skip for ORT on RV2
+
+ONNX MLAS has no `libspine_tcm` path. A/B with packed B in `/dev/tcm` ([`bench_qnbit_tcm.cpp`](https://github.com/opensolvers/benchmarks/blob/main/onnx/bench_qnbit_tcm.cpp)): offline TCM **−6…−10%** when B fits; real FFN packedB (**25 MiB**) skips. Same conclusion as llama — **IME yes, TCM no** for e2e. Guide: [RV2](../boards/RV2.html#how-to-use-ime-and-when-not-to-use-tcm).
+
 ---
 
 ## Reproduce
@@ -110,3 +125,4 @@ bash run-tinyllama-ort.sh         # TinyLlama-1.1B
 3. **Config, then pack, then panels** — `accuracy_level=4` → CompInt8; BlkLen must match the pack; M1 panels recover decode.
 4. **Int8 needed its own ship path** — SQ8Bit + Q8×16, not “hope int4 helps.”
 5. **Grep the ONNX** — missing attributes and broken embed wiring look like slow kernels until you read the bytes.
+6. **Panel loop for M≥4** — N-outer B-panel +19% on 4×FFN; TCM does not help e2e on RV2.

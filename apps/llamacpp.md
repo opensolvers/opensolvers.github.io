@@ -130,6 +130,17 @@ Hybrid lifts Q8_0 decode ~**8×** vs IME-only while slightly improving pp. Cost:
 
 Pipelining port (`load`/`smt.vmadot` interleave): kernel **~4–5%**; end-to-end pp512 within noise — synthetic kloop wins do not transfer (llama INNER is only 2 K-steps).
 
+### TCM — leave off on RV2 (2026-09-02)
+
+llama.cpp can stage A/B panels through TCM when `libspine_tcm.so` is present. RV2 has `/dev/tcm` but no vendor `.so`; [`spine_tcm_shim.c`](https://github.com/opensolvers/benchmarks/blob/main/ime/spine_tcm_shim.c) provides a drop-in over the kernel device. End-to-end A/B (Qwen2.5-0.5B) **regresses**:
+
+| config | no TCM | shim TCM | Δ |
+| ------ | -----: | -------: | --: |
+| Q8_0 pp512 @ t4 | 70.1 | 50.4 | **−28%** |
+| Q4_0 pp512 @ t4 | 96.8 | 49.9 | **−48%** |
+
+Synthetic IME TCM wins only when **full offline B fits in 512 KiB**. Real weights do not — staging memcpy each GEMM loses. **Recommendation:** `SPACEMIT_DISABLE_TCM=1` (or do not preload the shim). See [RV2 — how to use IME / TCM](../boards/RV2.html#how-to-use-ime-and-when-not-to-use-tcm).
+
 ### IME1 scale-build ([#2](https://github.com/opensolvers/llama.cpp/pull/2))
 
 Replaces the masked `vfmul.vf` scale-combine chain with `LOAD_SCALE_4x16_FP16_OPT` (`vfmul.vv`). Isolated interleaved A/B on RV2: **+4.3%** pp512 (22.50 → 23.47 GOP/s), bit-exact, 30/30 rounds. End-to-end `llama-bench` pp512 on this multi-tenant board sits under ±15–20% noise. Details: [RV2 IME scale-build](../boards/RV2.html#ime1-scale-build-prefill-optimization-llamacpp).
@@ -217,3 +228,4 @@ Harnesses and TSVs: [benchmarks/llamacpp](https://github.com/opensolvers/benchma
 4. **Fork kernels:** Q8_0/Q6_K IME GEMM, hybrid split, +4.3% scale-build, RVV softmax (~2×), M1 GEMV (**6.45×** tg on Q8_0 — [#5](https://github.com/opensolvers/llama.cpp/pull/5)).
 5. **7B Q4_0 is the practical ceiling** on 8 GB no-swap; keep ctx modest on ≥3B.
 6. **Pick build by quant + workload** — not “IME always” or “RVV always”.
+7. **TCM off on RV2** — shim enables the path but e2e staging loses; keep `SPACEMIT_DISABLE_TCM=1`.

@@ -64,6 +64,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 
 | Date | Decision |
 |------|----------|
+| 2026-09-02 | Document **IME vs TCM** usage: IME yes (panel loop +19% ONNX M≥4); TCM microbench-only / **off for llama+ONNX e2e** on RV2 — [RV2](boards/RV2.html#how-to-use-ime-and-when-not-to-use-tcm), [llama.cpp](apps/llamacpp.html), [ONNX](apps/onnx.html), [MLAS](scientific-libs/mlas.html) |
 | 2026-08-31 | Sync **ESPResSo**: fair FFT A/B **~0%** RVV; **~1.74×** local opt vs EESSI on dense Coulomb (pair-loop patches); MPI **~2.8×** @ 8 ranks — [ESPResSo](apps/espresso.html), [RV2](boards/RV2.html), [benchmarks/espresso](https://github.com/opensolvers/benchmarks/tree/main/espresso) |
 | 2026-08-30 | Sync **FFTW** wisdom/MEASURE QE A/B (~6% serial / ~3–6% MPI) + XOR-conj simd (~2–4%); failed gather/FLIP/split notes — [FFTW](scientific-libs/fftw.html), [QE](apps/qe.html), [RV2](boards/RV2.html) |
 | 2026-08-26 | **OpenBLAS 0.3.34** HPL on RV2: `HPL.dat` **11.04** / sweep **10.97 GFLOP/s PASSED** (vs patched 0.3.30 7.72 / 10.27); sync [HPL](apps/hpl.html), [BLAS](scientific-libs/blas.html), [RV2](boards/RV2.html) |

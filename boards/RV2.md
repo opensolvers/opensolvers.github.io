@@ -42,15 +42,30 @@ EESSI `foss-2025b` on this board is still **GCC 14.3 + binutils 2.44** — neith
 
 Same hardware and toolchain story apply on the [Banana Pi F3](F3.html) (identical K1 / X60 silicon).
 
-Microbenchmarks in [opensolvers/benchmarks/ime](https://github.com/opensolvers/benchmarks/tree/main/ime) (`ime-bench`): pure `s8s8s32` GEMM, bit-exact vs a scalar reference, timed against a plain RVV int8 baseline on this board (core 0, 1.6 GHz):
+Microbenchmarks in [opensolvers/benchmarks/ime](https://github.com/opensolvers/benchmarks/tree/main/ime) (`ime-bench`): pure `s8s8s32` GEMM, bit-exact vs a scalar reference, timed against a plain RVV int8 baseline on this board (core 0, 1.6 GHz). Clean-layout peaks (max over ≥5 launches):
 
 | M×N×K | RVV int8 | IME (`smt.vmadot`) | IME / RVV |
 | ----- | -------- | ------------------ | --------- |
 | 512×512×512 | 5.2 GOP/s | **39 GOP/s** | **7.5×** |
-| 768×768×512 | ~5.2 GOP/s | **42 GOP/s** (peak) | **8.1×** |
+| 768×768×512 | ~5.2 GOP/s | **42 GOP/s** | **8.1×** |
 | 1024×1024×512 | 5.2 GOP/s | **32 GOP/s** | 6.2× |
 
-Peak **~42 GOP/s** single-core — vs ~5 GOP/s for a straightforward RVV int8 path. End-to-end ORT decode (Qwen / SmolLM2 / TinyLlama int4+int8) through [ONNX Runtime](../apps/onnx.html) and isolated [MLAS](../scientific-libs/mlas.html) kernel rates use the same IME hardware; see also [papers/x60-ime-block-scale-optimization](https://github.com/opensolvers/benchmarks/blob/main/papers/x60-ime-block-scale-optimization.md) in the benchmarks repo.
+### Best IME results (step-2 panel / memory, 2026-09-02)
+
+Same `ime-bench` stack after nc≈16-col panels, offline B, and optional TCM. All bit-exact vs scalar. Shape **768³**, cluster 0:
+
+| Path | GOP/s | Notes |
+| ---- | ----: | ----- |
+| Full pack+compute (DRAM) | ~44 | baseline after panel defaults |
+| Offline-B DRAM | ~48 | `pack_b` once; repack A per GEMM (**+9–10%**) |
+| Compute only (pre-packed) | ~48 | megakernel cache-touch **off** (−5% if on) |
+| **TCM offline-B + fused pack_a** | **68.0** | **+55%** vs full; B must fit in **512 KiB** |
+| Isolated kloop (L1 8×16) | **228** | ~56% of 409.6 @1.6 GHz theoretical |
+| OpenMP M-split 4c wall | **~80** | shared IME/L2; ~2.5–3.2× vs 1c, not 4× |
+
+**Headline:** production-shaped full GEMM crests **~42–48 GOP/s** single-core (~7–8× RVV). Best synthetic when static B fits in TCM: **68 GOP/s**. That TCM path does **not** transfer to llama/ONNX e2e (weights ≫512 KiB) — see below. BPI-F3 clean peak: **~45 GOP/s** @768³ ([F3](F3.html)).
+
+End-to-end ORT decode (Qwen / SmolLM2 / TinyLlama int4+int8) through [ONNX Runtime](../apps/onnx.html) and isolated [MLAS](../scientific-libs/mlas.html) kernel rates use the same IME hardware (~**10 GOP/s** m1pack M=1; panel **+19%** @ M=4). See also [papers/x60-ime-block-scale-optimization](https://github.com/opensolvers/benchmarks/blob/main/papers/x60-ime-block-scale-optimization.md).
 
 End-to-end [llama.cpp](../apps/llamacpp.html): **10/10** Q4_0 models (0.5B–7.6B) validated — IME wins prefill ≥1.1B (up to ~2.5×), RVV wins token-gen. Q8_0 **hybrid** restores decode (**6.68** vs **0.83** tg32 @ t4) at ~2× weight RAM. Staging fork: [`opensolvers/llama.cpp`](https://github.com/opensolvers/llama.cpp) branch [`x60-ime-rvv`](https://github.com/opensolvers/llama.cpp/tree/x60-ime-rvv).
 
@@ -58,9 +73,9 @@ End-to-end [llama.cpp](../apps/llamacpp.html): **10/10** Q4_0 models (0.5B–7.6
 
 | Lever | Use? | How | Expect on RV2 |
 | ----- | ---- | --- | ------------- |
-| **IME** (`smt.vmadot`) | **Yes** | CompInt8 / pack-time offline B; pin cluster 0 (`taskset -c 0` / `0-3`); prefer `-t4` over `-t8` for IME GEMM | ~42–45 GOP/s micro; real wins in [llama.cpp](../apps/llamacpp.html) prefill and [ONNX](../apps/onnx.html) decode |
+| **IME** (`smt.vmadot`) | **Yes** | CompInt8 / pack-time offline B; pin cluster 0 (`taskset -c 0` / `0-3`); prefer `-t4` over `-t8` for IME GEMM | **~42–48 GOP/s** full GEMM; **68** with TCM when B fits; real wins in [llama.cpp](../apps/llamacpp.html) / [ONNX](../apps/onnx.html) |
 | Panel / memory (pre-TCM) | **Yes** | nc≈16-col B-panel, offline B, N-outer/M-inner | +10–20% on M≥4; M=1 mostly neutral ([benchmarks/ime](https://github.com/opensolvers/benchmarks/tree/main/ime), [ONNX panel](../apps/onnx.html#6-panel-loop-pre-tcm)) |
-| **TCM** (`/dev/tcm`, 512 KiB) | **Microbench only** | Offline B resident in TCM when packed weights **fit** | Up to **+55%** @768³ synthetic; **leave off** for LLM e2e |
+| **TCM** (`/dev/tcm`, 512 KiB) | **Microbench only** | Offline B resident in TCM when packed weights **fit** | Up to **68 GOP/s** (+55% @768³); **leave off** for LLM e2e |
 
 **TCM rule of thumb:** real GGUF / MatMulNBits weights are tens–hundreds of MiB, so apps can only **memcpy panels each GEMM** — that path loses (−15…−48% llama; −6…−10% ONNX when B fits; FFN packedB skips). For production inference on RV2: **IME on, TCM off** (`SPACEMIT_DISABLE_TCM=1`). Probe/shim details: [benchmarks/ime](https://github.com/opensolvers/benchmarks/tree/main/ime) (`tcm.c`, `spine_tcm_shim.c`). Full guide: [benchmarks README — IME and TCM](https://github.com/opensolvers/benchmarks#ime-and-tcm--when--how-to-use-them).
 

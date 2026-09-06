@@ -2,6 +2,8 @@
 
 [ELPA](https://elpa.mpcdf.mpg.de/) is a dense real-symmetric eigensolver used in DFT codes (CP2K, VASP, ELSI). It exercises a **mix of BLAS-2 and BLAS-3** (`dsymv`, `dsyr2k`, `dgemm`, `dtrmm`) — a more representative BLAS probe than raw `dgemm`.
 
+**Video:** [ELPA on RISC-V: Stock RVV Returns ev0=nan — Then 1.58× with Patched OpenBLAS](https://www.youtube.com/watch?v=9YVAbxyOro0) — [all videos](../videos.html)
+
 Benchmark source: [opensolvers/benchmarks/elpa](https://github.com/opensolvers/benchmarks/tree/main/elpa).
 
 ## Orange Pi RV2 (SpaceMiT X60, 8 cores)

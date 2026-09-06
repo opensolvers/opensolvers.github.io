@@ -1,4 +1,29 @@
 # YouTube videos — add new entries here (newest first).
+- id: elpa-rvv-rv2
+  title: "ELPA on RISC-V: Stock RVV Returns ev0=nan — Then 1.58× with Patched OpenBLAS"
+  description: >
+    ELPA dense eigensolver on Orange Pi RV2: stock EESSI OpenBLAS RVV finishes in
+    42.17 s but ev0=nan (finite=0). Patched gemv_n → 34.81 s, finite=1, 1.58×
+    scalar. Same FlexiBLAS swap as HPL and QE — no ELPA rebuild.
+  youtube_id: 9YVAbxyOro0
+  date: 2026-09-06
+  duration: PT2M41S
+  boards:
+    - Orange Pi RV2
+  topics:
+    - ELPA
+    - OpenBLAS
+    - gemv_n
+    - FlexiBLAS
+    - eigensolver
+    - RVV
+  related_pages:
+    - title: ELPA notes
+      url: /scientific-libs/elpa.html
+    - title: Orange Pi RV2 board notes
+      url: /boards/RV2.html
+    - title: BLAS notes
+      url: /scientific-libs/blas.html
 - id: blis-vs-openblas-rv2
   title: "BLIS vs OpenBLAS on RISC-V: 1.29× DGEMM — Then 0.5× HPL"
   description: >

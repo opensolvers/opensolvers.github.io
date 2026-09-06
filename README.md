@@ -16,6 +16,7 @@ Those core-level fixes and tunings are what HPC already runs at scale: the same 
 
 Walkthroughs on our [YouTube channel](https://www.youtube.com/@opensolvers) — see the full list on the [Videos](videos.html) page.
 
+- **[ELPA on RISC-V](https://www.youtube.com/watch?v=9YVAbxyOro0)** — stock RVV returns `ev0=nan`; patched gemv_n → 34.81 s · 1.58× scalar
 - **[BLIS vs OpenBLAS on RISC-V](https://www.youtube.com/watch?v=zLMkNrl3NNw)** — 1.29× square DGEMM, then 0.35–0.53× HPL (PASSED); panel-heavy vs square
 - **[GCC 15.2 mtune on RISC-V](https://www.youtube.com/watch?v=guKeNzHXm70)** — teach `-mtune=spacemit-x60`; canaries −8.7%/−7.7%; DGEMM +3.8%; HPL +0.8%
 - **[When RVV FFT Wins 1.6× — 0% in QE](https://www.youtube.com/watch?v=FlumrCEUIBE)** — planner trap: MEASURE micro wins evaporate under `FFTW_ESTIMATE`

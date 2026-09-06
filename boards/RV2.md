@@ -4,6 +4,7 @@ The Orange Pi RV2 is built on the SpaceMiT **K1** SoC: eight **SpacemiT X60** co
 
 ## Video walkthrough
 
+- **[ELPA on RISC-V: Stock RVV Returns ev0=nan — Then 1.58× with Patched OpenBLAS](https://www.youtube.com/watch?v=9YVAbxyOro0)** — 42.17 s FAIL → 34.81 s · 1.58×; same `gemv_n`
 - **[BLIS vs OpenBLAS on RISC-V: 1.29× DGEMM — Then 0.5× HPL](https://www.youtube.com/watch?v=zLMkNrl3NNw)** — vector vs vector; square win, panel loss
 - **[GCC 15.2 on RISC-V: Teaching mtune=spacemit-x60 (−8.7% Canaries, +3.8% DGEMM)](https://www.youtube.com/watch?v=guKeNzHXm70)** — one flag; canaries to DGEMM/HPL dilution
 - **[When RVV FFT Wins 1.6× — and Gives 0% in Quantum ESPRESSO](https://www.youtube.com/watch?v=FlumrCEUIBE)** — planner trap; micro MEASURE ≠ QE `ESTIMATE`

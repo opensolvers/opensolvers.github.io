@@ -10,7 +10,7 @@ Context file for structural and content decisions on [opensolvers.com](https://w
 
 | Area | Path | Purpose |
 |------|------|---------|
-| Homepage | `README.md` → `/` | Intro, scientific libs, apps, board summaries; Contact form + newsletter subscribe |
+| Homepage | `README.md` → `/` | Short intro, highlights, compute paths, compact lib/app/board indexes; Contact + newsletter |
 | Contact | `_includes/mailmoose-contact.html` | Mailmoose CRM inbox (`POST …/lists/opensolvers/contact`) |
 | Newsletter | `_includes/mailmoose-subscribe.html` | Mailmoose list `opensolvers` (`POST …/lists/opensolvers/subscribe`) |
 | Videos | `videos.md` → `/videos.html` | YouTube walkthroughs (`_data/videos.yml`) |
@@ -64,6 +64,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 
 | Date | Decision |
 |------|----------|
+| 2026-09-08 | Simplify homepage: drop video dump + megaparagraph; short Highlights; compact lib/app link rows |
 | 2026-09-02 | Sync **best IME** ladder on [RV2](boards/RV2.html#best-ime-results-step-2-panel--memory-2026-09-02): full **~42–48 GOP/s**, TCM+fused **68**, kloop **228**, 4c OpenMP **~80**; F3/homepage |
 | 2026-09-02 | Document **IME vs TCM** usage: IME yes (panel loop +19% ONNX M≥4); TCM microbench-only / **off for llama+ONNX e2e** on RV2 — [RV2](boards/RV2.html#how-to-use-ime-and-when-not-to-use-tcm), [llama.cpp](apps/llamacpp.html), [ONNX](apps/onnx.html), [MLAS](scientific-libs/mlas.html) |
 | 2026-08-31 | Sync **ESPResSo**: fair FFT A/B **~0%** RVV; **~1.74×** local opt vs EESSI on dense Coulomb (pair-loop patches); MPI **~2.8×** @ 8 ranks — [ESPResSo](apps/espresso.html), [RV2](boards/RV2.html), [benchmarks/espresso](https://github.com/opensolvers/benchmarks/tree/main/espresso) |

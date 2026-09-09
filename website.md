@@ -64,6 +64,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 
 | Date | Decision |
 |------|----------|
+| 2026-09-09 | Simplify [BLAS](scientific-libs/blas.html): story table + 0.3.34 summary; drop duplicate difftest/DGEMM dumps |
 | 2026-09-08 | Simplify homepage: drop video dump + megaparagraph; short Highlights; compact lib/app link rows |
 | 2026-09-02 | Sync **best IME** ladder on [RV2](boards/RV2.html#best-ime-results-step-2-panel--memory-2026-09-02): full **~42–48 GOP/s**, TCM+fused **68**, kloop **228**, 4c OpenMP **~80**; F3/homepage |
 | 2026-09-02 | Document **IME vs TCM** usage: IME yes (panel loop +19% ONNX M≥4); TCM microbench-only / **off for llama+ONNX e2e** on RV2 — [RV2](boards/RV2.html#how-to-use-ime-and-when-not-to-use-tcm), [llama.cpp](apps/llamacpp.html), [ONNX](apps/onnx.html), [MLAS](scientific-libs/mlas.html) |

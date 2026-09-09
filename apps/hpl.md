@@ -1,104 +1,52 @@
 ---
 title: HPL results on RISC-V boards
-description: High Performance Linpack cross-board summary — VisionFive 2 U74 tuning, Orange Pi RV2 and Banana Pi F3 X60 fixes, EESSI stack, and FlexiBLAS backend swaps.
+description: High Performance Linpack on VisionFive 2, Orange Pi RV2, and Banana Pi F3 — OpenBLAS fixes, 0.3.34, BLIS end-to-end.
 ---
 
-# HPL results overview
+# HPL
 
-**HPL** (High Performance Linpack) is the classic dense linear-algebra benchmark behind the TOP500: factor a large matrix and solve Ax=b with LU. It stress-tests BLAS (especially GEMM) end-to-end.
+**HPL** (High Performance Linpack) factors a large matrix and solves Ax=b — the TOP500-style dense LU stress test of BLAS end-to-end.
 
-Cross-board summary on consumer RISC-V hardware through the EESSI stack. Configs and an A/B runner (`run-hpl-ab.sh`) are in [opensolvers/benchmarks/hpl](https://github.com/opensolvers/benchmarks/tree/main/hpl).
+Configs + A/B: [opensolvers/benchmarks/hpl](https://github.com/opensolvers/benchmarks/tree/main/hpl). Backend story: [BLAS](../scientific-libs/blas.html). **Video:** [NaN Linpack on RISC-V](https://www.youtube.com/watch?v=W_-8cKA-CCU) · [EESSI blog](https://www.eessi.io/docs/blog/2026/07/12/risc-v-x60-openblas-hpl/).
 
-**Toolchain:** GCC 14.3.0, OpenBLAS 0.3.30, HPL 2.3.0. EESSI `2025.06-001` on [`dev.eessi.io/riscv`](https://www.eessi.io/docs/repositories/dev.eessi.io-riscv/).
+Same `xhpl` throughout; OpenBLAS swapped via FlexiBLAS (no HPL rebuild). EESSI `2025.06-001`, GCC 14.3, HPL 2.3.
 
-## Cross-board summary
+## Cross-board
 
-| Board | Cores | Before | After |
-| ----- | ----- | ------ | ----- |
-| [VisionFive 2](../boards/VisionFive2.html) | 4× SiFive U74 | 3.13 GFLOP/s | **5.28 GFLOP/s** |
-| [Orange Pi RV2](../boards/RV2.html) | 8× SpacemiT X60 | FAILED (`nan`) | **10.53 GFLOP/s** |
-| [Banana Pi F3](../boards/F3.html) | 8× SpacemiT X60 | FAILED (`nan`) | **11.52 GFLOP/s** |
+| Board | Before (stock 0.3.30) | After (fixed OpenBLAS) |
+| ----- | --------------------- | ---------------------- |
+| [VisionFive 2](../boards/VisionFive2.html) (4× U74) | 3.13 GFLOP/s | **5.28 GFLOP/s** (**1.69×**) |
+| [Orange Pi RV2](../boards/RV2.html) (8× X60) | ~8.5 GFLOP/s, **FAILED** (`nan`) | **10.53 GFLOP/s**, PASSED |
+| [Banana Pi F3](../boards/F3.html) (8× X60, 3.7 GB) | 11.64 GFLOP/s, **FAILED** (`nan`) | **11.52 GFLOP/s**, PASSED |
 
-**Before** — stock EESSI OpenBLAS 0.3.30 (same `xhpl` binary throughout).
+X60 stock RVV looked “fast” but residual was `nan` — broken `gemv_n` ([easyconfigs#26444](https://github.com/easybuilders/easybuild-easyconfigs/pull/26444)).
 
-**After** — fixed OpenBLAS via EasyBuild + FlexiBLAS backend swap (no HPL rebuild). See [BLAS overview](../scientific-libs/blas.html).
+## Orange Pi RV2
 
-Related (separate axis): [GCC X60 mtune](../scientific-libs/gcc.html) — 14.3 / 15.2 patches; 15.2 rebuilds OpenBLAS under `-mtune=spacemit-x60` vs `generic-ooo` (modest HPL N=3000 **+0.8%** on RV2; local proof, not EESSI yet).
+| Config | Result |
+| ------ | ------ |
+| Stock RVV N=8000 | ~8.5 GFLOP/s, **FAILED** |
+| Fixed RVV peak (N=20000, 2×4) | **10.53** GFLOP/s, PASSED |
+| Scalar vs patched RVV (N=8000) | 6.41 → **11.55** (**1.80×**) |
+| OpenBLAS **0.3.34** (N=8000 / N=20000) | **11.04** / **10.97** vs patched 0.3.30 |
 
-## Orange Pi RV2 — detailed results
+Prefer a **2×4** grid over 1×8 for peak. Large N is RAM-tight on 8 GB. Harness: [`run-hpl-ab.sh`](https://github.com/opensolvers/benchmarks/blob/main/hpl/run-hpl-ab.sh), [`run-hpl-034.sh`](https://github.com/opensolvers/benchmarks/blob/main/hpl/run-hpl-034.sh).
 
-**Video:** [NaN Linpack on RISC-V: Fixing OpenBLAS gemv_n on Orange Pi RV2 (EESSI)](https://www.youtube.com/watch?v=W_-8cKA-CCU) — [all videos](../videos.html)
+GCC X60 mtune is a separate axis ([GCC](../scientific-libs/gcc.html)) — modest HPL **+0.8%** on 15.2.
 
-Stock EESSI dispatches RVV `ZVL256B` on the X60, but the unpatched `gemv_n` kernel makes HPL report ~8.5 GFLOP/s while **failing** the residual check (`nan`). With the [easyconfigs#26444](https://github.com/easybuilders/easybuild-easyconfigs/pull/26444) fix, all runs below **PASSED**.
+## HPL on BLIS
 
-### EESSI walkthrough (fixed backend)
+Dedicated `xhpl` + static RVV `libblis.a` (no FlexiBLAS on RV2). Correctness holds; square-DGEMM wins do not transfer:
 
-| Config | Grid | N | Result |
-| ------ | ---- | - | ------ |
-| Stock EESSI, default RVV | 1×8 | 8000 | ~8.5 GFLOP/s, **FAILED** (`nan`) |
-| Fixed RVV, peak | 2×4 | 20000 | **10.53 GFLOP/s**, PASSED |
+| Config | BLIS | vs OpenBLAS-RVV |
+| ------ | ---: | --------------: |
+| N=8000, 1×8 | 4.02 GFLOP/s PASSED | **0.35×** |
+| N=20000, 2×4 | 5.57 GFLOP/s PASSED | **0.53×** |
+| N=25600 best (2×4) | **5.87** PASSED | — |
 
-Walkthrough: [EESSI blog — Chasing a NaN (X60 OpenBLAS / HPL)](https://www.eessi.io/docs/blog/2026/07/12/risc-v-x60-openblas-hpl/).
+HPL is panel-heavy (`dtrsm` / level-2), not the large square DGEMM where [BLIS](../scientific-libs/blis.html) wins ~1.3× single-thread.
 
-### OpenBLAS 0.3.34 (2026-08-26)
+## Other boards
 
-Upstream tag `v0.3.34` (`TARGET=RISCV64_ZVL256B`), swapped in via FlexiBLAS under the same EESSI `xhpl` — no HPL rebuild. Side-by-side with the patched 0.3.30 EasyBuild backend:
-
-| Config | OpenBLAS **0.3.34** | Patched 0.3.30 | 0.3.34 vs patched |
-| ------ | ------------------:| --------------:| -----------------:|
-| `HPL.dat` (N=8000, 1×8) | **11.04** GFLOP/s, PASSED | 7.72 GFLOP/s, PASSED | **1.43×** |
-| `HPL-sweep.dat` (N=20000, 2×4) | **10.97** GFLOP/s, PASSED | 10.27 GFLOP/s, PASSED | **1.07×** |
-
-Correct Linpack solve (residuals ~3–4e-03). Matches the [BLAS 0.3.34 verify](../scientific-libs/blas.html) (`dgemv` NaN **0**, SYRK/CTRSM PASS). Harness: [`run-hpl-034.sh`](https://github.com/opensolvers/benchmarks/blob/main/hpl/run-hpl-034.sh).
-
-### A/B — scalar vs patched RVV (`run-hpl-ab.sh`)
-
-Same `xhpl`, backend swapped via FlexiBLAS. All **PASSED** with the fixed vector library:
-
-| Config | Scalar (`RISCV64_GENERIC`) | Patched RVV (`ZVL256B`) | Speedup |
-| ------ | -------------------------- | ----------------------- | ------- |
-| `HPL.dat` (N=8000, 1×8) | 6.41 GFLOP/s | 11.55 GFLOP/s | **1.80×** |
-| `HPL_big.dat` (N=28672, 1×8) | 7.38 GFLOP/s | 13.41 GFLOP/s | **1.82×** |
-| `HPL-sweep.dat` (N=20000, 2×4) | — | ~10.5 GFLOP/s | — |
-
-A squarer **2×4** grid beats 1×8 for peak throughput. `HPL_big.dat` needs ~6.6 GB RAM — tight on 8 GB boards.
-
-### HPL on BLIS — end-to-end validation
-
-Unlike the FlexiBLAS OpenBLAS A/B above, BLIS cannot be swapped at runtime on the RV2 (no FlexiBLAS). A dedicated `xhpl` is linked statically against RVV `libblis.a` (`Make.rv64_blis`, `build-hpl-blis.sh`). Source: [benchmarks/hpl](https://github.com/opensolvers/benchmarks/tree/main/hpl).
-
-This validates that RVV BLIS drives a real Linpack solve — not just square DGEMM — because HPL's panel path leans on `dgemv`/`dtrsv` (the same reason stock OpenBLAS NaN'd).
-
-| Config | BLIS GFLOP/s | Residual | vs patched OpenBLAS-RVV |
-| ------ | -----------: | -------- | ----------------------: |
-| `HPL.dat` (N=8000, 1×8) | 4.02 | 4.12e-03 PASSED | **0.35×** |
-| `HPL-sweep.dat` (N=20000, 2×4) | 5.57 | 3.39e-03 PASSED | **0.53×** |
-
-#### Full-memory process-grid sweep (N=25600)
-
-Largest square problem that fits (~5.2 GB). N=28672 OOMs on this 8 GB no-swap board (rank 7 signal 9).
-
-| Grid | GFLOP/s | Time | Residual |
-| ---- | ------: | ---: | -------- |
-| **2×4** | **5.87** | 1904.5 s | 3.37e-03 PASSED |
-| 1×8 | 5.84 | 1916.0 s | 2.84e-03 PASSED |
-| 4×2 | 5.23 | 2140.5 s | 4.07e-03 PASSED |
-| 8×1 | 4.31 | 2592.9 s | 5.75e-03 PASSED |
-
-**Takeaway:** correctness holds (no NaN, residual on par with OpenBLAS). Throughput trails patched-RVV OpenBLAS — HPL is panel-heavy (thin k=256, `dtrsm`, level-2), not the large square DGEMM where BLIS wins ~1.2–1.3× single-thread. Wide grids beat tall (8×1 −26% vs 2×4). See [BLIS](../scientific-libs/blis.html).
-
-## VisionFive 2
-
-Scalar U74 — stock OpenBLAS uses a generic kernel; the U74-tuned build lifts HPL **3.13 → 5.28 GFLOP/s** (**1.69×**). Walkthrough: [EESSI/docs#818](https://github.com/EESSI/docs/pull/818).
-
-## Banana Pi F3
-
-Same K1 / X60 SoC as the Orange Pi RV2 — cross-board confirmation on [opensolvers/benchmarks](https://github.com/opensolvers/benchmarks). **3.7 GB RAM** limits problem size: only `HPL.dat` (N=8000) was run; larger configs need more memory than this board has.
-
-| Backend | GFLOP/s | Residual | Result |
-| ------- | ------- | -------- | ------ |
-| Stock EESSI RVV | 11.64 | `nan` | FAILED |
-| Scalar | 6.52 | 4.63e-03 | PASSED |
-| Patched RVV | **11.52** | 4.04e-03 | PASSED |
-
-**1.77×** scalar → patched vector; residual bit-identical to RV2.
+- **VisionFive 2** — U74-tuned OpenBLAS lifts HPL **1.69×** ([EESSI/docs#818](https://github.com/EESSI/docs/pull/818)).
+- **BPI-F3** — same K1 fix; only N=8000 fits in 3.7 GB; patched RVV **1.77×** scalar.

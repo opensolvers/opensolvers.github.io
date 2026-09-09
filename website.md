@@ -64,6 +64,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 
 | Date | Decision |
 |------|----------|
+| 2026-09-09 | Simplify [BLIS](scientific-libs/blis.html): headline table + RV2 DGEMM; drop full F3 dump / long takeaways |
 | 2026-09-09 | Simplify [BLAS](scientific-libs/blas.html): story table + 0.3.34 summary; drop duplicate difftest/DGEMM dumps |
 | 2026-09-08 | Simplify homepage: drop video dump + megaparagraph; short Highlights; compact lib/app link rows |
 | 2026-09-02 | Sync **best IME** ladder on [RV2](boards/RV2.html#best-ime-results-step-2-panel--memory-2026-09-02): full **~42–48 GOP/s**, TCM+fused **68**, kloop **228**, 4c OpenMP **~80**; F3/homepage |

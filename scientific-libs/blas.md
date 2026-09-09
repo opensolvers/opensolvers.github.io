@@ -1,120 +1,57 @@
+---
+title: BLAS (OpenBLAS) on RISC-V
+description: OpenBLAS on RISC-V — U74 4×4 DGEMM, X60 gemv_n NaN fix, 0.3.34 verify, FlexiBLAS swaps via EESSI.
+---
+
 # BLAS (OpenBLAS)
 
-Improvements to **OpenBLAS 0.3.30** on RISC-V boards — built via EasyBuild, deployed through [EESSI](https://www.eessi.io/) with **FlexiBLAS** runtime swapping.
+OpenBLAS on consumer RISC-V boards via [EESSI](https://www.eessi.io/) and **FlexiBLAS** (swap backends without rebuilding apps).
 
-Verification microbenchmarks live in [opensolvers/benchmarks/OpenBLAS](https://github.com/opensolvers/benchmarks/tree/main/OpenBLAS) (`bench_dgemm`, `difftest`, `verify_ctrsm`). **Alternative BLAS:** [BLIS](blis.html) RVV vs OpenBLAS DGEMM A/B on X60. Stack probes: [NumPy](numpy.html) (`bench_blas.py`). Full repo: [opensolvers/benchmarks](https://github.com/opensolvers/benchmarks).
+Harness: [opensolvers/benchmarks/OpenBLAS](https://github.com/opensolvers/benchmarks/tree/main/OpenBLAS). Related: [BLIS](blis.html), [NumPy](numpy.html), [HPL](../apps/hpl.html). **Video:** [NaN Linpack on RISC-V](https://www.youtube.com/watch?v=W_-8cKA-CCU) · [EESSI blog](https://www.eessi.io/docs/blog/2026/07/12/risc-v-x60-openblas-hpl/).
 
-**Base stack:** GCC 14.3.0, OpenBLAS 0.3.30, EESSI `2025.06-001` ([`dev.eessi.io/riscv`](https://www.eessi.io/docs/repositories/dev.eessi.io-riscv/)).
+## What broke / what we fixed
 
-## OpenBLAS 0.3.34 — end-to-end verify (Orange Pi RV2, 2026-08-25)
+| Board | Stock problem | Fix | Headline |
+| ----- | ------------- | --- | -------- |
+| [VisionFive 2](../boards/VisionFive2.html) (U74) | Generic `2×2` GEMM only | **4×4 DGEMM** asm (`TARGET=U74`) | HPL **3.13 → 5.28 GFLOP/s** (**1.69×**) |
+| [Orange Pi RV2](../boards/RV2.html) (X60 RVV) | RVV `gemv_n` → **NaN** | Backport `gemv_n` fix | HPL **FAILED → 10.53 GFLOP/s**; DGEMM **2.3×** vs scalar |
+| [Banana Pi F3](../boards/F3.html) (same K1) | Same `gemv_n` bug | Same fix | HPL **11.52 GFLOP/s**; DGEMM **2.35×** |
 
-EESSI `2025.06-001` still ships **0.3.29 / 0.3.30** only. We built upstream tag **`v0.3.34`** locally with EESSI **GCC 14.3.0** (`TARGET=RISCV64_ZVL256B`; Ubuntu GCC 13 cannot compile ZVL256 SGEMM tuple intrinsics). Harness: [run-034-tests.sh](https://github.com/opensolvers/benchmarks/blob/main/OpenBLAS/run-034-tests.sh) in [opensolvers/benchmarks/OpenBLAS](https://github.com/opensolvers/benchmarks/tree/main/OpenBLAS).
+Fault is in **`dgemv` only** — plain `dgemm` can look fine on a broken build, which is why HPL / QE / PETSc fail while a GEMM microbench passes.
 
-### Correctness (`difftest`, 1 thread)
+## OpenBLAS 0.3.34 (RV2)
 
-| Backend | `dgemv` NaN | `dgemm` NaN | `dtrsm` NaN | `dgemv` sum |
-| ------- | ----------- | ----------- | ----------- | ----------- |
-| **0.3.34 ZVL256B** | **0** | 0 | 0 | 42.06549 |
-| Stock EESSI 0.3.30 | **768** | 0 | 0 | 0 (broken) |
-| Stock EESSI 0.3.29 | 0 | 0 | 0 | 42.06549 |
-| Patched 0.3.30 ([#26444](https://github.com/easybuilders/easybuild-easyconfigs/pull/26444)) | 0 | 0 | 0 | 42.06549 |
+Upstream `v0.3.34` (`TARGET=RISCV64_ZVL256B`) has a working RVV path on X60 — verified with [`run-034-tests.sh`](https://github.com/opensolvers/benchmarks/blob/main/OpenBLAS/run-034-tests.sh):
 
-**SYRK PSD** ([OpenBLAS#5811](https://github.com/OpenMathLib/OpenBLAS/issues/5811) repro, N=K=50): `max_err=0`, `min_diag=+12.56`, **PASS** (fixes the 0.3.33 ZVL256 regression).
+| Check | Result |
+| ----- | ------ |
+| `dgemv` NaN | **0** (stock 0.3.30: **768**) |
+| SYRK PSD / CTRSM | **PASS** / **2400/0** |
+| DGEMM N=2048×8 thr | **15.54** GFLOP/s (~1.6× stock 0.3.30) |
+| HPL N=8000 / N=20000 | **11.04** / **10.97** GFLOP/s PASSED |
 
-**CTRSM sweep** (`verify_ctrsm`): **2400 cases, 0 fails** — new ZVL TRSM RVV kernels in 0.3.34 ([OpenBLAS#5895](https://github.com/OpenMathLib/OpenBLAS/pull/5895)).
-
-### Performance — `bench_dgemm` (N=2048, 8 threads)
-
-| Backend | GFLOP/s | `C[0]` |
-| ------- | ------- | ------ |
-| **0.3.34** | **15.54** | 245.24 |
-| Stock EESSI 0.3.30 | 9.81 | 245.24 |
-
-**~1.6×** over stock 0.3.30, bit-identical output. Verdict: **0.3.34 has a working RVV path on X60** — ready for an EESSI package bump when upstream lands in the stack.
-
-### HPL end-to-end (same `xhpl`, FlexiBLAS → 0.3.34)
-
-| Config | OpenBLAS **0.3.34** | Patched 0.3.30 | 0.3.34 vs patched |
-| ------ | ------------------:| --------------:| -----------------:|
-| `HPL.dat` (N=8000, 1×8) | **11.04** GFLOP/s, PASSED | 7.72 GFLOP/s, PASSED | **1.43×** |
-| `HPL-sweep.dat` (N=20000, 2×4) | **10.97** GFLOP/s, PASSED | 10.27 GFLOP/s, PASSED | **1.07×** |
-
-Residuals ~3–4e-03. See [HPL](../apps/hpl.html) and [`run-hpl-034.sh`](https://github.com/opensolvers/benchmarks/blob/main/hpl/run-hpl-034.sh).
-
-## Improvements
-
-| Board / CPU | Problem (stock 0.3.30) | Fix | Result |
-| ----------- | ---------------------- | --- | ------ |
-| [VisionFive 2](../boards/VisionFive2.html) — SiFive **U74** (scalar) | No U74 kernel; falls back to generic `RISCV64_GENERIC` C `2×2` GEMM | New **4×4 DGEMM micro-kernel** in RV64 assembly, `TARGET=U74` | Single-core DGEMM **~1.4 → 1.77 GFLOP/s**; 4-core DGEMM **6.31 GFLOP/s**; [HPL **1.69×**](../apps/hpl.html) |
-| [Orange Pi RV2](../boards/RV2.html) — SpacemiT **X60** (RVV VLEN=256) | RVV `gemv_n` zeroes an **uninitialized** vector register → `dgemv` returns NaN | Backport upstream `gemv_n` fix; `TARGET=RISCV64_ZVL256B` | Verification 2.3×; [NumPy](numpy.html) DGEMM 2.4×; [HPL](../apps/hpl.html) **10.53 GFLOP/s** |
-| [Banana Pi F3](../boards/F3.html) — same K1 / X60 SoC | Same RVV `gemv_n` bug as RV2 | Same [easyconfigs#26444](https://github.com/easybuilders/easybuild-easyconfigs/pull/26444) fix | Verification 2.35×; [NumPy](numpy.html) DGEMM **3.6×**; HPL **11.52 GFLOP/s** |
+EESSI still ships 0.3.29/0.3.30; use a local 0.3.34 + FlexiBLAS until the stack bumps.
 
 ## Packages
 
-| Target | EasyBuild PR | Upstream OpenBLAS | Walkthrough |
-| ------ | ------------ | ----------------- | ----------- |
-| SiFive U74 | [easyconfigs#26436](https://github.com/easybuilders/easybuild-easyconfigs/pull/26436) | [OpenBLAS#5903](https://github.com/OpenMathLib/OpenBLAS/pull/5903) | [EESSI/docs#818](https://github.com/EESSI/docs/pull/818) |
-| SpacemiT X60 | [easyconfigs#26444](https://github.com/easybuilders/easybuild-easyconfigs/pull/26444) | [OpenBLAS#5408](https://github.com/OpenMathLib/OpenBLAS/pull/5408), [#5476](https://github.com/OpenMathLib/OpenBLAS/pull/5476) | [EESSI blog](https://www.eessi.io/docs/blog/2026/07/12/risc-v-x60-openblas-hpl/) · [YouTube](https://www.youtube.com/watch?v=W_-8cKA-CCU) |
+| Target | EasyBuild | Upstream |
+| ------ | --------- | -------- |
+| U74 | [easyconfigs#26436](https://github.com/easybuilders/easybuild-easyconfigs/pull/26436) | [OpenBLAS#5903](https://github.com/OpenMathLib/OpenBLAS/pull/5903) |
+| X60 | [easyconfigs#26444](https://github.com/easybuilders/easybuild-easyconfigs/pull/26444) | [OpenBLAS#5408](https://github.com/OpenMathLib/OpenBLAS/pull/5408), [#5476](https://github.com/OpenMathLib/OpenBLAS/pull/5476) |
 
-Build with `eb --from-pr <num> --robot` into an **EESSI-extend** user install, then `flexiblas add` / `flexiblas default` — no downstream rebuild.
+`eb --from-pr <num> --robot` into EESSI-extend, then `flexiblas add` / `flexiblas default`.
 
-## Verification {#verification}
-
-Small, self-contained programs in [opensolvers/benchmarks/OpenBLAS](https://github.com/opensolvers/benchmarks/tree/main/OpenBLAS) for **BLAS performance and per-routine correctness** — used to isolate broken RVV kernels before trusting downstream apps.
-
-| File | Purpose |
-| ---- | ------- |
-| [`bench_dgemm.c`](https://github.com/opensolvers/benchmarks/blob/main/OpenBLAS/bench_dgemm.c) | Times square `C = A×B` (3 reps), reports GFLOP/s, prints `C[0]` |
-| [`difftest.c`](https://github.com/opensolvers/benchmarks/blob/main/OpenBLAS/difftest.c) | `dlopen`s a BLAS `.so`, runs level-1/2/3 routines, reports `sum` / NaN counts |
-| [`verify_ctrsm.c`](https://github.com/opensolvers/benchmarks/blob/main/OpenBLAS/verify_ctrsm.c) | Full-parameter TRSM correctness sweep (localizes [OpenBLAS#5928](https://github.com/OpenMathLib/OpenBLAS/pull/5928) VLEN bug in `_rvv_v1` kernels) |
-| [`run-034-tests.sh`](https://github.com/opensolvers/benchmarks/blob/main/OpenBLAS/run-034-tests.sh) | Build + verify OpenBLAS 0.3.34 on RV2 (`difftest`, SYRK PSD, CTRSM, DGEMM A/B) |
-
-Both switch backends at runtime via FlexiBLAS or `OPENBLAS_CORETYPE` — no recompile.
+## Reproduce
 
 ```bash
 gcc -O2 bench_dgemm.c -o bench_dgemm -lflexiblas
-gcc -O2 difftest.c    -o difftest    -ldl -lm
-
+gcc -O2 difftest.c -o difftest -ldl -lm
 OPENBLAS_NUM_THREADS=8 ./bench_dgemm 4096
 ./difftest /path/to/libopenblas.so
 ```
 
-### Correctness — `difftest` (X60, RV2 & F3)
-
-Bit-identical on [Orange Pi RV2](../boards/RV2.html) and [Banana Pi F3](../boards/F3.html):
-
-| Backend | `dgemv` NaN | `dgemm` NaN | `dtrsm` NaN | `dgemv` sum |
-| ------- | ----------- | ----------- | ----------- | ----------- |
-| Stock EESSI, default RVV | **192** | 0 | 0 | 198.94 (wrong) |
-| Forced scalar | 0 | 0 | 0 | 42.06549 (reference) |
-| Patched RVV (`gemv_n` fix) | 0 | 0 | 0 | 42.06549 (matches) |
-
-Fault is in **`dgemv` only** — plain `dgemm` and `dtrsm` look fine on the broken `gemv_n` build, which is why [HPL](../apps/hpl.html), [Quantum ESPRESSO](../apps/qe.html), and [PETSc](petsc.html) dense/direct paths can fail while a GEMM micro-benchmark passes.
-
-A second bug — RVV `_rvv_v1` TRSM kernels not VLEN-agnostic ([OpenBLAS#5928](https://github.com/OpenMathLib/OpenBLAS/pull/5928)) — is caught by `verify_ctrsm` on `ZVL128B` builds where `GEMM_UNROLL_M ≠ VSETVL_MAX`.
-
-### Performance — `bench_dgemm`
-
-#### Orange Pi RV2 (1 core, N=2048)
-
-| Backend | GFLOP/s | `C[0]` |
-| ------- | ------- | ------ |
-| Scalar | 1.16 | 245.24 |
-| Patched RVV | 2.62 | 245.24 |
-
-**2.3×** faster, numerically identical.
-
-#### Banana Pi F3 (cross-board)
-
-| Backend | GFLOP/s | `C[0]` |
-| ------- | ------- | ------ |
-| Scalar | 1.26 | 245.24 |
-| Patched RVV | 2.96 | 245.24 |
-
-**2.35×** at 1 core. Threaded (8 cores, N=4096): **17.71 GFLOP/s** on patched RVV.
-
-## Notes
-
-- **U74** — performance kernel; stock OpenBLAS works but leaves FP throughput on the table.
-- **X60** — correctness fix first. Stock EESSI `DYNAMIC_ARCH` *does* dispatch RVV, but 0.3.30's broken `gemv_n` corrupts BLAS-2 paths. OpenBLAS **≥ 0.3.34** fixes this natively — **verified on Orange Pi RV2** (see above).
-- Pin a valid `-march` via `EASYBUILD_OPTARCH` on the experimental `dev.eessi.io/riscv` toolchain (see board walkthroughs).
+| Tool | Role |
+| ---- | ---- |
+| `bench_dgemm` | Square GEMM GFLOP/s + `C[0]` |
+| `difftest` | Level-1/2/3 sums + NaN counts |
+| `verify_ctrsm` | TRSM parameter sweep (VLEN bugs) |

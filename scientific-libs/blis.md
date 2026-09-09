@@ -1,83 +1,49 @@
+---
+title: BLIS on RISC-V (X60)
+description: BLIS rv64iv vs OpenBLAS RVV on SpaceMiT X60 — 1.29× single-thread DGEMM, weaker HPL; correctness via verify_ctrsm.
+---
+
 # BLIS
 
-**Video:** [BLIS vs OpenBLAS on RISC-V: 1.29× DGEMM — Then 0.5× HPL](https://www.youtube.com/watch?v=zLMkNrl3NNw) — [all videos](../videos.html)
+**Video:** [BLIS vs OpenBLAS on RISC-V](https://www.youtube.com/watch?v=zLMkNrl3NNw) — [all videos](../videos.html)
 
-[BLIS](https://github.com/flame/blis) (BLAS-like Library Instantiation Software, FLAME group) on RISC-V — a **vector-vs-vector** DGEMM comparison against patched RVV **OpenBLAS** on the SpaceMiT X60.
+[BLIS](https://github.com/flame/blis) (FLAME) on SpaceMiT X60 — **vector vs vector** DGEMM against patched RVV [OpenBLAS](blas.html). Both use RVV; BLIS picks hand-written kernels via config **`rv64iv`**.
 
-BLIS ships hand-written RVV assembly level-3 microkernels under [`kernels/rviv/3/`](https://github.com/flame/blis/tree/master/kernels/rviv/3) (dynamic VLEN via `get_vlenb()`), selected by the **`rv64iv`** config target. This is not scalar-vs-vector — both libraries use RVV.
+Harness: [opensolvers/benchmarks/BLIS](https://github.com/opensolvers/benchmarks/tree/main/BLIS). End-to-end: [HPL on BLIS](../apps/hpl.html#hpl-on-blis--end-to-end-validation).
 
-Benchmark source: [opensolvers/benchmarks/BLIS](https://github.com/opensolvers/benchmarks/tree/main/BLIS) — `build-blis.sh`, `run-ab.sh`, shared `bench_dgemm.c`, `verify_ctrsm.c`.
+## Headline
 
-See also [BLAS (OpenBLAS)](blas.html) for the OpenBLAS fixes and verification suite that define the baseline here.
+| Axis | Result |
+| ---- | ------ |
+| Square DGEMM, 1 thread, N=4096 (RV2) | BLIS **1.29×** OpenBLAS |
+| Square DGEMM, 8 threads | BLIS **0.80–0.89×** (OpenBLAS scales better) |
+| HPL (same `libblis.a`) | **PASSED**, but **0.35–0.53×** OpenBLAS-RVV |
+| `verify_ctrsm` | **2400/0**; DGEMM `C[0]` identical |
+
+Square 1T wins do **not** predict Linpack — HPL hits skinny rank-k / `dtrsm` / `dgemv` where BLIS trails.
 
 ## Why link, not FlexiBLAS
 
-Other BLAS-axis benchmarks ([HPL](../apps/hpl.html), [NumPy](numpy.html), [QE](../apps/qe.html)) swap backends at runtime via FlexiBLAS. **FlexiBLAS is not installed on the RV2**, so this A/B links the same unchanged `bench_dgemm.c` against each library in turn — still one variable (the BLAS implementation), identical `-O3 -march=rv64imafdcv_zvl256b`. The same constraint applies end-to-end: [HPL on BLIS](../apps/hpl.html#hpl-on-blis--end-to-end-validation) builds a dedicated `xhpl` against static `libblis.a`.
+FlexiBLAS is not on the RV2 for this A/B. Same `bench_dgemm.c` is linked once against each library (`-O3 -march=rv64imafdcv_zvl256b`). HPL uses a dedicated `xhpl` + static `libblis.a`.
 
-## Build & run
+## Reproduce
 
 ```bash
-./build-blis.sh                    # ~10–20 min native; installs to $HOME/blis-install
+./build-blis.sh                    # rv64iv + OpenMP → $HOME/blis-install
 BLIS_PREFIX=$HOME/blis-install \
-OPENBLAS_LIB=$HOME/trsm-pr5830/libopenblas.a \
+OPENBLAS_LIB=/path/to/libopenblas.a \
   ./run-ab.sh
 ```
 
-Configure with **`rv64iv`** (RVV 1.0, dynamic VLEN=256) and **`--enable-threading=openmp`** — without OpenMP, DGEMM stays single-threaded (~2.7 GFLOP/s regardless of thread count). Do **not** use `sifive_rvv` (defaults to VLEN=128).
+Use **`rv64iv`** (not `sifive_rvv` / VLEN=128). Enable OpenMP or DGEMM stays ~2.7 GFLOP/s regardless of threads. Prefer EESSI **GCC 14.3** ahead of compat GCC 13.
 
-**Toolchain:** EESSI GCC **14.3.0** forced ahead of compat GCC 13.4.0; link with `-L$GCC14/lib -B$GCC14/lib` (see benchmarks README for the `libgomp.spec` trap).
+## DGEMM (Orange Pi RV2)
 
-## Correctness
+BLIS `061c2eb` vs patched OpenBLAS, best of 3 reps:
 
-| Check | Result |
-| ----- | ------ |
-| `verify_ctrsm` (BLIS `rv64iv`) | **2400 cases, 0 fails**, worst residual **2.55×10⁻⁷** (1- and 8-thread) |
-| `C[0]` in DGEMM sweep | **245.24** identical for BLIS and OpenBLAS at every size — no NaN |
+| Threads | N=2048 | N=4096 |
+| ------: | -----: | -----: |
+| 1 (BLIS / OpenBLAS) | 2.73 / 2.25 (**1.21×**) | 2.95 / 2.28 (**1.29×**) |
+| 8 (BLIS / OpenBLAS) | 9.60 / 10.83 (0.89×) | 9.55 / 11.94 (0.80×) |
 
-BLIS TRSM passes cleanly on X60 — unlike the stock OpenBLAS `_rvv_v1` TRSM VLEN bug caught by [`verify_ctrsm` in OpenBLAS/](https://github.com/opensolvers/benchmarks/tree/main/OpenBLAS).
-
-## Performance — Orange Pi RV2 (X60, VLEN=256)
-
-BLIS `061c2eb` (`rv64iv`, OpenMP) vs patched RVV OpenBLAS `0.3.33.dev` (`zvl128bp`), EESSI GCC 14.3.0. Square DGEMM, 3 reps, best GFLOP/s:
-
-| Threads | N | BLIS | OpenBLAS | BLIS / OpenBLAS |
-| ------: | --: | ---: | -------: | --------------: |
-| 1 | 1024 | 1.99 | 2.13 | 0.93× |
-| 1 | 2048 | 2.73 | 2.25 | **1.21×** |
-| 1 | 4096 | 2.95 | 2.28 | **1.29×** |
-| 8 | 1024 | 8.93 | 10.13 | 0.88× |
-| 8 | 2048 | 9.60 | 10.83 | 0.89× |
-| 8 | 4096 | 9.55 | 11.94 | 0.80× |
-
-### Takeaways
-
-- **Single thread, large N:** BLIS's RVV assembly microkernel **beats OpenBLAS by ~20–30%** once packing is amortized (N ≥ 2048). At N=1024 the two are within noise.
-- **8 threads:** OpenBLAS scales slightly better (BLIS **0.80–0.89×**). Both get ~3.5–5× from 8 cores; BLIS's OpenMP path leaves headroom vs OpenBLAS threading.
-- **Correctness first:** both backends numerically identical on DGEMM; BLIS TRSM verified independently.
-
-## Cross-board — Banana Pi BPI-F3
-
-Same BLIS `061c2eb` (`rv64iv`, OpenMP) vs stock CVMFS `OpenBLAS/0.3.30-GCC-14.3.0` (no local patched OpenBLAS on that image), [Banana Pi F3](../boards/F3.html) (3.7 GB RAM):
-
-| Threads | N | BLIS | OpenBLAS 0.3.30 | BLIS / OpenBLAS |
-| ------: | --: | ---: | --------------: | --------------: |
-| 1 | 1024 | 2.13 | 3.01 | 0.71× |
-| 1 | 2048 | 2.85 | 2.96 | 0.96× |
-| 1 | 4096 | 3.08 | 2.89 | **1.07×** |
-| 8 | 1024 | 8.94 | 10.10 | 0.89× |
-| 8 | 2048 | 9.92 | 10.82 | 0.92× |
-| 8 | 4096 | 10.34 | 10.96 | 0.94× |
-
-`verify_ctrsm`: **2400 cases, 0 fails, worst_resid=2.55×10⁻⁷** (1- and 8-thread) — identical to the RV2. Single-thread BLIS peaks match (~3.0–3.1 GFLOP/s @ N=4096); stock CVMFS OpenBLAS on the F3 is stronger at small N than the RV2's patched local build, so the F3 BLIS/OpenBLAS ratio at N=1024×1 is lower.
-
-## End-to-end: HPL on BLIS
-
-Linking HPL against the same RVV `libblis.a` ([HPL app](../apps/hpl.html#hpl-on-blis--end-to-end-validation)): all configs **PASSED**, but BLIS is **0.35–0.53×** patched OpenBLAS-RVV (4.02 / 5.57 GFLOP/s; full-memory best **5.87** at N=25600, 2×4).
-
-The 1T square-DGEMM advantage does **not** predict Linpack: HPL hits skinny rank-k / `dtrsm` / `dgemv` shapes where BLIS RVV trails. Details and grid sweep: [benchmarks/hpl](https://github.com/opensolvers/benchmarks/tree/main/hpl).
-
-## References
-
-- BLIS RISC-V config: [`config_registry`](https://github.com/flame/blis/blob/master/config_registry) (`rv64iv`, `sifive_rvv`)
-- RVV assembly kernels: [`kernels/rviv/3/`](https://github.com/flame/blis/tree/master/kernels/rviv/3)
-- Prior RISC-V BLIS work: PR [#737](https://github.com/flame/blis/pull/737) (X280), [#832](https://github.com/flame/blis/pull/832), [#868](https://github.com/flame/blis/pull/868) (SG2042)
+BPI-F3: same CTRSM pass; 1T N=4096 ~**1.07×** vs stock CVMFS OpenBLAS 0.3.30 — detail in [benchmarks/BLIS](https://github.com/opensolvers/benchmarks/tree/main/BLIS).

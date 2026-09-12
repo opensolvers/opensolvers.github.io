@@ -23,10 +23,11 @@ Context file for structural and content decisions on [opensolvers.com](https://w
 
 1. **Home** · **Videos** · **GitHub** (external → `opensolvers/benchmarks`; GitHub uses logo icon)
 2. **Apps** — HPL, Quantum ESPRESSO, ONNX Runtime, **llama.cpp**, GROMACS, **LAMMPS**, **OpenFOAM**, **waLBerla**, **ESPResSo**, **MetalWalls**, **MODFLOW**, **GCC**
-3. **Scientific libs** — BLAS, **BLIS**, NumPy, **Armadillo**, **R**, **scikit-learn**, LAPACK, ELPA, MLAS, FFTW, **Kokkos**, **PETSc**, **PLUMED**, **ScaFaCoS**, **Voro++**, **OSU**, ScaLAPACK
-4. **Boards** — VisionFive 2, OrangePi RV2, BananaPi F3
+3. **Kernels** — libs with own ISA kernels: **BLAS**, **BLIS**, **FFTW**, **MLAS**
+4. **Derivatives** — FlexiBLAS / FFT / portable stack probes: NumPy, Armadillo, R, scikit-learn, LAPACK, ELPA, ScaLAPACK, PETSc, Kokkos, PLUMED, ScaFaCoS, Voro++, OSU
+5. **Boards** — VisionFive 2, OrangePi RV2, BananaPi F3
 
-Nav config: `_config.yml` (`navigation`, `navigation_boards`, `navigation_apps`, `navigation_scientific_libs`). Rendered in `_includes/header.html`. Cayman theme requires `_layouts/default.html` override to include the header.
+Nav config: `_config.yml` (`navigation`, `navigation_boards`, `navigation_apps`, `navigation_scientific_kernels`, `navigation_scientific_derivatives`). Rendered in `_includes/header.html`. Cayman theme requires `_layouts/default.html` override to include the header.
 
 ## Videos
 
@@ -64,6 +65,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 
 | Date | Decision |
 |------|----------|
+| 2026-09-12 | Header: split **Scientific libs** into **Kernels** (BLAS/BLIS/FFTW/MLAS) vs **Derivatives** (FlexiBLAS/FFT stack probes) |
 | 2026-09-12 | Simplify [FFTW](scientific-libs/fftw.html): headline + micro + QE ~0%/wisdom ~6%; drop F3 dump and codelet experiment table |
 | 2026-09-09 | Simplify [HPL](apps/hpl.html): cross-board + RV2/BLIS headlines; drop grid-sweep dump |
 | 2026-09-09 | Simplify [BLIS](scientific-libs/blis.html): headline table + RV2 DGEMM; drop full F3 dump / long takeaways |

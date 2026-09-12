@@ -55,11 +55,17 @@ navigation_apps:
   - title: GCC
     url: /scientific-libs/gcc.html
 
-navigation_scientific_libs:
+navigation_scientific_kernels:
   - title: BLAS
     url: /scientific-libs/blas.html
   - title: BLIS
     url: /scientific-libs/blis.html
+  - title: FFTW
+    url: /scientific-libs/fftw.html
+  - title: MLAS
+    url: /scientific-libs/mlas.html
+
+navigation_scientific_derivatives:
   - title: NumPy
     url: /scientific-libs/numpy.html
   - title: Armadillo
@@ -72,14 +78,12 @@ navigation_scientific_libs:
     url: /scientific-libs/lapack.html
   - title: ELPA
     url: /scientific-libs/elpa.html
-  - title: MLAS
-    url: /scientific-libs/mlas.html
-  - title: FFTW
-    url: /scientific-libs/fftw.html
-  - title: Kokkos
-    url: /scientific-libs/kokkos.html
+  - title: ScaLAPACK
+    url: /scientific-libs/scalapack.html
   - title: PETSc
     url: /scientific-libs/petsc.html
+  - title: Kokkos
+    url: /scientific-libs/kokkos.html
   - title: PLUMED
     url: /scientific-libs/plumed.html
   - title: ScaFaCoS
@@ -88,8 +92,6 @@ navigation_scientific_libs:
     url: /scientific-libs/voro.html
   - title: OSU
     url: /scientific-libs/osu.html
-  - title: ScaLAPACK
-    url: /scientific-libs/scalapack.html
 
 defaults:
   - scope:

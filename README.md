@@ -31,12 +31,19 @@ The improvements we chase live at the **core** of the stack — BLAS kernels, ve
 | **Custom** | X60 **IME** (`smt.vmadot`) for int8/int4 GEMM |
 | **GPU** | PowerVR present; **vendor GPGPU closed** on K1 (BXM-only DDK) |
 
-## Scientific libs
+## Kernels
 
-- [BLAS](scientific-libs/blas.html) · [BLIS](scientific-libs/blis.html) · [NumPy](scientific-libs/numpy.html) · [Armadillo](scientific-libs/armadillo.html) · [R](scientific-libs/r.html) · [scikit-learn](scientific-libs/sklearn.html)
+Libs with their own ISA kernels (RVV / IME):
+
+- [BLAS](scientific-libs/blas.html) · [BLIS](scientific-libs/blis.html) · [FFTW](scientific-libs/fftw.html) · [MLAS](scientific-libs/mlas.html)
+
+## Derivatives
+
+Stack probes that call into the kernels above (FlexiBLAS / FFT / portable parallel):
+
+- [NumPy](scientific-libs/numpy.html) · [Armadillo](scientific-libs/armadillo.html) · [R](scientific-libs/r.html) · [scikit-learn](scientific-libs/sklearn.html)
 - [LAPACK](scientific-libs/lapack.html) · [ELPA](scientific-libs/elpa.html) · [ScaLAPACK](scientific-libs/scalapack.html) · [PETSc](scientific-libs/petsc.html)
-- [FFTW](scientific-libs/fftw.html) · [MLAS](scientific-libs/mlas.html) · [Kokkos](scientific-libs/kokkos.html) · [PLUMED](scientific-libs/plumed.html)
-- [ScaFaCoS](scientific-libs/scafacos.html) · [Voro++](scientific-libs/voro.html) · [OSU](scientific-libs/osu.html)
+- [Kokkos](scientific-libs/kokkos.html) · [PLUMED](scientific-libs/plumed.html) · [ScaFaCoS](scientific-libs/scafacos.html) · [Voro++](scientific-libs/voro.html) · [OSU](scientific-libs/osu.html)
 
 ## Apps
 

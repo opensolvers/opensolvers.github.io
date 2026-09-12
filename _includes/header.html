@@ -42,9 +42,25 @@
             </div>
 
             <div class="site-nav-row">
-                <span class="site-nav-label">Scientific libs</span>
+                <span class="site-nav-label">Kernels</span>
                 <ul class="site-nav-list">
-                    {% for item in site.navigation_scientific_libs %}
+                    {% for item in site.navigation_scientific_kernels %}
+                    <li class="site-nav-item">
+                        <a
+                            href="{{ item.url | relative_url }}"
+                            class="site-nav-link{% if page.url == item.url %} is-active{% endif %}"
+                        >
+                            {{ item.title }}
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div class="site-nav-row">
+                <span class="site-nav-label">Derivatives</span>
+                <ul class="site-nav-list">
+                    {% for item in site.navigation_scientific_derivatives %}
                     <li class="site-nav-item">
                         <a
                             href="{{ item.url | relative_url }}"

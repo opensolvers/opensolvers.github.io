@@ -64,6 +64,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 
 | Date | Decision |
 |------|----------|
+| 2026-09-12 | Simplify [FFTW](scientific-libs/fftw.html): headline + micro + QE ~0%/wisdom ~6%; drop F3 dump and codelet experiment table |
 | 2026-09-09 | Simplify [HPL](apps/hpl.html): cross-board + RV2/BLIS headlines; drop grid-sweep dump |
 | 2026-09-09 | Simplify [BLIS](scientific-libs/blis.html): headline table + RV2 DGEMM; drop full F3 dump / long takeaways |
 | 2026-09-09 | Simplify [BLAS](scientific-libs/blas.html): story table + 0.3.34 summary; drop duplicate difftest/DGEMM dumps |

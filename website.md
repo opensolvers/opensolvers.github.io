@@ -15,13 +15,14 @@ Context file for structural and content decisions on [opensolvers.com](https://w
 | Newsletter | `_includes/mailmoose-subscribe.html` | Mailmoose list `opensolvers` (`POST …/lists/opensolvers/subscribe`) |
 | Videos | `videos.md` → `/videos.html` | YouTube walkthroughs (`_data/videos.yml`) |
 | Sponsors | `sponsors.md` → `/sponsors.html` | Tier table + backer/logo list; CTA to GitHub Sponsors |
+| EESSI | `eessi.md` → `/eessi.html` | What EESSI is, RISC-V CVMFS/init, how we use it on boards |
 | Boards | `boards/` | Per-board hardware + benchmark notes |
 | Apps | `apps/` | End-to-end application benchmarks (e.g. HPL) |
 | Scientific libs | `scientific-libs/` | Library-level probes (BLAS, LAPACK, ELPA) |
 
 ## Navigation groups
 
-1. **Home** · **Videos** · **GitHub** (external → `opensolvers/benchmarks`; GitHub uses logo icon)
+1. **Home** · **EESSI** · **Videos** · **GitHub** (external → `opensolvers/benchmarks`; GitHub uses logo icon)
 2. **Apps** — HPL, Quantum ESPRESSO, ONNX Runtime, **llama.cpp**, GROMACS, **LAMMPS**, **OpenFOAM**, **waLBerla**, **ESPResSo**, **MetalWalls**, **MODFLOW**, **GCC**
 3. **Kernels** — libs with own ISA kernels: **BLAS**, **BLIS**, **FFTW**, **MLAS**
 4. **Derivatives** — FlexiBLAS / FFT / portable stack probes: NumPy, Armadillo, R, scikit-learn, LAPACK, ELPA, ScaLAPACK, PETSc, Kokkos, PLUMED, ScaFaCoS, Voro++, OSU
@@ -65,6 +66,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 
 | Date | Decision |
 |------|----------|
+| 2026-09-27 | Add main [EESSI](eessi.html) page — project overview + RISC-V CVMFS/init/`riscv64/generic` + OpenSolvers usage; top-nav link |
 | 2026-09-27 | Homepage `compute-backends.svg` = **combined** (U74/X60/X100, IME1+IME2, BXE+BXM); K3-only `compute-backends-k3.svg` on new [SM10](boards/SM10.html) board page |
 | 2026-09-12 | Header: split **Scientific libs** into **Kernels** (BLAS/BLIS/FFTW/MLAS) vs **Derivatives** (FlexiBLAS/FFT stack probes) |
 | 2026-09-12 | Simplify [FFTW](scientific-libs/fftw.html): headline + micro + QE ~0%/wisdom ~6%; drop F3 dump and codelet experiment table |

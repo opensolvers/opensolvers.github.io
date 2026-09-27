@@ -66,6 +66,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 
 | Date | Decision |
 |------|----------|
+| 2026-09-27 | [SM10](boards/SM10.html): A100 details — kernel fence, `/proc/set_ai_thread`, measured VLEN=1024, VLEN migrate pitfall, mixed-rank note |
 | 2026-09-27 | [SM10](boards/SM10.html): X100 vs A100 table (RVV both; VLEN 256 vs 1024; `h` only on X100; IME2 / affinity note) |
 | 2026-09-27 | Add main [EESSI](eessi.html) page — project overview + RISC-V CVMFS/init/`riscv64/generic` + OpenSolvers usage; top-nav link |
 | 2026-09-27 | Homepage `compute-backends.svg` = **combined** (U74/X60/X100, IME1+IME2, BXE+BXM); K3-only `compute-backends-k3.svg` on new [SM10](boards/SM10.html) board page |

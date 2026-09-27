@@ -6,12 +6,12 @@ permalink: /sponsors.html
 
 OpenSolvers benchmarks and tunes open-source scientific software and AI inference engines on real RISC-V hardware — OpenBLAS, FlexiBLAS, EESSI, HPL, Quantum ESPRESSO, llama.cpp, and friends. The results and fixes stay public.
 
-Today we work on what we can buy and keep on the desk: SiFive U74 ([VisionFive 2](boards/VisionFive2.html)), SpacemiT X60 / K1 ([Orange Pi RV2](boards/RV2.html), [Banana Pi F3](boards/F3.html)), SpacemiT K3 ([Banana Pi SM10](boards/SM10.html)), and T-Head C910 ([BeagleV-Ahead](boards/Ahead.html)). That already uncovered real bugs (X60 `gemv_n` NaNs) and usable wins (U74 DGEMM, IME kernels, RVV backends); K3 A/B numbers are next, and the Ahead is still at the CPU-notes stage.
+Today we work on what we can buy and keep on the desk: SiFive U74 ([VisionFive 2](boards/VisionFive2.html)), SpacemiT X60 / K1 ([Orange Pi RV2](boards/RV2.html), [Banana Pi F3](boards/F3.html)), SpacemiT K3 ([Banana Pi SM10](boards/SM10.html)), and T-Head C910 ([BeagleV-Ahead](boards/Ahead.html)). That already uncovered real bugs (X60 `gemv_n` NaNs) and usable wins (U74 DGEMM, IME kernels, RVV backends, C910 `xtheadvector` GEMM); K3 A/B numbers are next.
 
 **Sponsorship is how we add platforms and finish the K3 story.** Boards, shipping, power, and CI time are the bottleneck — not interest. Priorities:
 
 - **More K3 RAM / time** — publish the same careful A/B methodology on SM10 (IME2, BXM-4-64, RVA23). Extra RAM SKUs help large LLM / scientific runs: **16 GB ~$380–$400**, **32 GB ~$575–$640** (Milk-V Jupiter 2 **$575**; Sipeed up to **$639**).
-- **T-Head C910** — the [BeagleV-Ahead](boards/Ahead.html) is on the desk. Draft RVV 0.7.1 (`xtheadvector`) means the RVV 1.0 modules from the other boards do not apply; instrumenting it is separate work.
+- **T-Head C910** — the [BeagleV-Ahead](boards/Ahead.html) is on the desk. Draft RVV 0.7.1 (`xtheadvector`) means the RVV 1.0 modules from the other boards do not apply. First local OpenBLAS numbers are up (DGEMM **7.42** GFLOP/s, 4 cores); small real/double GEMM shapes still fail CBLAS.
 
 Your support buys those boards and the time to run the probes — then publish the notes here and in [opensolvers/benchmarks](https://github.com/opensolvers/benchmarks).
 

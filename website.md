@@ -66,6 +66,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 
 | Date | Decision |
 |------|----------|
+| 2026-09-27 | [Ahead](boards/Ahead.html): EESSI mounted; OpenBLAS 0.3.34 `xtheadvector` DGEMM **7.42** / SGEMM **16.58** GFLOP/s (4 cores, 1.848 GHz). CBLAS L2 pass; real/double L3 GEMM family fails small shapes |
 | 2026-09-27 | Board nav grouped by core generation: **U74** → **C910** → **X60** → **X100** |
 | 2026-09-27 | Add [BeagleV-Ahead](boards/Ahead.html): TH1520 quad **C910** (3-wide OoO, 1.85 GHz, draft RVV 0.7.1 / `xtheadvector`, GhostWrite); nav, homepage, EESSI, sponsors |
 | 2026-09-27 | [SM10](boards/SM10.html): A100 details — kernel fence, `/proc/set_ai_thread`, measured VLEN=1024, VLEN migrate pitfall, mixed-rank note |

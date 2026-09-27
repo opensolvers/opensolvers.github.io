@@ -16,6 +16,7 @@ Harness: [opensolvers/benchmarks/OpenBLAS](https://github.com/opensolvers/benchm
 | [VisionFive 2](../boards/VisionFive2.html) (U74) | Generic `2×2` GEMM only | **4×4 DGEMM** asm (`TARGET=U74`) | HPL **3.13 → 5.28 GFLOP/s** (**1.69×**) |
 | [Orange Pi RV2](../boards/RV2.html) (X60 RVV) | RVV `gemv_n` → **NaN** | Backport `gemv_n` fix | HPL **FAILED → 10.53 GFLOP/s**; DGEMM **2.3×** vs scalar |
 | [Banana Pi F3](../boards/F3.html) (same K1) | Same `gemv_n` bug | Same fix | HPL **11.52 GFLOP/s**; DGEMM **2.35×** |
+| [BeagleV-Ahead](../boards/Ahead.html) (C910) | Stock target uses Xuantie `v0p7` march | GCC 14 `xtheadvector` + `th.*` GEMM asm | DGEMM **7.42** / SGEMM **16.58** GFLOP/s (4 cores). Real/double `gemm`/`symm`/`syrk` fail small CBLAS shapes |
 
 Fault is in **`dgemv` only** — plain `dgemm` can look fine on a broken build, which is why HPL / QE / PETSc fail while a GEMM microbench passes.
 

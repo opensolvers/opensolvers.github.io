@@ -46,9 +46,22 @@ These are not the Linux CPUs. They sit beside the C910 cluster and have their ow
 | [Orange Pi RV2](RV2.html) / [BPI-F3](F3.html) | 8× X60 | RVV 1.0, VLEN=256, plus IME1 |
 | [BPI-SM10](SM10.html) | 8× X100 + 8× A100 | RVV 1.0, VLEN=256 / 1024, plus IME2 |
 
-## Status
+## Measured
 
-Console login works on the factory Yocto image. [EESSI](../eessi.html) is not on this board yet: `dev.eessi.io/riscv` ships **RVV 1.0** userspace, which is the wrong vector ISA for a C910. Benchmark pages will land here once there is a userspace that can build `xtheadvector` and the same A/B method as [RV2](RV2.html).
+[EESSI](../eessi.html) `2025.06-001` is mounted (`software.eessi.io` and `dev.eessi.io`). Init selects `riscv64/generic`. That tree is RVV 1.0, so it supplies the compatibility layer and the generic OpenBLAS, not a C910 vector build. Stock `HPL/2.3-foss-2025b` runs on it: N=2000, 2×2, **3.77 GFLOP/s**, residual PASSED. That problem fits in cache.
+
+OpenBLAS **0.3.34** `TARGET=C910V` is a local build with EESSI GCC 14.3 and `-march=rv64gc_xtheadvector`. Upstream binutils names the 0.7 instructions `th.vle.v` and `th.vfmacc.vv`; the stock Xuantie march string does not assemble. Clock pinned at **1.848 GHz**. All-ones square GEMM, `C[0] = N` at every size. Full notes: [benchmarks/OpenBLAS](https://github.com/opensolvers/benchmarks/blob/main/OpenBLAS/README.md).
+
+| | 1 core | 4 cores |
+| --- | ---: | ---: |
+| DGEMM N=2048 | 2.56 | 7.42 |
+| DGEMM N=4096 | | **7.42** |
+| SGEMM N=2048 | 5.72 | 16.69 |
+| SGEMM N=4096 | | **16.58** |
+
+GFLOP/s. Four cores reach about 2.7× one core. Single precision is a bit over twice double precision, which matches the 128-bit vector pipe.
+
+CBLAS Level 2 (all four precisions) and complex Level 3 pass. Real and double Level 3: `trmm` and `trsm` pass; `gemm`, `symm`, `syrk`, and `syr2k` fail the netlib ratio on small shapes, including K=0. The all-ones GEMM sizes above still match.
 
 ## Related
 

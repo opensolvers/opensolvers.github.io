@@ -26,7 +26,7 @@ Context file for structural and content decisions on [opensolvers.com](https://w
 2. **Apps** — HPL, Quantum ESPRESSO, ONNX Runtime, **llama.cpp**, GROMACS, **LAMMPS**, **OpenFOAM**, **waLBerla**, **ESPResSo**, **MetalWalls**, **MODFLOW**, **GCC**
 3. **Kernels** — libs with own ISA kernels: **BLAS**, **BLIS**, **FFTW**, **MLAS**
 4. **Derivatives** — FlexiBLAS / FFT / portable stack probes: NumPy, Armadillo, R, scikit-learn, LAPACK, ELPA, ScaLAPACK, PETSc, Kokkos, PLUMED, ScaFaCoS, Voro++, OSU
-5. **Boards** — VisionFive 2, OrangePi RV2, BananaPi F3, BananaPi SM10 (K3)
+5. **Boards** — VisionFive 2, OrangePi RV2, BananaPi F3, BananaPi SM10 (K3), BeagleV-Ahead (C910)
 
 Nav config: `_config.yml` (`navigation`, `navigation_boards`, `navigation_apps`, `navigation_scientific_kernels`, `navigation_scientific_derivatives`). Rendered in `_includes/header.html`. Cayman theme requires `_layouts/default.html` override to include the header.
 
@@ -66,6 +66,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 
 | Date | Decision |
 |------|----------|
+| 2026-09-27 | Add [BeagleV-Ahead](boards/Ahead.html): TH1520 quad **C910** (3-wide OoO, 1.85 GHz, draft RVV 0.7.1 / `xtheadvector`, GhostWrite); nav, homepage, EESSI, sponsors |
 | 2026-09-27 | [SM10](boards/SM10.html): A100 details — kernel fence, `/proc/set_ai_thread`, measured VLEN=1024, VLEN migrate pitfall, mixed-rank note |
 | 2026-09-27 | [SM10](boards/SM10.html): X100 vs A100 table (RVV both; VLEN 256 vs 1024; `h` only on X100; IME2 / affinity note) |
 | 2026-09-27 | Add main [EESSI](eessi.html) page — project overview + RISC-V CVMFS/init/`riscv64/generic` + OpenSolvers usage; top-nav link |

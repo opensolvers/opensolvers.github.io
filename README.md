@@ -27,9 +27,9 @@ The improvements we chase live at the **core** of the stack — BLAS kernels, ve
 | Path | On our boards |
 | ---- | ------------- |
 | **Scalar** | `rv64gc` baseline — U74 · X60 · X100 (**RVA23** on K3) |
-| **Vector** | RVV 1.0 **Zvl256b** on X60/X100 (none on U74); bugs we fixed in OpenBLAS / apps |
+| **Vector** | RVV 1.0 **Zvl256b** on X60/X100 (none on U74). Ahead’s C910 is draft RVV **0.7.1** (`xtheadvector`, 128-bit) — see [BeagleV-Ahead](boards/Ahead.html) |
 | **Custom** | K1 X60 **IME1** (`XsmtVdot`); K3 A100 **IME2** · **60 TOPS** |
-| **GPU** | VF2 **BXE-4-32** · K1 **BXE-2-32** (GPGPU closed) · K3 **BXM-4-64** |
+| **GPU** | VF2 **BXE-4-32** · K1 **BXE-2-32** (GPGPU closed) · K3 and Ahead **BXM-4-64** |
 
 ## Kernels
 
@@ -58,6 +58,7 @@ Stack probes that call into the kernels above (FlexiBLAS / FFT / portable parall
 - **[Orange Pi RV2](boards/RV2.html)** — 8× X60 (RVV + IME); HPL **nan → 10.53**; IME / LLM notes
 - **[Banana Pi F3](boards/F3.html)** — same K1 SoC, 3.7 GB RAM; HPL **11.52**; IME **~45 GOP/s**
 - **[Banana Pi SM10](boards/SM10.html)** — SpacemiT **K3** (8× X100 + 8× A100); early notes
+- **[BeagleV-Ahead](boards/Ahead.html)** — 4× T-Head **C910** (out-of-order, draft RVV 0.7.1); CPU notes, no A/B numbers yet
 
 Use the menu for full pages. Benchmarks live in [opensolvers/benchmarks](https://github.com/opensolvers/benchmarks).
 

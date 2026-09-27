@@ -6,16 +6,16 @@ permalink: /sponsors.html
 
 OpenSolvers benchmarks and tunes open-source scientific software and AI inference engines on real RISC-V hardware — OpenBLAS, FlexiBLAS, EESSI, HPL, Quantum ESPRESSO, llama.cpp, and friends. The results and fixes stay public.
 
-Today we work on what we can buy and keep on the desk: SiFive U74 ([VisionFive 2](boards/VisionFive2.html)) and SpacemiT X60 / K1 ([Orange Pi RV2](boards/RV2.html), [Banana Pi F3](boards/F3.html)). That already uncovered real bugs (X60 `gemv_n` NaNs) and usable wins (U74 DGEMM, IME kernels, RVV backends).
+Today we work on what we can buy and keep on the desk: SiFive U74 ([VisionFive 2](boards/VisionFive2.html)), SpacemiT X60 / K1 ([Orange Pi RV2](boards/RV2.html), [Banana Pi F3](boards/F3.html)), and SpacemiT K3 ([Banana Pi SM10](boards/SM10.html)). That already uncovered real bugs (X60 `gemv_n` NaNs) and usable wins (U74 DGEMM, IME kernels, RVV backends); K3 A/B numbers are next.
 
-**Sponsorship is how we add platforms.** Boards, shipping, power, and CI time are the bottleneck — not interest. Two platforms we especially want next:
+**Sponsorship is how we add platforms and finish the K3 story.** Boards, shipping, power, and CI time are the bottleneck — not interest. Priorities:
 
+- **More K3 RAM / time** — publish the same careful A/B methodology on SM10 (IME2, BXM-4-64, RVA23). Extra RAM SKUs help large LLM / scientific runs: **16 GB ~$380–$400**, **32 GB ~$575–$640** (Milk-V Jupiter 2 **$575**; Sipeed up to **$639**).
 - **T-Head C910** — a widely shipped RISC-V core class we have not instrumented yet; different microarchitecture means different BLAS / RVV / app behaviour.
-- **SpacemiT K3** — the next step after K1 / X60 (RVA23, newer IME / vector story); we need silicon in-hand to extend the same kernel and app work beyond today’s RV2 / F3 results. Pico-ITX pricing (approx.): **8 GB ~$300** ([BPI ~$293](https://www.bpi-shop.com/k3-pico-itx-spacemit-k3.html) / Sipeed **$299**), **16 GB ~$380–$400**, **32 GB ~$575–$640** (Milk-V Jupiter 2 **$575**; Sipeed up to **$639**).
 
-Your support buys those boards and the time to run the same careful A/B methodology on them — then publish the notes here and in [opensolvers/benchmarks](https://github.com/opensolvers/benchmarks).
+Your support buys those boards and the time to run the probes — then publish the notes here and in [opensolvers/benchmarks](https://github.com/opensolvers/benchmarks).
 
-**Near-term Sponsors goal:** **$300/month** — covers an 8 GB K3 Pico-ITX to get started; stretch toward **16 GB (~$400)** or **32 GB (~$600)** for larger AI inference runs.
+**Near-term Sponsors goal:** fund K3 benchmark time + stretch toward a **16 GB (~$400)** or **32 GB (~$600)** SKU for larger AI inference runs.
 
 **[Become a sponsor on GitHub →](https://github.com/sponsors/opensolvers)**
 

@@ -26,14 +26,19 @@ navigation:
 navigation_boards:
   - title: VisionFive 2
     url: /boards/VisionFive2.html
-  - title: OrangePi RV2
-    url: /boards/RV2.html
-  - title: BananaPi F3
-    url: /boards/F3.html
-  - title: BananaPi SM10
-    url: /boards/SM10.html
+    core: U74
   - title: BeagleV Ahead
     url: /boards/Ahead.html
+    core: C910
+  - title: OrangePi RV2
+    url: /boards/RV2.html
+    core: X60
+  - title: BananaPi F3
+    url: /boards/F3.html
+    core: X60
+  - title: BananaPi SM10
+    url: /boards/SM10.html
+    core: X100
 
 navigation_apps:
   - title: HPL

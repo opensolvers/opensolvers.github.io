@@ -48,6 +48,21 @@
   text-transform: uppercase;
 }
 
+.site-nav-gen-group {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.4rem;
+}
+
+.site-nav-gen {
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
 .site-nav-list {
   display: flex;
   flex-wrap: wrap;

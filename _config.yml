@@ -32,6 +32,8 @@ navigation_boards:
     url: /boards/F3.html
   - title: BananaPi SM10
     url: /boards/SM10.html
+  - title: BeagleV Ahead
+    url: /boards/Ahead.html
 
 navigation_apps:
   - title: HPL

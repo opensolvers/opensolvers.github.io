@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="560" height="128" viewBox="0 0 560 128" role="img" aria-label="Scalar (RV64GC, Zba, Zbb), Vector (RV64GCV, Zvl256b), Custom (IME, XsmtVdot), GPU (BXE-4-32, BXE-2-32) compute backends">
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="148" viewBox="0 0 560 148" role="img" aria-label="Compute backends across our boards: Scalar (RV64GC, RVA23; U74, X60, X100), Vector (RV64GCV, Zvl256b), Custom (IME1 XsmtVdot; A100 IME2 60 TOPS), GPU (BXE-4-32, BXE-2-32, BXM-4-64)">
   <defs>
     <linearGradient id="header-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
       <stop offset="0%" stop-color="#155799"/>
@@ -9,46 +9,45 @@
     </filter>
   </defs>
 
-  <!-- Accent bar matching opensolvers.com page-header gradient -->
   <rect x="16" y="12" width="528" height="6" rx="3" fill="url(#header-gradient)"/>
 
-  <!-- Scalar -->
+  <!-- Scalar — U74 (VF2), X60 (K1), X100 (K3) -->
   <g filter="url(#soft-shadow)">
-    <rect x="16" y="32" width="120" height="72" rx="10" fill="#ffffff" stroke="#155799" stroke-width="1.5"/>
+    <rect x="16" y="32" width="120" height="92" rx="10" fill="#ffffff" stroke="#155799" stroke-width="1.5"/>
     <rect x="16" y="32" width="120" height="8" rx="10" fill="#155799"/>
     <rect x="16" y="36" width="120" height="4" fill="#155799"/>
     <text x="76" y="66" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#155799">Scalar</text>
-    <text x="76" y="84" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#155799" opacity="0.85">RV64GC</text>
-    <text x="76" y="98" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#155799" opacity="0.85">Zba · Zbb</text>
+    <text x="76" y="84" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#155799" opacity="0.85">RV64GC &#183; RVA23</text>
+    <text x="76" y="100" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#155799" opacity="0.75">U74 &#183; X60 &#183; X100</text>
   </g>
 
-  <!-- Vector -->
+  <!-- Vector — X60 / X100 RVV (U74 has none) -->
   <g filter="url(#soft-shadow)">
-    <rect x="152" y="32" width="120" height="72" rx="10" fill="#ffffff" stroke="#1e6bb8" stroke-width="1.5"/>
+    <rect x="152" y="32" width="120" height="92" rx="10" fill="#ffffff" stroke="#1e6bb8" stroke-width="1.5"/>
     <rect x="152" y="32" width="120" height="8" rx="10" fill="#1e6bb8"/>
     <rect x="152" y="36" width="120" height="4" fill="#1e6bb8"/>
     <text x="212" y="66" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1e6bb8">Vector</text>
     <text x="212" y="84" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#1e6bb8" opacity="0.85">RV64GCV</text>
-    <text x="212" y="98" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#1e6bb8" opacity="0.85">Zvl256b</text>
+    <text x="212" y="100" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#1e6bb8" opacity="0.75">Zvl256b &#183; X60/X100</text>
   </g>
 
-  <!-- Custom (silicon-specific extensions beyond standard RVV) -->
+  <!-- Custom — K1 IME1 + K3 A100/IME2 -->
   <g filter="url(#soft-shadow)">
-    <rect x="288" y="32" width="120" height="72" rx="10" fill="#ffffff" stroke="#157878" stroke-width="1.5"/>
+    <rect x="288" y="32" width="120" height="92" rx="10" fill="#ffffff" stroke="#157878" stroke-width="1.5"/>
     <rect x="288" y="32" width="120" height="8" rx="10" fill="#157878"/>
     <rect x="288" y="36" width="120" height="4" fill="#157878"/>
     <text x="348" y="66" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#157878">Custom</text>
-    <text x="348" y="84" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#157878" opacity="0.85">IME</text>
-    <text x="348" y="98" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#157878" opacity="0.85">XsmtVdot</text>
+    <text x="348" y="84" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#157878" opacity="0.85">IME1 &#183; XsmtVdot</text>
+    <text x="348" y="100" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#157878" opacity="0.75">A100 &#183; IME2 &#183; 60 TOPS</text>
   </g>
 
-  <!-- GPU -->
+  <!-- GPU — VF2 BXE-4-32, K1 BXE-2-32, K3 BXM-4-64 -->
   <g filter="url(#soft-shadow)">
-    <rect x="424" y="32" width="120" height="72" rx="10" fill="#ffffff" stroke="#159957" stroke-width="1.5"/>
+    <rect x="424" y="32" width="120" height="92" rx="10" fill="#ffffff" stroke="#159957" stroke-width="1.5"/>
     <rect x="424" y="32" width="120" height="8" rx="10" fill="#159957"/>
     <rect x="424" y="36" width="120" height="4" fill="#159957"/>
     <text x="484" y="66" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#159957">GPU</text>
-    <text x="484" y="84" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#159957" opacity="0.85">BXE-4-32</text>
-    <text x="484" y="98" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#159957" opacity="0.85">BXE-2-32</text>
+    <text x="484" y="84" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#159957" opacity="0.85">BXE-4-32 &#183; BXE-2-32</text>
+    <text x="484" y="100" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#159957" opacity="0.75">BXM-4-64</text>
   </g>
 </svg>

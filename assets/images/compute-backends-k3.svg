@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="128" viewBox="0 0 560 128" role="img" aria-label="SpacemiT K3 compute backends: Scalar (RV64GC, RVA23), Vector (RV64GCV, Zvl256b), Custom (A100, IME2, 60 TOPS), GPU (BXM-4-64)">
+  <defs>
+    <linearGradient id="header-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#155799"/>
+      <stop offset="100%" stop-color="#159957"/>
+    </linearGradient>
+    <filter id="soft-shadow" x="-4%" y="-8%" width="108%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#155799" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+
+  <!-- Accent bar matching opensolvers.com page-header gradient -->
+  <rect x="16" y="12" width="528" height="6" rx="3" fill="url(#header-gradient)"/>
+
+  <!-- Scalar — X100 general-purpose cores -->
+  <g filter="url(#soft-shadow)">
+    <rect x="16" y="32" width="120" height="72" rx="10" fill="#ffffff" stroke="#155799" stroke-width="1.5"/>
+    <rect x="16" y="32" width="120" height="8" rx="10" fill="#155799"/>
+    <rect x="16" y="36" width="120" height="4" fill="#155799"/>
+    <text x="76" y="66" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#155799">Scalar</text>
+    <text x="76" y="84" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#155799" opacity="0.85">RV64GC</text>
+    <text x="76" y="98" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#155799" opacity="0.85">RVA23</text>
+  </g>
+
+  <!-- Vector — X100 RVV 1.0, VLEN=256 -->
+  <g filter="url(#soft-shadow)">
+    <rect x="152" y="32" width="120" height="72" rx="10" fill="#ffffff" stroke="#1e6bb8" stroke-width="1.5"/>
+    <rect x="152" y="32" width="120" height="8" rx="10" fill="#1e6bb8"/>
+    <rect x="152" y="36" width="120" height="4" fill="#1e6bb8"/>
+    <text x="212" y="66" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1e6bb8">Vector</text>
+    <text x="212" y="84" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#1e6bb8" opacity="0.85">RV64GCV</text>
+    <text x="212" y="98" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#1e6bb8" opacity="0.85">Zvl256b</text>
+  </g>
+
+  <!-- Custom — A100 AI cluster (IME2, VLEN=1024, 60 TOPS) -->
+  <g filter="url(#soft-shadow)">
+    <rect x="288" y="32" width="120" height="72" rx="10" fill="#ffffff" stroke="#157878" stroke-width="1.5"/>
+    <rect x="288" y="32" width="120" height="8" rx="10" fill="#157878"/>
+    <rect x="288" y="36" width="120" height="4" fill="#157878"/>
+    <text x="348" y="66" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#157878">Custom</text>
+    <text x="348" y="84" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#157878" opacity="0.85">A100 · IME2</text>
+    <text x="348" y="98" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#157878" opacity="0.85">60 TOPS</text>
+  </g>
+
+  <!-- GPU — PowerVR BXM-4-64 -->
+  <g filter="url(#soft-shadow)">
+    <rect x="424" y="32" width="120" height="72" rx="10" fill="#ffffff" stroke="#159957" stroke-width="1.5"/>
+    <rect x="424" y="32" width="120" height="8" rx="10" fill="#159957"/>
+    <rect x="424" y="36" width="120" height="4" fill="#159957"/>
+    <text x="484" y="66" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#159957">GPU</text>
+    <text x="484" y="84" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#159957" opacity="0.85">BXM-4-64</text>
+    <text x="484" y="98" text-anchor="middle" font-family="'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#159957" opacity="0.75">OpenCL &#183; Vulkan</text>
+  </g>
+</svg>

@@ -28,6 +28,8 @@ navigation_boards:
     url: /boards/RV2.html
   - title: BananaPi F3
     url: /boards/F3.html
+  - title: BananaPi SM10
+    url: /boards/SM10.html
 
 navigation_apps:
   - title: HPL

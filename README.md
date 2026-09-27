@@ -26,10 +26,10 @@ The improvements we chase live at the **core** of the stack — BLAS kernels, ve
 
 | Path | On our boards |
 | ---- | ------------- |
-| **Scalar** | Correctness baseline (`rv64gc`, generic OpenBLAS) |
-| **Vector** | RVV in OpenBLAS / FFTW / apps — and the bugs we fixed |
-| **Custom** | X60 **IME** (`smt.vmadot`) for int8/int4 GEMM |
-| **GPU** | PowerVR present; **vendor GPGPU closed** on K1 (BXM-only DDK) |
+| **Scalar** | `rv64gc` baseline — U74 · X60 · X100 (**RVA23** on K3) |
+| **Vector** | RVV 1.0 **Zvl256b** on X60/X100 (none on U74); bugs we fixed in OpenBLAS / apps |
+| **Custom** | K1 X60 **IME1** (`XsmtVdot`); K3 A100 **IME2** · **60 TOPS** |
+| **GPU** | VF2 **BXE-4-32** · K1 **BXE-2-32** (GPGPU closed) · K3 **BXM-4-64** |
 
 ## Kernels
 
@@ -57,6 +57,7 @@ Stack probes that call into the kernels above (FlexiBLAS / FFT / portable parall
 - **[VisionFive 2](boards/VisionFive2.html)** — 4× U74; HPL **3.13 → 5.28 GFLOP/s**
 - **[Orange Pi RV2](boards/RV2.html)** — 8× X60 (RVV + IME); HPL **nan → 10.53**; IME / LLM notes
 - **[Banana Pi F3](boards/F3.html)** — same K1 SoC, 3.7 GB RAM; HPL **11.52**; IME **~45 GOP/s**
+- **[Banana Pi SM10](boards/SM10.html)** — SpacemiT **K3** (8× X100 + 8× A100); early notes
 
 Use the menu for full pages. Benchmarks live in [opensolvers/benchmarks](https://github.com/opensolvers/benchmarks).
 

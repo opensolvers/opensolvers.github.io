@@ -69,7 +69,7 @@ Same `xhpl` / `pw.x` binary; only the BLAS (or FFT) backend changes — the meth
 | [Orange Pi RV2](boards/RV2.html) | 8× X60 | Stock RVV + FlexiBLAS A/B; `gemv_n` fix; IME via local asm |
 | [Banana Pi F3](boards/F3.html) | 8× X60 | Same K1 stack, tighter RAM |
 | [Banana Pi SM10](boards/SM10.html) | 8× X100 + 8× A100 | Same init; `archdetect` → **x100**; RVA23 / IME2 work next |
-| [BeagleV-Ahead](boards/Ahead.html) | 4× C910 | Not loaded yet. Factory Yocto; C910 vector is draft **0.7.1**, so the RVV 1.0 `riscv64/generic` tree is the wrong ISA |
+| [BeagleV-Ahead](boards/Ahead.html) | 4× C910 | Mounted. Init selects `riscv64/generic` (RVV 1.0 compat layer). C910 vector code is a local GCC 14 `xtheadvector` OpenBLAS, not this tree |
 
 Highlights that started as “stock EESSI vs fixed module”:
 

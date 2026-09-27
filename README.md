@@ -4,7 +4,7 @@ description: Benchmark notes for open-source scientific libraries, applications,
 permalink: /
 ---
 
-OpenSolvers explores how open-source scientific software runs on real hardware — starting with **RISC-V** boards and the tools that make that practical (EESSI, OpenBLAS, and friends). We also tune **AI inference** ([llama.cpp](apps/llamacpp.html), [ONNX Runtime](apps/onnx.html)) on the same cores (RVV, IME). If the work is useful, [sponsor OpenSolvers on GitHub](https://github.com/sponsors/opensolvers).
+OpenSolvers explores how open-source scientific software runs on real hardware — starting with **RISC-V** boards and the tools that make that practical ([EESSI](eessi.html), OpenBLAS, and friends). We also tune **AI inference** ([llama.cpp](apps/llamacpp.html), [ONNX Runtime](apps/onnx.html)) on the same cores (RVV, IME). If the work is useful, [sponsor OpenSolvers on GitHub](https://github.com/sponsors/opensolvers).
 
 ## Why single-board computers?
 
@@ -12,13 +12,13 @@ The improvements we chase live at the **core** of the stack — BLAS kernels, ve
 
 ## Highlights
 
-- **OpenBLAS `gemv_n`** — stock RVV failed HPL / ELPA / QE with `nan`; patched EESSI restores correctness ([HPL](apps/hpl.html), [EESSI blog](https://www.eessi.io/docs/blog/2026/07/12/risc-v-x60-openblas-hpl/))
+- **OpenBLAS `gemv_n`** — stock RVV failed HPL / ELPA / QE with `nan`; patched EESSI restores correctness ([HPL](apps/hpl.html), [EESSI](eessi.html), [blog](https://www.eessi.io/docs/blog/2026/07/12/risc-v-x60-openblas-hpl/))
 - **IME on X60** — ~42–48 GOP/s full GEMM, **68** with TCM when B fits; **TCM off** for LLM e2e ([RV2](boards/RV2.html#best-ime-results-step-2-panel--memory-2026-09-02))
 - **ONNX / llama.cpp** — real decode via CompInt8 IME; Q4_0 IME wins prefill, RVV wins token-gen; Q8_0 hybrid restores decode
 - **GROMACS** — hand RVV `Force` **3.31×** whole-app; FFT micro wins alone do not move the needle
 - **FFTW / QE** — RVV FFT **1.06–1.60×** in isolation, **~0%** drop-in under `FFTW_ESTIMATE`
 
-[Videos](videos.html) · [YouTube](https://www.youtube.com/@opensolvers)
+[EESSI](eessi.html) · [Videos](videos.html) · [YouTube](https://www.youtube.com/@opensolvers)
 
 ## What we optimise on the board
 

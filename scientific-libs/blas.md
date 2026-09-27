@@ -5,7 +5,7 @@ description: OpenBLAS on RISC-V — U74 4×4 DGEMM, X60 gemv_n NaN fix, 0.3.34 v
 
 # BLAS (OpenBLAS)
 
-OpenBLAS on consumer RISC-V boards via [EESSI](https://www.eessi.io/) and **FlexiBLAS** (swap backends without rebuilding apps).
+OpenBLAS on consumer RISC-V boards via [EESSI](../eessi.html) and **FlexiBLAS** (swap backends without rebuilding apps).
 
 Harness: [opensolvers/benchmarks/OpenBLAS](https://github.com/opensolvers/benchmarks/tree/main/OpenBLAS). Related: [BLIS](blis.html), [NumPy](numpy.html), [HPL](../apps/hpl.html). **Video:** [NaN Linpack on RISC-V](https://www.youtube.com/watch?v=W_-8cKA-CCU) · [EESSI blog](https://www.eessi.io/docs/blog/2026/07/12/risc-v-x60-openblas-hpl/).
 

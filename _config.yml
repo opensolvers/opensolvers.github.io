@@ -11,6 +11,8 @@ logo: /assets/images/compute-backends.svg
 navigation:
   - title: Home
     url: /
+  - title: EESSI
+    url: /eessi.html
   - title: Videos
     url: /videos.html
   - title: GitHub

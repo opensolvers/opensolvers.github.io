@@ -26,10 +26,10 @@ The improvements we chase live at the **core** of the stack — BLAS kernels, ve
 
 | Path | On our boards |
 | ---- | ------------- |
-| **Scalar** | Correctness baseline (`rv64gc`, generic OpenBLAS) |
-| **Vector** | RVV in OpenBLAS / FFTW / apps — and the bugs we fixed |
-| **Custom** | X60 **IME** (`smt.vmadot`) for int8/int4 GEMM |
-| **GPU** | PowerVR present; **vendor GPGPU closed** on K1 (BXM-only DDK) |
+| **Scalar** | Correctness baseline (`rv64gc` / **RVA23** on K3 X100) |
+| **Vector** | RVV 1.0 — X60/X100 **Zvl256b**; bugs we fixed in OpenBLAS / apps |
+| **Custom** | K1 X60 **IME1** (`smt.vmadot`); K3 A100 **IME2** · **60 TOPS** (VLEN=1024) |
+| **GPU** | K3 **BXM-4-64** (Vulkan / OpenCL); K1 BXE still vendor-closed for GPGPU |
 
 ## Kernels
 

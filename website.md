@@ -65,6 +65,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 
 | Date | Decision |
 |------|----------|
+| 2026-09-27 | Homepage logo/diagram: **K3** backends — Scalar RVA23, Vector Zvl256b, Custom A100·IME2 60 TOPS, GPU BXM-4-64; add `compute-backends-k3.svg` |
 | 2026-09-12 | Header: split **Scientific libs** into **Kernels** (BLAS/BLIS/FFTW/MLAS) vs **Derivatives** (FlexiBLAS/FFT stack probes) |
 | 2026-09-12 | Simplify [FFTW](scientific-libs/fftw.html): headline + micro + QE ~0%/wisdom ~6%; drop F3 dump and codelet experiment table |
 | 2026-09-09 | Simplify [HPL](apps/hpl.html): cross-board + RV2/BLIS headlines; drop grid-sweep dump |

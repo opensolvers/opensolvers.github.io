@@ -54,11 +54,11 @@ Stack probes that call into the kernels above (FlexiBLAS / FFT / portable parall
 
 ## Boards
 
-- **[VisionFive 2](boards/VisionFive2.html)** — 4× U74; HPL **3.13 → 5.28 GFLOP/s**
-- **[Orange Pi RV2](boards/RV2.html)** — 8× X60 (RVV + IME); HPL **nan → 10.53**; IME / LLM notes
-- **[Banana Pi F3](boards/F3.html)** — same K1 SoC, 3.7 GB RAM; HPL **11.52**; IME **~45 GOP/s**
-- **[Banana Pi SM10](boards/SM10.html)** — SpacemiT **K3** (8× X100 + 8× A100); early notes
-- **[BeagleV-Ahead](boards/Ahead.html)** — 4× T-Head **C910** (out-of-order, draft RVV 0.7.1); CPU notes, no A/B numbers yet
+- **[VisionFive 2](boards/VisionFive2.html)** — 4× **U74**; HPL **3.13 → 5.28 GFLOP/s**
+- **[BeagleV-Ahead](boards/Ahead.html)** — 4× **C910** (draft RVV 0.7.1); CPU notes, no A/B numbers yet
+- **[Orange Pi RV2](boards/RV2.html)** — 8× **X60** (RVV + IME); HPL **nan → 10.53**; IME / LLM notes
+- **[Banana Pi F3](boards/F3.html)** — same **X60** / K1, 3.7 GB RAM; HPL **11.52**; IME **~45 GOP/s**
+- **[Banana Pi SM10](boards/SM10.html)** — **X100** + A100 (K3); early notes
 
 Use the menu for full pages. Benchmarks live in [opensolvers/benchmarks](https://github.com/opensolvers/benchmarks).
 

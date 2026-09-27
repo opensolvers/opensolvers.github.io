@@ -76,16 +76,26 @@
             <div class="site-nav-row">
                 <span class="site-nav-label">Boards</span>
                 <ul class="site-nav-list">
+                    {% assign board_core = "" %}
                     {% for item in site.navigation_boards %}
-                    <li class="site-nav-item">
+                    {% if item.core != board_core %}
+                    {% if board_core != "" %}
+                    </li>
+                    {% endif %}
+                    <li class="site-nav-gen-group">
+                        <span class="site-nav-gen">{{ item.core }}</span>
+                        {% assign board_core = item.core %}
+                    {% endif %}
                         <a
                             href="{{ item.url | relative_url }}"
                             class="site-nav-link{% if page.url == item.url %} is-active{% endif %}"
                         >
                             {{ item.title }}
                         </a>
-                    </li>
                     {% endfor %}
+                    {% if board_core != "" %}
+                    </li>
+                    {% endif %}
                 </ul>
             </div>
         </div>

@@ -3,7 +3,7 @@ title: BeagleV-Ahead — T-Head C910
 description: BeagleV-Ahead (TH1520) — quad Xuantie C910 at 1.85 GHz, 3-wide out-of-order, draft RVV 0.7.1 (xtheadvector, 128-bit), GhostWrite, plus the on-chip C906, 4 TOPS NPU, and BXM-4-64.
 ---
 
-The BeagleV-Ahead is a BeagleBone-sized board on the T-Head **TH1520**. The CPUs that run Linux are four **Xuantie C910** cores. Beagle’s board manual clocks that cluster at **1.85 GHz**; the [product page](https://www.beagleboard.org/boards/beaglev-ahead) lists **2 GHz**. Ours is on the desk on the factory image: **THEAD C910 Release Distro 1.1.2**, kernel `5.10.113-yocto-standard` (built 2023-06-10). **4 GB** LPDDR4, **16 GB** eMMC.
+The BeagleV-Ahead is a BeagleBone-sized board on the T-Head **TH1520**. The CPUs that run Linux are four **Xuantie C910** cores. Beagle’s board manual clocks that cluster at **1.85 GHz**; the [product page](https://www.beagleboard.org/boards/beaglev-ahead) lists **2 GHz**. **4 GB** LPDDR4, **16 GB** eMMC. The factory image is still on the eMMC (**THEAD C910 Release Distro 1.1.2**, kernel `5.10.113-yocto-standard`, built 2023-06-10). Ubuntu 24.04.3 now boots from the SD card. How that boot and its Wi-Fi were brought up is below.
 
 Product page: [BeagleV-Ahead](https://www.beagleboard.org/boards/beaglev-ahead) · [docs](https://docs.beagleboard.org/boards/beaglev/ahead/index.html).
 
@@ -46,6 +46,73 @@ These are not the Linux CPUs. They sit beside the C910 cluster and have their ow
 | [Orange Pi RV2](RV2.html) / [BPI-F3](F3.html) | 8× X60 | RVV 1.0, VLEN=256, plus IME1 |
 | [BPI-SM10](SM10.html) | 8× X100 + 8× A100 | RVV 1.0, VLEN=256 / 1024, plus IME2 |
 
+## Ubuntu 24.04 from the SD card
+
+The image is the Beagle [xuantie-ubuntu](https://openbeagle.org/beaglev-ahead/xuantie-ubuntu) console build, kernel `6.15.11-20251216+`, Ubuntu 24.04.3. Serial login is `beagle` / `beagle`, hostname `beaglev`, 115200 8N1. Write it to the SD card as a normal GPT image (boot ext4, then root ext4, extlinux `root=/dev/mmcblk1p3`). Leave sector 0 as the GPT. The SPL and the partition table cannot share that sector.
+
+The ROM loads U-Boot from the eMMC boot partition. The Ubuntu U-Boot (`2020.01`, prompt `C910 Light#`, `bootdelay=2`) has `boot_targets=mmc1 mmc0`, so a plain reset tries the SD card and falls back to the factory eMMC root. Do not hold the SD button. To boot the factory system on purpose, stop autoboot and run `bootcmd_mmc0`.
+
+Kernel 6.15 hangs at `smp: Bringing up secondary CPUs` when the secondary harts are started from the factory OpenSBI 0.9 image (85856 bytes on the eMMC). The boot that brings up all four CPUs loads the SD card’s `fw_dynamic.bin` (119104 bytes) from `mmc 1:2` to address 0 and still runs `bootslave` before distro boot. Hart 0 keeps reporting OpenSBI 0.9. That pair is what prints `smp: Brought up 1 node, 4 CPUs`.
+
+`reboot` and `reboot -f` on this Ubuntu call SBI system reset and trap in OpenSBI 0.9 (`sbi_trap_error`). Use the reset button.
+
+Kernel 6.15 includes the GhostWrite mitigation and hides `xtheadvector`. The GEMM numbers below were measured on the factory 5.10 kernel, which still exposes the extension.
+
+## Wi-Fi and SSH
+
+The onboard module is an AMPAK AP6203BM. The kernel sees it as SDIO `BCM43012/2` on `mmc@ffe70a0000`. The stock device tree leaves that slot looking removable, so the host never scans it. After the device-tree changes below, a reset prints `mmc2: new high speed SDIO card`.
+
+On a copy of `/boot/firmware/th1520-beaglev-ahead.dtb`:
+
+- Add `/wifi-pwrseq` (`compatible = "mmc-pwrseq-simple"`, `reset-gpios` GPIO2 pin 31 active-low, `post-power-on-delay-ms = <200>`).
+- On `mmc@ffe70a0000`: `non-removable`, `no-sd`, `no-mmc`, `mmc-pwrseq`, `no-1-8-v`, and `max-frequency = <50000000>`.
+- Delete `interrupts`, `interrupt-parent`, and `interrupt-names` from `wifi@1`.
+
+`no-1-8-v` keeps the bus at 3.3 V high-speed. At 1.8 V DDR50 the card enumerates and then dies with `brcmf_sdio_htclk: HT Avail timeout` (`clkctl 0x50`). The stock host-wake pin is `SDIO1_DETN`, still muxed as SDIO. With that interrupt in the tree, `brcmfmac` waits for an out-of-band IRQ that never arrives (`dongle is not responding`). In-band SDIO interrupts work. Leave `function = "gpio"` off the MMC pin group: the GPIO controller and the MMC pinctrl then both claim GPIO2_31, and the SDIO host fails to probe.
+
+linux-firmware’s `brcmfmac43012-sdio.bin` and the Cypress `cyfmac43012-sdio.bin` do not start this module. The vendor files already on the rootfs do. Copy them onto the names `brcmfmac` requests, including the board-specific `beagle,beaglev-ahead` names:
+
+```sh
+cp /lib/firmware/fw_bcm43013c1_ag.bin /lib/firmware/brcm/brcmfmac43012-sdio.bin
+cp /lib/firmware/fw_bcm43013c1_ag.bin /lib/firmware/brcm/brcmfmac43012-sdio.beagle,beaglev-ahead.bin
+cp /lib/firmware/nvram_ap6203bm.txt /lib/firmware/brcm/brcmfmac43012-sdio.txt
+cp /lib/firmware/nvram_ap6203bm.txt /lib/firmware/brcm/brcmfmac43012-sdio.beagle,beaglev-ahead.txt
+cp /lib/firmware/clm_bcm43013c1_ag.blob /lib/firmware/brcm/brcmfmac43012-sdio.clm_blob
+```
+
+A working probe logs `Firmware: BCM43012/2 wl0: Aug 19 2022 09:56:39 version 18.35.389.80` and creates `wlan0` with MAC `50:41:1c:cf:ce:ca`. These file copies and the device tree take effect on the next reset.
+
+The image uses iwd. This kernel is built without `CONFIG_RFKILL`, so `/dev/rfkill` does not exist and iwd 2.20 exits immediately (`Module rfkill failed to start: -2`). A small preload supplies a dummy file descriptor for that open. The stock iwd unit is `DevicePolicy=closed` and only allows `/dev/rfkill`, so the drop-in also sets `DevicePolicy=auto`.
+
+```sh
+gcc -shared -fPIC -o /usr/local/lib/librfkill-shim.so rfkill-shim.c -ldl
+mkdir -p /etc/systemd/system/iwd.service.d
+printf '%s\n' '[Service]' \
+  'Environment=LD_PRELOAD=/usr/local/lib/librfkill-shim.so' \
+  'DevicePolicy=auto' \
+  > /etc/systemd/system/iwd.service.d/rfkill.conf
+printf '\n[General]\nEnableNetworkConfiguration=true\n' >> /etc/iwd/main.conf
+systemctl daemon-reload
+systemctl restart iwd
+```
+
+`rfkill-shim.c` interposes `open`, `open64`, and `ioctl`. For the path `/dev/rfkill` it returns one end of a `socketpair` and makes `ioctl` on that descriptor succeed. Every other path goes to libc.
+
+Put the network in `/var/lib/iwd/<ssid>.psk`, mode `0600`:
+
+```ini
+[Security]
+Passphrase=<the passphrase>
+```
+
+If the SSID has a trailing space, that space is part of the filename. iwd then associates and runs DHCP. On this desk the lease was `192.168.1.227/24`. `eth0` stays down until a cable is plugged in.
+
+`ssh.socket` is already listening. `ufw allow OpenSSH` fails here (`Couldn't determine iptables version`) and is unnecessary. An `eessi` account in group `sudo`, with `eessi ALL=(ALL) NOPASSWD:ALL` and an `authorized_keys` entry, logs in with a key:
+
+```sh
+ssh -i ~/.ssh/id_rsa eessi@192.168.1.227
+```
+
 ## Measured
 
 [EESSI](../eessi.html) `2025.06-001` is mounted (`software.eessi.io` and `dev.eessi.io`). Init selects `riscv64/generic`. That tree is RVV 1.0, so it supplies the compatibility layer and the generic OpenBLAS, not a C910 vector build. Stock `HPL/2.3-foss-2025b` runs on it: N=2000, 2×2, **3.77 GFLOP/s**, residual PASSED. That problem fits in cache.
@@ -69,4 +136,5 @@ CBLAS Level 2 (all four precisions) and complex Level 3 pass. Real and double Le
 - [Beagle docs](https://docs.beagleboard.org/boards/beaglev/ahead/index.html)
 - [GhostWrite](https://ghostwriteattack.com/) — CVE-2024-44067
 - [Chips and Cheese: Xuantie C910](https://chipsandcheese.com/p/alibabat-heads-xuantie-c910) — pipeline and caches on the TH1520
+- [xuantie-ubuntu pipelines](https://openbeagle.org/beaglev-ahead/xuantie-ubuntu) — Ubuntu 24.04 images
 - [opensolvers/benchmarks](https://github.com/opensolvers/benchmarks)

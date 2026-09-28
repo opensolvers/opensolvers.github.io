@@ -115,7 +115,15 @@ ssh -i ~/.ssh/id_rsa eessi@192.168.1.227
 
 ## Measured
 
-[EESSI](../eessi.html) `2025.06-001` is mounted (`software.eessi.io` and `dev.eessi.io`). Init selects `riscv64/generic`. That tree is RVV 1.0, so it supplies the compatibility layer and the generic OpenBLAS, not a C910 vector build. Stock `HPL/2.3-foss-2025b` runs on it: N=2000, 2×2, **3.77 GFLOP/s**, residual PASSED. That problem fits in cache.
+[EESSI](../eessi.html) `2025.06-001` is mounted (`software.eessi.io` and `dev.eessi.io`). Init selects `riscv64/generic`. That tree is RVV 1.0, so it supplies the compatibility layer and the generic OpenBLAS, not a C910 vector build. Stock `HPL/2.3-foss-2025b`, NB=192, 2×2, one thread per rank ([HPL](../apps/hpl.html)):
+
+| Kernel | Problem | Result |
+| --- | --- | --- |
+| Factory 5.10 (`xtheadvector` exposed) | N=2000, fits in cache | **3.77 GFLOP/s**, PASSED |
+| Ubuntu 6.15 (`xtheadvector` hidden) | N=2000, fits in cache | **1.45 GFLOP/s**, PASSED |
+| Ubuntu 6.15 | N=18816, ~2.8 GB matrix, ~0.9 GB left free | **2.15 GFLOP/s** in 2070 s, residual **3.95e-03 PASSED** |
+
+The Ubuntu runs are the generic module on a kernel that will not execute `xtheadvector`. The GEMM table below is still the factory-kernel C910 build.
 
 OpenBLAS **0.3.34** `TARGET=C910V` is a local build with EESSI GCC 14.3 and `-march=rv64gc_xtheadvector`. Upstream binutils names the 0.7 instructions `th.vle.v` and `th.vfmacc.vv`; the stock Xuantie march string does not assemble. Clock pinned at **1.848 GHz**. All-ones square GEMM, `C[0] = N` at every size. Full notes: [benchmarks/OpenBLAS](https://github.com/opensolvers/benchmarks/blob/main/OpenBLAS/README.md).
 

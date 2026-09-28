@@ -66,6 +66,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 
 | Date | Decision |
 |------|----------|
+| 2026-09-28 | [Ahead](boards/Ahead.html): Ubuntu 6.15 stock EESSI HPL, vector hidden. N=18816, 2×2, **2.15 GFLOP/s**, PASSED. Cache N=2000 is **1.45** on this kernel and **3.77** on factory 5.10 |
 | 2026-09-27 | [Ahead](boards/Ahead.html): EESSI mounted; OpenBLAS 0.3.34 `xtheadvector` DGEMM **7.42** / SGEMM **16.58** GFLOP/s (4 cores, 1.848 GHz). CBLAS L2 pass; real/double L3 GEMM family fails small shapes |
 | 2026-09-27 | Board nav grouped by core generation: **U74** → **C910** → **X60** → **X100** |
 | 2026-09-27 | Add [BeagleV-Ahead](boards/Ahead.html): TH1520 quad **C910** (3-wide OoO, 1.85 GHz, draft RVV 0.7.1 / `xtheadvector`, GhostWrite); nav, homepage, EESSI, sponsors |

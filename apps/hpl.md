@@ -50,3 +50,4 @@ HPL is panel-heavy (`dtrsm` / level-2), not the large square DGEMM where [BLIS](
 
 - **VisionFive 2** — U74-tuned OpenBLAS lifts HPL **1.69×** ([EESSI/docs#818](https://github.com/EESSI/docs/pull/818)).
 - **BPI-F3** — same K1 fix; only N=8000 fits in 3.7 GB; patched RVV **1.77×** scalar.
+- **[BeagleV-Ahead](../boards/Ahead.html)** — stock generic EESSI on Ubuntu 6.15 (vector hidden): N=18816, 2×2, **2.15 GFLOP/s**, PASSED. Factory 5.10 cache run was **3.77 GFLOP/s**.

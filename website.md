@@ -66,6 +66,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 
 | Date | Decision |
 |------|----------|
+| 2026-10-29 | [SM10](boards/SM10.html) / [llama.cpp](apps/llamacpp.html): Q3_K_M Q5_0 moved onto the IME2 vmadot kernel (`0e90371`). 8 threads **188 / 49** t/s, **4.6×** the scalar-Q5 prefill. Prefill is **2.8×** below Q4_0. BXM GPU still open |
 | 2026-10-29 | [SM10](boards/SM10.html) / [llama.cpp](apps/llamacpp.html): Qwen2.5-0.5B Q3_K_M on A100 IME2. The file is mostly IQ4_NL, not Q3_K. pp128 **41** t/s and tg32 **22** at 8 threads, about **13×** below Q4_0 prefill. Q5_0 stays scalar. BXM GPU still open |
 | 2026-10-29 | [SM10](boards/SM10.html) / [llama.cpp](apps/llamacpp.html): Qwen2.5-0.5B Q4_0 on A100 IME2. pp128 **526** t/s at 8 threads; tg32 peaks at 4 threads (**58.7**). X100 RVV on the same model is **194 / 42**. BXM GPU still open |
 | 2026-10-29 | [SM10](boards/SM10.html): A100 IME2 int8 GEMM, one core at 1.8 GHz. Full **103.3 GOP/s** at 768×768×512 (**13.7×** that core’s RVV), bit-exact. X100 RVV on the same shapes is **15.9** |

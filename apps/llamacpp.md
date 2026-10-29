@@ -1,6 +1,6 @@
 ---
 title: llama.cpp on RISC-V — X60 IME vs RVV
-description: End-to-end llama.cpp — RV2 Q4_0 IME vs RVV, SM10 A100 IME2 Q4_0 (prefill 526 t/s, decode peaks at 4 threads), Q3_K_M (prefill 41 t/s), Q8_0 hybrid, Q4_K_M study.
+description: End-to-end llama.cpp — RV2 Q4_0 IME vs RVV, SM10 A100 IME2 Q4_0 (prefill 526 t/s, decode peaks at 4 threads), Q3_K_M (prefill 188 t/s), Q8_0 hybrid, Q4_K_M study.
 ---
 
 # llama.cpp
@@ -127,17 +127,17 @@ The stock RVV binary on the A100 is not the control arm. `repack.cpp` has no Q4_
 
 ## Measured — IME2 (Banana Pi SM10, Q3_K_M)
 
-Same model, official **Q3_K_M** file (406 MiB), fork `x60-ime-rvv` at `4239429`. The GGUF has **no Q3_K tensors**. The large matmuls are **IQ4_NL** (FFN gate and up, attention Q and K). FFN down is Q4_K, attention output and most attention V are Q5_0, and the `output` weight is one Q8_0 tensor. Bench and launch match the Q4_0 section. Board notes: [SM10](../boards/SM10.html#llamacpp-q3_k_m).
+Same model, official **Q3_K_M** file (406 MiB), fork `x60-ime-rvv` at `0e90371`. The GGUF has **no Q3_K tensors**. The large matmuls are **IQ4_NL** (FFN gate and up, attention Q and K). FFN down is Q4_K, attention output and most attention V are Q5_0, and the `output` weight is one Q8_0 tensor. Q5_0 uses the IME2 vmadot kernel. Bench and launch match the Q4_0 section. Board notes: [SM10](../boards/SM10.html#llamacpp-q3_k_m).
 
 | Threads | pp128 IME2 | tg32 IME2 |
 | ------: | ---------: | --------: |
-| 1 | 4.30 | 3.76 |
-| 4 | 20.93 | 15.37 |
-| 8 | **41.16** | **22.29** |
+| 1 | 12.50 | 8.66 |
+| 4 | 101.41 | 37.30 |
+| 8 | **187.64** | **48.96** |
 
-Eight-thread prefill is about **13×** below the Q4_0 IME2 result (525.96). Q4_K and the Q8_0 head use IME2. IQ4_NL uses a 64-column RVV kernel at VLEN=1024. Q5_0 uses a scalar reference: the asm kernel’s high-bit mask does not match the per-column repack. Leaving Q5_0 out of that dispatch makes the model repeat one token. With it included, a greedy completion is coherent English.
+Eight-thread prefill is **2.8×** below the Q4_0 IME2 result (525.96). Decode at 8 threads is **48.96**, above the Q4_0 8-thread decode (38.78) and below the Q4_0 peak at 4 threads (58.67). Q4_K, Q8_0, and Q5 use IME2. IQ4_NL uses a 64-column RVV kernel at VLEN=1024. The same build with Q5_0 on the scalar reference was **41.16 / 22.29** at 8 threads. Leaving Q5_0 out of `compute_forward` makes the model repeat one token. With it on the vmadot path, a greedy completion is coherent English.
 
-The 16-column IQ4 kernel on the same IME2 build was **37.63 / 20.16** at 8 threads, so the wider kernel is about **10%**. An RVV build on the A100, 16-lane IQ4 kernel, 8 threads, was **18.25 / 7.67**. Raw note: [`results_sm10_q3_k_m.md`](https://github.com/opensolvers/benchmarks/blob/main/llamacpp/results_sm10_q3_k_m.md).
+An RVV build on the A100, 16-lane IQ4 kernel, 8 threads, was **18.25 / 7.67**. Raw note: [`results_sm10_q3_k_m.md`](https://github.com/opensolvers/benchmarks/blob/main/llamacpp/results_sm10_q3_k_m.md).
 
 ## Optimizations in detail
 
@@ -258,4 +258,4 @@ Harnesses and TSVs: [benchmarks/llamacpp](https://github.com/opensolvers/benchma
 5. **7B Q4_0 is the practical ceiling** on 8 GB no-swap; keep ctx modest on ≥3B.
 6. **Pick build by quant + workload** — not “IME always” or “RVV always”.
 7. **TCM off on RV2** — shim enables the path but e2e staging loses; keep `SPACEMIT_DISABLE_TCM=1`.
-8. **K3 Q3_K_M:** the official file is mostly IQ4_NL, not Q3_K. IME2 at 8 A100 threads is **41 / 22** t/s, about **13×** below Q4_0 prefill. Q5_0 is still scalar; IQ4_NL is an RVV kernel.
+8. **K3 Q3_K_M:** the official file is mostly IQ4_NL, not Q3_K. With Q5 on IME2 vmadot, 8 A100 threads is **188 / 49** t/s. Prefill is **2.8×** below Q4_0. IQ4_NL stays on RVV.

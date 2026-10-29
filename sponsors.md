@@ -6,7 +6,7 @@ permalink: /sponsors.html
 
 OpenSolvers benchmarks and tunes open-source scientific software and AI inference engines on real RISC-V hardware — OpenBLAS, FlexiBLAS, EESSI, HPL, Quantum ESPRESSO, llama.cpp, and friends. The results and fixes stay public.
 
-Today we work on what we can buy and keep on the desk: SiFive U74 ([VisionFive 2](boards/VisionFive2.html)), SpacemiT X60 / K1 ([Orange Pi RV2](boards/RV2.html), [Banana Pi F3](boards/F3.html)), SpacemiT K3 ([Banana Pi SM10](boards/SM10.html)), and T-Head C910 ([BeagleV-Ahead](boards/Ahead.html)). That already uncovered real bugs (X60 `gemv_n` NaNs) and usable wins (U74 DGEMM, IME kernels, RVV backends, C910 `xtheadvector` GEMM, K3 IME2 int8 GEMM **103 GOP/s**, K3 Q4_0 llama.cpp prefill **526** t/s). The same model at Q3_K_M is **41** t/s prefill. Larger llama models and the BXM GPU on the K3 are next.
+Today we work on what we can buy and keep on the desk: SiFive U74 ([VisionFive 2](boards/VisionFive2.html)), SpacemiT X60 / K1 ([Orange Pi RV2](boards/RV2.html), [Banana Pi F3](boards/F3.html)), SpacemiT K3 ([Banana Pi SM10](boards/SM10.html)), and T-Head C910 ([BeagleV-Ahead](boards/Ahead.html)). That already uncovered real bugs (X60 `gemv_n` NaNs) and usable wins (U74 DGEMM, IME kernels, RVV backends, C910 `xtheadvector` GEMM, K3 IME2 int8 GEMM **103 GOP/s**, K3 Q4_0 llama.cpp prefill **526** t/s). The same model at Q3_K_M is **188** t/s prefill. Larger llama models and the BXM GPU on the K3 are next.
 
 **Sponsorship is how we add platforms and finish the K3 story.** Boards, shipping, power, and CI time are the bottleneck — not interest. Priorities:
 

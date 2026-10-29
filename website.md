@@ -66,6 +66,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 
 | Date | Decision |
 |------|----------|
+| 2026-10-29 | [SM10](boards/SM10.html): A100 IME2 int8 GEMM, one core at 1.8 GHz. Full **103.3 GOP/s** at 768×768×512 (**13.7×** that core’s RVV), bit-exact. X100 RVV on the same shapes is **15.9**. llama.cpp and BXM GPU still open |
 | 2026-09-28 | [Ahead](boards/Ahead.html): Ubuntu 6.15 stock EESSI HPL, vector hidden. N=18816, 2×2, **2.15 GFLOP/s**, PASSED. Cache N=2000 is **1.45** on this kernel and **3.77** on factory 5.10 |
 | 2026-09-27 | [Ahead](boards/Ahead.html): EESSI mounted; OpenBLAS 0.3.34 `xtheadvector` DGEMM **7.42** / SGEMM **16.58** GFLOP/s (4 cores, 1.848 GHz). CBLAS L2 pass; real/double L3 GEMM family fails small shapes |
 | 2026-09-27 | Board nav grouped by core generation: **U74** → **C910** → **X60** → **X100** |

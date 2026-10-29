@@ -14,6 +14,7 @@ The improvements we chase live at the **core** of the stack — BLAS kernels, ve
 
 - **OpenBLAS `gemv_n`** — stock RVV failed HPL / ELPA / QE with `nan`; patched EESSI restores correctness ([HPL](apps/hpl.html), [EESSI](eessi.html), [blog](https://www.eessi.io/docs/blog/2026/07/12/risc-v-x60-openblas-hpl/))
 - **IME on X60** — ~42–48 GOP/s full GEMM, **68** with TCM when B fits; **TCM off** for LLM e2e ([RV2](boards/RV2.html#best-ime-results-step-2-panel--memory-2026-09-02))
+- **IME2 on A100** — one K3 core, **103 GOP/s** full int8 GEMM at 768×768×512, **13.7×** that core’s RVV ([SM10](boards/SM10.html#ime2-int8-gemm))
 - **ONNX / llama.cpp** — real decode via CompInt8 IME; Q4_0 IME wins prefill, RVV wins token-gen; Q8_0 hybrid restores decode
 - **GROMACS** — hand RVV `Force` **3.31×** whole-app; FFT micro wins alone do not move the needle
 - **FFTW / QE** — RVV FFT **1.06–1.60×** in isolation, **~0%** drop-in under `FFTW_ESTIMATE`
@@ -28,7 +29,7 @@ The improvements we chase live at the **core** of the stack — BLAS kernels, ve
 | ---- | ------------- |
 | **Scalar** | `rv64gc` baseline — U74 · X60 · X100 (**RVA23** on K3) |
 | **Vector** | RVV 1.0 **Zvl256b** on X60/X100 (none on U74). Ahead’s C910 is draft RVV **0.7.1** (`xtheadvector`, 128-bit) — see [BeagleV-Ahead](boards/Ahead.html) |
-| **Custom** | K1 X60 **IME1** (`XsmtVdot`); K3 A100 **IME2** · **60 TOPS** |
+| **Custom** | K1 X60 **IME1** (`XsmtVdot`); K3 A100 **IME2** — **103 GOP/s** int8 GEMM on one core |
 | **GPU** | VF2 **BXE-4-32** · K1 **BXE-2-32** (GPGPU closed) · K3 and Ahead **BXM-4-64** |
 
 ## Kernels
@@ -58,7 +59,7 @@ Stack probes that call into the kernels above (FlexiBLAS / FFT / portable parall
 - **[BeagleV-Ahead](boards/Ahead.html)** — 4× **C910** (`xtheadvector`); DGEMM **7.42** / SGEMM **16.58** GFLOP/s at 4 cores
 - **[Orange Pi RV2](boards/RV2.html)** — 8× **X60** (RVV + IME); HPL **nan → 10.53**; IME / LLM notes
 - **[Banana Pi F3](boards/F3.html)** — same **X60** / K1, 3.7 GB RAM; HPL **11.52**; IME **~45 GOP/s**
-- **[Banana Pi SM10](boards/SM10.html)** — **X100** + A100 (K3); early notes
+- **[Banana Pi SM10](boards/SM10.html)** — **X100** + A100 (K3); HPL **57.5**; IME2 **103 GOP/s**
 
 Use the menu for full pages. Benchmarks live in [opensolvers/benchmarks](https://github.com/opensolvers/benchmarks).
 

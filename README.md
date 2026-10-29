@@ -59,7 +59,7 @@ Stack probes that call into the kernels above (FlexiBLAS / FFT / portable parall
 - **[BeagleV-Ahead](boards/Ahead.html)** — 4× **C910** (`xtheadvector`); DGEMM **7.42** / SGEMM **16.58** GFLOP/s at 4 cores
 - **[Orange Pi RV2](boards/RV2.html)** — 8× **X60** (RVV + IME); HPL **nan → 10.53**; IME / LLM notes
 - **[Banana Pi F3](boards/F3.html)** — same **X60** / K1, 3.7 GB RAM; HPL **11.52**; IME **~45 GOP/s**
-- **[Banana Pi SM10](boards/SM10.html)** — **X100** + A100 (K3); HPL **57.5**; IME2 **103 GOP/s**; Q4_0 llama prefill **526** t/s
+- **[Banana Pi SM10](boards/SM10.html)** — **X100** + A100 (K3); HPL **57.5**; IME2 **103 GOP/s**; Q4_0 llama prefill **526** t/s; Q3_K_M **41** t/s
 
 Use the menu for full pages. Benchmarks live in [opensolvers/benchmarks](https://github.com/opensolvers/benchmarks).
 

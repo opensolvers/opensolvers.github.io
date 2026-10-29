@@ -68,7 +68,7 @@ Same `xhpl` / `pw.x` binary; only the BLAS (or FFT) backend changes — the meth
 | [VisionFive 2](boards/VisionFive2.html) | 4× U74 | Scalar baseline; U74-tuned OpenBLAS → HPL **1.69×** |
 | [Orange Pi RV2](boards/RV2.html) | 8× X60 | Stock RVV + FlexiBLAS A/B; `gemv_n` fix; IME via local asm |
 | [Banana Pi F3](boards/F3.html) | 8× X60 | Same K1 stack, tighter RAM |
-| [Banana Pi SM10](boards/SM10.html) | 8× X100 + 8× A100 | Same init; `archdetect` → **x100**; IME2 int8 GEMM published; llama.cpp / GPU next |
+| [Banana Pi SM10](boards/SM10.html) | 8× X100 + 8× A100 | Same init; `archdetect` → **x100**; IME2 int8 GEMM and Q4_0 llama.cpp published; GPU next |
 | [BeagleV-Ahead](boards/Ahead.html) | 4× C910 | Mounted. Init selects `riscv64/generic` (RVV 1.0 compat layer). C910 vector code is a local GCC 14 `xtheadvector` OpenBLAS, not this tree |
 
 Highlights that started as “stock EESSI vs fixed module”:

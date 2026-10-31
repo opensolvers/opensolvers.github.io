@@ -1,11 +1,11 @@
 ---
 title: llama.cpp on RISC-V — X60 IME vs RVV
-description: End-to-end llama.cpp — RV2 Q4_0 IME vs RVV, SM10 A100 IME2 Q4_0 (prefill 526 t/s, decode peaks at 4 threads), Q3_K_M (prefill 502 t/s), Q8_0 hybrid, Q4_K_M study.
+description: End-to-end llama.cpp — RV2 Q4_0 IME vs RVV, SM10 A100 IME2 Q4_0 (prefill 526 t/s), Q3_K_M (prefill 499 t/s, decode 48 t/s), TinyLlama Q3_K prefill 254 t/s, Q8_0 hybrid, Q4_K_M study.
 ---
 
 # llama.cpp
 
-[llama.cpp](https://github.com/ggml-org/llama.cpp) is a lightweight C/C++ runtime for local large-language-model inference (GGML / GGUF) without a heavy framework stack. We run Q4_0 / Q8_0 workloads on the SpaceMiT X60 — end-to-end **IME `smt.vmadot`** vs plain **RVV** on the Orange Pi RV2 — and Q4_0 plus Q3_K_M on the K3 A100 (**IME2**) on the [Banana Pi SM10](../boards/SM10.html#llamacpp-q4_0).
+[llama.cpp](https://github.com/ggml-org/llama.cpp) is a lightweight C/C++ runtime for local large-language-model inference (GGML / GGUF) without a heavy framework stack. We run Q4_0 / Q8_0 workloads on the SpaceMiT X60 — end-to-end **IME `smt.vmadot`** vs plain **RVV** on the Orange Pi RV2 — and Q4_0, Q3_K_M, and TinyLlama on the K3 A100 (**IME2**) on the [Banana Pi SM10](../boards/SM10.html#llamacpp-q4_0).
 
 Benchmark source: [opensolvers/benchmarks/llamacpp](https://github.com/opensolvers/benchmarks/tree/main/llamacpp) — model list, `validate_model.sh` / `run_all.sh`, and `model_validation.tsv`. Kernel-level IME work: [IME on RV2](../boards/RV2.html#ime-integer-matrix-extension) / [benchmarks/ime](https://github.com/opensolvers/benchmarks/tree/main/ime). Related ORT int4 path: [ONNX Runtime](onnx.html).
 
@@ -127,17 +127,29 @@ The stock RVV binary on the A100 is not the control arm. `repack.cpp` has no Q4_
 
 ## Measured — IME2 (Banana Pi SM10, Q3_K_M)
 
-Same model, official **Q3_K_M** file (406 MiB), fork `x60-ime-rvv` at `fbcc41c`. The GGUF has **no Q3_K tensors**. The large matmuls are **IQ4_NL** (FFN gate and up, attention Q and K). FFN down is Q4_K, attention output and most attention V are Q5_0, and the `output` weight is one Q8_0 tensor. IQ4_NL matmuls are expanded into the Q8_0 tile and use the IME2 int8 vmadot kernel. Bench and launch match the Q4_0 section. Board notes: [SM10](../boards/SM10.html#llamacpp-q3_k_m).
+Same model, official **Q3_K_M** file (406 MiB), fork `x60-ime-rvv` at `107ead2f2`. The GGUF has **no Q3_K tensors**. The large matmuls are **IQ4_NL** (FFN gate and up, attention Q and K). FFN down is Q4_K, attention output and most attention V are Q5_0, and the `output` weight is one Q8_0 tensor. Prefill expands IQ4_NL into the Q8_0 tile and uses the IME2 int8 vmadot kernel. At 8 threads a generated token dots a packed nibble tail instead of that expanded tile. Bench and launch match the Q4_0 section. Board notes: [SM10](../boards/SM10.html#llamacpp-q3_k_m).
 
 | Threads | pp128 IME2 | tg32 IME2 |
 | ------: | ---------: | --------: |
-| 1 | 69.01 | 19.15 |
-| 4 | 267.13 | 46.61 |
-| 8 | **502.10** | **46.18** |
+| 1 | 69.04 | 19.14 |
+| 4 | 266.35 | 45.56 |
+| 8 | **499.23** | **47.95** |
 
-Eight-thread prefill is **4.5%** below the Q4_0 IME2 result (525.96) and **2.7×** the previous build, where IQ4_NL stayed on RVV (**187.64**). Decode peaks at 4 threads (**46.61**), above the Q4_0 8-thread decode (38.78) and below the Q4_0 peak at 4 threads (58.67). Q4_K, Q8_0, Q5, and the IQ4_NL matmuls use IME2. A greedy completion is coherent English.
+Eight-thread prefill is **5.1%** below the Q4_0 IME2 result (525.96) and **2.7×** the build where IQ4_NL stayed on RVV (**187.64**). Decode peaks at 8 threads (**47.95**). At `fbcc41c`, before the packed tail, the same file was **502.10 / 46.18**, and decode peaked at 4 threads (46.61). Q4_K, Q8_0, Q5, and the IQ4_NL matmuls use IME2. A greedy completion is the same coherent English sentence as that earlier build.
 
 An RVV build on the A100, 16-lane IQ4 kernel, 8 threads, was **18.25 / 7.67**. Raw note: [`results_sm10_q3_k_m.md`](https://github.com/opensolvers/benchmarks/blob/main/llamacpp/results_sm10_q3_k_m.md).
+
+## Measured — IME2 (Banana Pi SM10, TinyLlama Q2_K)
+
+**TinyLlama 1.1B Chat v1.0 Q2_K** (459 MiB, TheBloke), same fork at `107ead2f2`, same launch and bench. The file is tagged Q2_K. Most of the matmul work is **Q3_K** (FFN, attention output, attention V). Q2_K is attention Q and K. The `output` weight is Q6_K. Q3_K prefill unpacks the 3-bit weights once for four rows and dots them with `vmadot.hp`. A generated token still uses the 1-row kernel. Board notes: [SM10](../boards/SM10.html#llamacpp-tinyllama).
+
+| Threads | pp128 IME2 | tg32 IME2 |
+| ------: | ---------: | --------: |
+| 1 | 35.73 | 10.93 |
+| 4 | 138.25 | 35.13 |
+| 8 | **254.37** | **43.39** |
+
+Eight-thread prefill is **1.24×** the previous integer Q3_K kernel on this file (**205.17**). One thread is **1.30×** (27.43) and four threads are **1.29×** (107.06). Decode stays at **43** t/s. A tile of the new kernel against the integer kernel differed by at most `7.6e-5`. A greedy completion is coherent English. Raw note: [`results_sm10_tinyllama_q2_k.md`](https://github.com/opensolvers/benchmarks/blob/main/llamacpp/results_sm10_tinyllama_q2_k.md).
 
 ## Optimizations in detail
 
@@ -258,4 +270,5 @@ Harnesses and TSVs: [benchmarks/llamacpp](https://github.com/opensolvers/benchma
 5. **7B Q4_0 is the practical ceiling** on 8 GB no-swap; keep ctx modest on ≥3B.
 6. **Pick build by quant + workload** — not “IME always” or “RVV always”.
 7. **TCM off on RV2** — shim enables the path but e2e staging loses; keep `SPACEMIT_DISABLE_TCM=1`.
-8. **K3 Q3_K_M:** the official file is mostly IQ4_NL, not Q3_K. With IQ4_NL and Q5 on IME2 vmadot, 8 A100 threads is **502 / 46** t/s. Prefill is **4.5%** below Q4_0.
+8. **K3 Q3_K_M:** the official file is mostly IQ4_NL, not Q3_K. With IQ4_NL and Q5 on IME2 vmadot, and packed nibbles on 8-thread decode, 8 A100 threads is **499 / 48** t/s. Prefill is **5.1%** below Q4_0. Decode peaks at 8 threads.
+9. **K3 TinyLlama:** the Q2_K file’s matmuls are mostly Q3_K. A 4-row `vmadot.hp` prefill kernel is **254** t/s at 8 threads, **1.24×** the integer Q3_K kernel. Decode stays at **43** t/s.

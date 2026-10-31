@@ -1,11 +1,11 @@
 ---
 title: llama.cpp on RISC-V — X60 IME vs RVV
-description: End-to-end llama.cpp — RV2 Q4_0 IME vs RVV, SM10 A100 IME2 Q4_0 (prefill 526 t/s), Q3_K_M (prefill 499 t/s, decode 48 t/s), TinyLlama Q3_K prefill 254 t/s, Q8_0 hybrid, Q4_K_M study.
+description: End-to-end llama.cpp — RV2 Q4_0 IME vs RVV, SM10 A100 IME2 Q4_0 (prefill 526 t/s), Q3_K_M (prefill 499 t/s, decode 48 t/s), TinyLlama Q3_K prefill 254 t/s, 10 Q4_0 and 17 Q4_K_M models, Q8_0 hybrid.
 ---
 
 # llama.cpp
 
-[llama.cpp](https://github.com/ggml-org/llama.cpp) is a lightweight C/C++ runtime for local large-language-model inference (GGML / GGUF) without a heavy framework stack. We run Q4_0 / Q8_0 workloads on the SpaceMiT X60 — end-to-end **IME `smt.vmadot`** vs plain **RVV** on the Orange Pi RV2 — and Q4_0, Q3_K_M, and TinyLlama on the K3 A100 (**IME2**) on the [Banana Pi SM10](../boards/SM10.html#llamacpp-q4_0).
+[llama.cpp](https://github.com/ggml-org/llama.cpp) is a lightweight C/C++ runtime for local large-language-model inference (GGML / GGUF) without a heavy framework stack. We run Q4_0 / Q8_0 workloads on the SpaceMiT X60 — end-to-end **IME `smt.vmadot`** vs plain **RVV** on the Orange Pi RV2 — and Q4_0, Q3_K_M, TinyLlama, and the 10- and 17-model suites on the K3 A100 (**IME2**) on the [Banana Pi SM10](../boards/SM10.html#llamacpp-q4_0).
 
 Benchmark source: [opensolvers/benchmarks/llamacpp](https://github.com/opensolvers/benchmarks/tree/main/llamacpp) — model list, `validate_model.sh` / `run_all.sh`, and `model_validation.tsv`. Kernel-level IME work: [IME on RV2](../boards/RV2.html#ime-integer-matrix-extension) / [benchmarks/ime](https://github.com/opensolvers/benchmarks/tree/main/ime). Related ORT int4 path: [ONNX Runtime](onnx.html).
 
@@ -108,7 +108,7 @@ tg scales down with model size as the ~3.85 GB/s memory-bandwidth wall predicts 
 | Mistral-7B-Instruct-v0.3 | 7.2B | 3922 | 5.84 | 0.73 | 2.35 | 1.38 | **IME** | RVV |
 | Qwen2.5-7B-Instruct | 7.6B | 3798 | 6.06 | 0.73 | 2.52 | 1.38 | **IME** | RVV |
 
-Raw TSV: [`model_validation.tsv`](https://github.com/opensolvers/benchmarks/blob/main/llamacpp/model_validation.tsv). Full model notes and HF sources: [`models.md`](https://github.com/opensolvers/benchmarks/blob/main/llamacpp/models.md).
+Raw TSV: [`model_validation.tsv`](https://github.com/opensolvers/benchmarks/blob/main/llamacpp/model_validation.tsv). Full model notes and HF sources: [`models.md`](https://github.com/opensolvers/benchmarks/blob/main/llamacpp/models.md). The same ten files on the K3 are in [the IME2 suite](#measured--ime2-banana-pi-sm10-q4_0-suite).
 
 ## Measured — IME2 vs RVV (Banana Pi SM10, Q4_0)
 
@@ -150,6 +150,55 @@ An RVV build on the A100, 16-lane IQ4 kernel, 8 threads, was **18.25 / 7.67**. R
 | 8 | **254.37** | **43.39** |
 
 Eight-thread prefill is **1.24×** the previous integer Q3_K kernel on this file (**205.17**). One thread is **1.30×** (27.43) and four threads are **1.29×** (107.06). Decode stays at **43** t/s. A tile of the new kernel against the integer kernel differed by at most `7.6e-5`. A greedy completion is coherent English. Raw note: [`results_sm10_tinyllama_q2_k.md`](https://github.com/opensolvers/benchmarks/blob/main/llamacpp/results_sm10_tinyllama_q2_k.md).
+
+## Measured — IME2 (Banana Pi SM10, Q4_0 suite)
+
+The ten Q4_0 models from the RV2 table, on the K3 at fork `107ead2f2`. One repeat of `llama-bench -p 128 -n 32 -t 8`. Launch matches the Q4_0 section. Every run logged `use_ime2: 1`. Coherence is a greedy 32-token completion of “Explain what RISC-V vector extensions are, in two short sentences.” Board notes: [SM10](../boards/SM10.html#llamacpp-q4_0-suite).
+
+Nine are coherent. **Qwen2.5-3B-Instruct repeats `G`.** The speed on that row is what the bench printed during the repeat, so it is not a valid result. The same model at Q4_K_M, in the next table, is coherent.
+
+The 0.5B row is one repeat of the file in the thread sweep above. Prefill **540.21** sits next to that sweep’s 8-thread mean (**525.96**, r=3 at `72d1824`). Decode **57.78** sits next to the 4-thread peak of that sweep (**58.67**), not its 8-thread mean (**38.78**).
+
+| Model | MiB | Coherent | pp128 | tg32 |
+| ----- | --: | -------- | ----: | ---: |
+| Qwen2.5-0.5B-Instruct | 408 | yes | 540.21 | 57.78 |
+| TinyLlama-1.1B-Chat | 608 | yes | 279.67 | 35.26 |
+| Llama-3.2-1B-Instruct | 737 | yes | 291.49 | 25.86 |
+| Qwen2.5-1.5B-Instruct | 1016 | yes | 204.11 | 22.83 |
+| Gemma-2-2B-it | 1554 | yes | 114.81 | 10.53 |
+| Qwen2.5-3B-Instruct | 1905 | repeat | 103.75 | 12.32 |
+| Llama-3.2-3B-Instruct | 1832 | yes | 108.70 | 11.72 |
+| Phi-3.5-mini-instruct | 2081 | yes | 78.99 | 10.48 |
+| Mistral-7B-Instruct-v0.3 | 3922 | yes | 45.57 | 5.75 |
+| Qwen2.5-7B-Instruct | 3798 | yes | 48.81 | 5.70 |
+
+Qwen2.5-7B is the two-shard Q4_0 file. Raw note: [`results_sm10_model_suite.md`](https://github.com/opensolvers/benchmarks/blob/main/llamacpp/results_sm10_model_suite.md).
+
+## Measured — IME2 (Banana Pi SM10, Q4_K_M suite)
+
+The seventeen Q4_K_M models from [study 2](#study-2--q4_k_m-17-models-m1gemv-vs-rvv), same fork, same 8-thread launch, `llama-bench -p 128 -n 32 -r 1`. All 17 are coherent, and every run logged `use_ime2: 1`. On this build Q4_K uses the IME2 Q4 kernel. The RV2 study below is a different bench (`-p 512 -n 64`) on IME1, where that kernel does not engage. Board notes: [SM10](../boards/SM10.html#llamacpp-q4_k_m-suite).
+
+`stablelm-2-1.6b` is the StableLM 2 Zephyr 1.6B Q4_K_M file. DeepSeek-Coder answered in English and described RISC-V as an ARM ISA. The DeepSeek-R1 distill opened with a thinking trace.
+
+| Model | MiB | pp128 | tg32 |
+| ----- | --: | ----: | ---: |
+| qwen2.5-0.5b | 468 | 433.34 | 51.44 |
+| llama-3.2-1b | 770 | 219.68 | 24.49 |
+| gemma-3-1b | 768 | 191.69 | 22.63 |
+| deepseek-coder-1.3b | 833 | 172.65 | 25.31 |
+| qwen2.5-1.5b | 1065 | 147.25 | 20.09 |
+| stablelm-2-1.6b | 983 | 167.67 | 21.19 |
+| falcon3-1b | 1008 | 179.10 | 21.78 |
+| smollm2-1.7b | 1006 | 132.45 | 18.90 |
+| deepseek-r1-qwen-1.5b | 1065 | 147.74 | 20.06 |
+| granite-3.1-2b | 1473 | 86.95 | 12.98 |
+| gemma-2-2b | 1629 | 87.09 | 9.07 |
+| qwen2.5-3b | 2007 | 73.31 | 10.69 |
+| falcon3-3b | 1912 | 82.71 | 9.94 |
+| llama-3.2-3b | 1925 | 77.84 | 10.37 |
+| phi-3.5-mini | 2282 | 50.79 | 9.25 |
+| gemma-3-4b | 2374 | 58.17 | 7.48 |
+| phi-4-mini | 2376 | 60.76 | 8.39 |
 
 ## Optimizations in detail
 
@@ -236,7 +285,7 @@ Why: Q4_K_M's 256-element superblocks / 6-bit scales do **not** map onto the IME
 | gemma-3-4b | 2.32 | 7.67 | 7.68 | 0.70 | **2.52** |
 | phi-4-mini | 2.32 | **5.33** | 4.14 | 0.76 | **2.17** |
 
-**Default to RVV for Q4_K_M.** Keep the IME build for **Q4_0** (and Q8_0 once #5 lands) where `smt.vmadot` actually fires. Next kernel target: engage IME on K-quant superblocks, or gate m1gemv off for K-quants.
+**Default to RVV for Q4_K_M on the RV2.** Keep the IME build for **Q4_0** (and Q8_0 once #5 lands) where `smt.vmadot` actually fires. On the K3 the same files run on IME2; see the [Q4_K_M suite](#measured--ime2-banana-pi-sm10-q4_k_m-suite). Next kernel target on the RV2: engage IME on K-quant superblocks, or gate m1gemv off for K-quants.
 
 ## Reproduce
 
@@ -265,10 +314,11 @@ Harnesses and TSVs: [benchmarks/llamacpp](https://github.com/opensolvers/benchma
 
 1. **Q4_0:** IME wins prefill ≥1.1B (1.2–2.6×); RVV wins token-gen everywhere.
 2. **Q8_0:** i8i8 IME wins prefill; **hybrid** restores decode (~**6.7** tg32 vs **0.83** IME-only) at ~2× weight RAM.
-3. **Q4_K_M:** plain RVV wins tg (and usually pp); m1gemv IME regresses until K-quants hit `smt.vmadot`.
+3. **Q4_K_M on the RV2:** plain RVV wins tg (and usually pp); m1gemv IME regresses until K-quants hit `smt.vmadot`. On the K3, all 17 Q4_K_M models are coherent on IME2.
 4. **Fork kernels:** Q8_0/Q6_K IME GEMM, hybrid split, +4.3% scale-build, RVV softmax (~2×), M1 GEMV (**6.45×** tg on Q8_0 — [#5](https://github.com/opensolvers/llama.cpp/pull/5)).
 5. **7B Q4_0 is the practical ceiling** on 8 GB no-swap; keep ctx modest on ≥3B.
 6. **Pick build by quant + workload** — not “IME always” or “RVV always”.
 7. **TCM off on RV2** — shim enables the path but e2e staging loses; keep `SPACEMIT_DISABLE_TCM=1`.
 8. **K3 Q3_K_M:** the official file is mostly IQ4_NL, not Q3_K. With IQ4_NL and Q5 on IME2 vmadot, and packed nibbles on 8-thread decode, 8 A100 threads is **499 / 48** t/s. Prefill is **5.1%** below Q4_0. Decode peaks at 8 threads.
 9. **K3 TinyLlama:** the Q2_K file’s matmuls are mostly Q3_K. A 4-row `vmadot.hp` prefill kernel is **254** t/s at 8 threads, **1.24×** the integer Q3_K kernel. Decode stays at **43** t/s.
+10. **K3 model suite:** 9 of 10 Q4_0 models are coherent on IME2. Qwen2.5-3B Q4_0 repeats one character. All 17 Q4_K_M models are coherent. Speeds are one repeat at 8 threads.

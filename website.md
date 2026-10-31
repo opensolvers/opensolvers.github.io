@@ -66,6 +66,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 
 | Date | Decision |
 |------|----------|
+| 2026-10-31 | [SM10](boards/SM10.html) / [llama.cpp](apps/llamacpp.html): Q3_K prefill uses a 4-row `vmadot.hp` kernel, and 8-thread IQ4_NL decode dots packed nibbles (`107ead2f2`). TinyLlama prefill **254** t/s (**1.24×**). Q3_K_M is **499 / 48** t/s, decode peaking at 8 threads. BXM GPU still open |
 | 2026-10-30 | [SM10](boards/SM10.html) / [llama.cpp](apps/llamacpp.html): Q3_K_M IQ4_NL matmuls moved onto the IME2 int8 vmadot kernel (`fbcc41c`). 8 threads **502 / 46** t/s, **2.7×** the previous prefill. Prefill is **4.5%** below Q4_0. BXM GPU still open |
 | 2026-10-29 | [SM10](boards/SM10.html) / [llama.cpp](apps/llamacpp.html): Q3_K_M Q5_0 moved onto the IME2 vmadot kernel (`0e90371`). 8 threads **188 / 49** t/s, **4.6×** the scalar-Q5 prefill. Prefill is **2.8×** below Q4_0. BXM GPU still open |
 | 2026-10-29 | [SM10](boards/SM10.html) / [llama.cpp](apps/llamacpp.html): Qwen2.5-0.5B Q3_K_M on A100 IME2. The file is mostly IQ4_NL, not Q3_K. pp128 **41** t/s and tg32 **22** at 8 threads, about **13×** below Q4_0 prefill. Q5_0 stays scalar. BXM GPU still open |

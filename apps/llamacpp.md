@@ -1,324 +1,170 @@
 ---
 title: llama.cpp on RISC-V — X60 IME vs RVV
-description: End-to-end llama.cpp — RV2 Q4_0 IME vs RVV, SM10 A100 IME2 Q4_0 (prefill 526 t/s), Q3_K_M (prefill 499 t/s, decode 48 t/s), TinyLlama Q3_K prefill 254 t/s, 10 Q4_0 and 17 Q4_K_M models, Q8_0 hybrid.
+description: llama.cpp on RISC-V. K3 IME2 prompt 526 t/s on Qwen2.5-0.5B Q4_0. RV2 IME wins prompt from 1.1B up; RVV wins decode.
 ---
 
 # llama.cpp
 
-[llama.cpp](https://github.com/ggml-org/llama.cpp) is a lightweight C/C++ runtime for local large-language-model inference (GGML / GGUF) without a heavy framework stack. We run Q4_0 / Q8_0 workloads on the SpaceMiT X60 — end-to-end **IME `smt.vmadot`** vs plain **RVV** on the Orange Pi RV2 — and Q4_0, Q3_K_M, TinyLlama, and the 10- and 17-model suites on the K3 A100 (**IME2**) on the [Banana Pi SM10](../boards/SM10.html#llamacpp-q4_0).
+[llama.cpp](https://github.com/ggml-org/llama.cpp) runs local GGUF models. We measure it on the [Orange Pi RV2](../boards/RV2.html) (X60, IME1) and the [Banana Pi SM10](../boards/SM10.html) (K3, IME2). Fork: [`opensolvers/llama.cpp`](https://github.com/opensolvers/llama.cpp) branch [`x60-ime-rvv`](https://github.com/opensolvers/llama.cpp/tree/x60-ime-rvv). Raw notes: [benchmarks/llamacpp](https://github.com/opensolvers/benchmarks/tree/main/llamacpp).
 
-Benchmark source: [opensolvers/benchmarks/llamacpp](https://github.com/opensolvers/benchmarks/tree/main/llamacpp) — model list, `validate_model.sh` / `run_all.sh`, and `model_validation.tsv`. Kernel-level IME work: [IME on RV2](../boards/RV2.html#ime-integer-matrix-extension) / [benchmarks/ime](https://github.com/opensolvers/benchmarks/tree/main/ime). Related ORT int4 path: [ONNX Runtime](onnx.html).
+**Prompt** is tokens/s for 128 prompt tokens. **Decode** is tokens/s for 32 generated tokens. Both come from `llama-bench -p 128 -n 32`.
 
-## Our fork: `opensolvers/llama.cpp` (`x60-ime-rvv`)
+## K3 — Banana Pi SM10
 
-Upstream [ggml-org/llama.cpp](https://github.com/ggml-org/llama.cpp) already ships a SpaceMiT backend (`GGML_CPU_RISCV64_SPACEMIT`). We keep a **fork** — [opensolvers/llama.cpp](https://github.com/opensolvers/llama.cpp) — and stage X60-specific work on the **[`x60-ime-rvv`](https://github.com/opensolvers/llama.cpp/tree/x60-ime-rvv)** branch so we can iterate on real silicon without blocking upstream review.
+<a id="results-on-the-k3"></a>
+<a id="measured--ime2-banana-pi-sm10-q4_0"></a>
+<a id="measured--ime2-banana-pi-sm10-q3_k_m"></a>
+<a id="measured--ime2-banana-pi-sm10-tinyllama-q2_k"></a>
 
-**Why a fork / branch (not patches-only):**
+Eight A100 cores at 1.8 GHz, `use_ime2: 1`. Q4_0 is r=3 at fork `72d1824`. Q3_K_M and TinyLlama are r=3 at `107ead2f2`.
 
-- Core-level kernels (IME GEMM, RVV softmax / GEMV) change often; a branch is the durable place to stack, bisect, and A/B them.
-- Some changes are **IME1 / X60-shaped** (cluster-0 matrix unit, `xsmtvdot` mnemonics, IME2 gated out) and need a landing pad before they are ready for `master`.
-- Viewers can **clone one branch** and get the same software we measure on the RV2 — no hunting across EasyBuild patch files.
+| | 1 core | 2 cores | 4 cores | 8 cores |
+| --- | -----: | -----: | -----: | -----: |
+| Q4_0 prompt | 76.43 | 149.65 | 291.12 | **525.96** |
+| Q4_0 decode | 21.90 | 40.24 | **58.67** | 38.78 |
+| Q3_K_M prompt | 69.04 | — | 266.35 | **499.23** |
+| Q3_K_M decode | 19.14 | — | 45.56 | **47.95** |
+| TinyLlama prompt | 35.73 | — | 138.25 | **254.37** |
+| TinyLlama decode | 10.93 | — | 35.13 | **43.39** |
 
-**What is on `x60-ime-rvv` today** (stacked on upstream master):
+Q4_0 decode peaks at 4 cores. Q3_K_M and TinyLlama peak at 8. The same Q4_0 file on the X100 (RVV, 8 cores) is **193.68 / 41.95**, so IME2 prompt is **2.7×** that core. On the RV2 the same file at 8 cores is IME 69.03 / 1.47 and RVV 100.60 / 12.18.
 
-| # | Change | Status | Measured impact |
-| - | ------ | ------ | --------------- |
-| [#1](https://github.com/opensolvers/llama.cpp/pull/1) | IME1 i8i8 GEMM for **Q8_0** / **Q6_K** `MUL_MAT` | merged | Prefill path via `smt.vmadot`; repack opt-in so default tg stays RVV-friendly |
-| [#2](https://github.com/opensolvers/llama.cpp/pull/2) | IME1 **scale-build** (`LOAD_SCALE_4x16_FP16_OPT`) | merged | **+4.3%** isolated Q4_0 GEMM (22.50 → 23.47 GOP/s), bit-exact — [RV2](../boards/RV2.html#ime1-scale-build-prefill-optimization-llamacpp) |
-| [#3](https://github.com/opensolvers/llama.cpp/pull/3) | Upstream **`xsmtvdot` / `smt.vmadot`** asm + IME2 gate | merged | Builds against binutils ≥ 2.46; X60 skips IME2 sources |
-| [#4](https://github.com/opensolvers/llama.cpp/pull/4) | RVV **SOFT_MAX** F32 | merged | **212/212** `test-backend-ops` OK; ~**2.1×** vs scalar on `[4096,4096,5]` |
-| [#5](https://github.com/opensolvers/llama.cpp/pull/5) | RVV **M1 int8 GEMV** (token-gen / remainder rows) | open | Bit-exact; standalone **9.36×** vs scalar; tg64 on Qwen2.5-0.5B **Q8_0**: **0.82 → 5.29 t/s (6.45×)** — but see [Q4_K_M caveat](#study-2--q4_k_m-17-models-m1gemv-vs-rvv) |
+The Q3_K_M file is mostly IQ4_NL, not Q3_K. Its 8-core prompt is 5% under Q4_0. TinyLlama is tagged Q2_K; most of its matmuls are Q3_K, and this prompt rate is **1.24×** the previous kernel (205.17). Stock RVV on the A100 has no VLEN=1024 Q4_0 kernel and lands at 6.68 / 4.27. Notes: [Q4_0](https://github.com/opensolvers/benchmarks/blob/main/llamacpp/results_sm10_q4_0.md), [Q3_K_M](https://github.com/opensolvers/benchmarks/blob/main/llamacpp/results_sm10_q3_k_m.md), [TinyLlama](https://github.com/opensolvers/benchmarks/blob/main/llamacpp/results_sm10_tinyllama_q2_k.md).
 
-Upstream already ships the base SpaceMiT Q4_0 IME path; the fork stacks the kernels above on top of that.
+### Ten Q4_0 models
 
-### How to use it
+<a id="measured--ime2-banana-pi-sm10-q4_0-suite"></a>
 
-On a SpaceMiT X60 board (Orange Pi RV2 / Banana Pi F3), with a toolchain that can assemble `smt.vmadot` ([details](../boards/RV2.html#toolchain-support-xsmtvdot)):
+One repeat, 8 cores, fork `107ead2f2`. Nine completions are coherent English. **Qwen2.5 3B repeated the character G**, so that row is a failed run.
+
+The 0.5B row is a single repeat of the file in the table above. Its prompt (540.21) sits next to the r=3 mean (525.96). Its decode (57.78) sits next to the 4-core peak (58.67).
+
+| Model | Prompt | Decode |
+| ----- | -----: | -----: |
+| Qwen2.5 0.5B | 540.21 | 57.78 |
+| TinyLlama 1.1B | 279.67 | 35.26 |
+| Llama 3.2 1B | 291.49 | 25.86 |
+| Qwen2.5 1.5B | 204.11 | 22.83 |
+| Gemma 2 2B | 114.81 | 10.53 |
+| Qwen2.5 3B (failed) | 103.75 | 12.32 |
+| Llama 3.2 3B | 108.70 | 11.72 |
+| Phi-3.5 mini | 78.99 | 10.48 |
+| Mistral 7B | 45.57 | 5.75 |
+| Qwen2.5 7B | 48.81 | 5.70 |
+
+Qwen2.5 7B is the two-shard file. The same 3B model at Q4_K_M, below, is coherent.
+
+### Seventeen Q4_K_M models
+
+<a id="measured--ime2-banana-pi-sm10-q4_k_m-suite"></a>
+
+Same launch, one repeat. All 17 are coherent. On this board Q4_K uses the IME2 Q4 kernel. StableLM 2 1.6B is the Zephyr GGUF. DeepSeek Coder described RISC-V as an ARM ISA, and the DeepSeek-R1 distill opened with a thinking trace.
+
+| Model | Prompt | Decode |
+| ----- | -----: | -----: |
+| Qwen2.5 0.5B | 433.34 | 51.44 |
+| Llama 3.2 1B | 219.68 | 24.49 |
+| Gemma 3 1B | 191.69 | 22.63 |
+| DeepSeek Coder 1.3B | 172.65 | 25.31 |
+| Qwen2.5 1.5B | 147.25 | 20.09 |
+| StableLM 2 Zephyr 1.6B | 167.67 | 21.19 |
+| Falcon 3 1B | 179.10 | 21.78 |
+| SmolLM2 1.7B | 132.45 | 18.90 |
+| DeepSeek R1 Qwen 1.5B | 147.74 | 20.06 |
+| Granite 3.1 2B | 86.95 | 12.98 |
+| Gemma 2 2B | 87.09 | 9.07 |
+| Qwen2.5 3B | 73.31 | 10.69 |
+| Falcon 3 3B | 82.71 | 9.94 |
+| Llama 3.2 3B | 77.84 | 10.37 |
+| Phi-3.5 mini | 50.79 | 9.25 |
+| Gemma 3 4B | 58.17 | 7.48 |
+| Phi-4 mini | 60.76 | 8.39 |
+
+Raw rows: [results_sm10_model_suite.md](https://github.com/opensolvers/benchmarks/blob/main/llamacpp/results_sm10_model_suite.md). The BXM-4-64 GPU is still unmeasured.
+
+## RV2 — Orange Pi
+
+<a id="measured--ime-vs-rvv-orange-pi-rv2"></a>
+
+Eight X60 cores, IME1 against plain RVV. IME wins prompt from 1.1B up (up to about 2.5×). RVV wins decode on every model. The board has 7.7 GiB and no swap, so 7B Q4_0 is the practical ceiling.
+
+| Model | Prompt IME | Prompt RVV | Decode IME | Decode RVV |
+| ----- | ---------: | ---------: | ---------: | ---------: |
+| Qwen2.5 0.5B | 69.03 | 100.60 | 1.47 | 12.18 |
+| TinyLlama 1.1B | 37.72 | 34.95 | 1.72 | 9.47 |
+| Llama 3.2 1B | 38.87 | 25.27 | 2.00 | 7.74 |
+| Qwen2.5 1.5B | 27.14 | 22.77 | 1.19 | 6.10 |
+| Gemma 2 2B | 17.56 | 10.04 | 1.01 | 3.15 |
+| Qwen2.5 3B | 14.13 | 7.85 | 0.85 | 3.12 |
+| Llama 3.2 3B | 13.99 | 6.95 | 1.05 | 3.09 |
+| Phi-3.5 mini | 11.37 | 4.59 | 1.11 | 2.02 |
+| Mistral 7B | 5.84 | 2.35 | 0.73 | 1.38 |
+| Qwen2.5 7B | 6.06 | 2.52 | 0.73 | 1.38 |
+
+Source: [model_validation.tsv](https://github.com/opensolvers/benchmarks/blob/main/llamacpp/model_validation.tsv), [models.md](https://github.com/opensolvers/benchmarks/blob/main/llamacpp/models.md).
+
+### Q4_K_M on the RV2
+
+<a id="study-2--q4_k_m-17-models-m1gemv-vs-rvv"></a>
+
+Different bench: 512 prompt tokens and 64 generated tokens, IME build with the M1 GEMV kernel. **RVV wins decode on all 17 models**, by about 3–6×. Prompt is close. Q4_K_M does not engage `smt.vmadot` on this build. Use the RVV build for Q4_K_M on the RV2. The K3 table above is the IME2 result for these files.
+
+| Model | Prompt IME | Prompt RVV | Decode IME | Decode RVV |
+| ----- | ---------: | ---------: | ---------: | ---------: |
+| Qwen2.5 0.5B | 23.92 | 20.73 | 1.42 | 9.19 |
+| Llama 3.2 1B | 24.13 | 27.49 | 1.90 | 8.19 |
+| Gemma 3 1B | 12.75 | 11.36 | 1.04 | 4.40 |
+| DeepSeek Coder 1.3B | 16.51 | 16.43 | 1.37 | 6.91 |
+| Qwen2.5 1.5B | 18.62 | 18.80 | 1.14 | 6.31 |
+| StableLM 2 1.6B | 16.58 | 20.65 | 1.17 | 6.74 |
+| Falcon 3 1B | 19.57 | 22.49 | 1.69 | 7.28 |
+| SmolLM2 1.7B | 13.62 | 15.46 | 1.35 | 5.94 |
+| DeepSeek R1 Qwen 1.5B | 18.54 | 19.10 | 1.14 | 6.38 |
+| Granite 3.1 2B | 9.23 | 10.48 | 0.80 | 4.04 |
+| Gemma 2 2B | 11.43 | 12.07 | 0.97 | 3.25 |
+| Qwen2.5 3B | 8.25 | 8.93 | 0.79 | 3.43 |
+| Falcon 3 3B | 10.37 | 10.68 | 1.17 | 3.74 |
+| Llama 3.2 3B | 8.59 | 9.14 | 0.96 | 3.30 |
+| Phi-3.5 mini | 4.08 | 2.91 | 0.69 | 2.04 |
+| Gemma 3 4B | 7.67 | 7.68 | 0.70 | 2.52 |
+| Phi-4 mini | 5.33 | 4.14 | 0.76 | 2.17 |
+
+Source: [results_17model_m1gemv_vs_rvv.md](https://github.com/opensolvers/benchmarks/blob/main/llamacpp/results_17model_m1gemv_vs_rvv.md).
+
+## Build
+
+On an X60, with an assembler that accepts `smt.vmadot` ([toolchain](../boards/RV2.html#toolchain-support-xsmtvdot)):
 
 ```bash
 git clone -b x60-ime-rvv https://github.com/opensolvers/llama.cpp.git
 cd llama.cpp
-
 cmake -B build -DCMAKE_BUILD_TYPE=Release \
   -DGGML_CPU_RISCV64_SPACEMIT=ON \
   -DGGML_RVV=ON -DGGML_RV_ZVFH=ON -DGGML_RV_ZFH=ON \
   -DGGML_RV_ZBA=ON -DGGML_RV_ZICBOP=ON
 cmake --build build --parallel "$(nproc)"
-
-# Prefer Q4_0 for the IME Q4 path; pin to cluster 0 for IME (cores 0–3)
-./build/bin/llama-cli -m model.q4_0.gguf -t 4 -c 2048 -n 64 \
-  -p "Explain RISC-V vector extensions in two sentences."
-# Startup should report use_ime1: 1
-
-./build/bin/llama-bench -m model.q4_0.gguf -p 128 -n 32 -t 4
 ```
 
-- **Docs on the branch:** [docs/build-riscv64-spacemit.md](https://github.com/opensolvers/llama.cpp/blob/x60-ime-rvv/docs/build-riscv64-spacemit.md) (SpaceMiT cross-toolchain / QEMU notes).
-- **Validation suite we publish numbers from:** [benchmarks/llamacpp](https://github.com/opensolvers/benchmarks/tree/main/llamacpp) (`validate_model.sh` / `run_all.sh`).
-- For A/B against plain RVV, build once **with** `GGML_CPU_RISCV64_SPACEMIT=ON` and once **without** (or use two install prefixes) — same pattern as the tables below.
+Pin IME to cluster 0 (`taskset -c 0-3`). Startup should report `use_ime1: 1`. A second build with `GGML_CPU_RISCV64_SPACEMIT=OFF` is the RVV arm. Branch docs: [build-riscv64-spacemit.md](https://github.com/opensolvers/llama.cpp/blob/x60-ime-rvv/docs/build-riscv64-spacemit.md). Harnesses: [benchmarks/llamacpp](https://github.com/opensolvers/benchmarks/tree/main/llamacpp).
 
-## What it probes
+On the K3, write the shell pid to `/proc/set_ai_thread` before `exec`, then `taskset -c 8-15`. See [SM10](../boards/SM10.html#getting-onto-a100-procset_ai_thread).
 
-Where [`ime/`](https://github.com/opensolvers/benchmarks/tree/main/ime) isolates the `smt.vmadot` microkernel, this suite asks: **which real Q4_0 models fit and run, and where does IME actually help?**
+## Kernels on the fork
 
-- **IME build** — SpaceMiT IME1 backend (`use_ime1: 1` in the startup log)
-- **RVV build** — plain vector control arm (`~/x60-rvv`)
-- Bench: `llama-bench -p 128 -n 32 -t 8` (pp128 / tg32)
-- Coherence: `llama-cli` prompt; pass = loads, finite coherent output, no repetition-collapse
+| Change | Result |
+| ------ | ------ |
+| [Q8_0 / Q6_K GEMM](https://github.com/opensolvers/llama.cpp/pull/1) | Q8_0 prompt 62.7 t/s at 4 cores, vs 25.5 on the stock IME build |
+| [Scale-build](https://github.com/opensolvers/llama.cpp/pull/2) | +4.3% on an isolated Q4_0 GEMM (22.50 → 23.47 GOP/s) |
+| [`xsmtvdot` asm](https://github.com/opensolvers/llama.cpp/pull/3) | Builds with binutils ≥ 2.46 |
+| [RVV softmax](https://github.com/opensolvers/llama.cpp/pull/4) | 212/212 tests; about 2.1× on a large shape |
+| [M1 GEMV](https://github.com/opensolvers/llama.cpp/pull/5) | Q8_0 decode 0.82 → 5.29 t/s. On RV2 Q4_K_M this build is slower than RVV |
 
-## Board ceiling
+**Q8_0 hybrid** stores weights twice and uses IME only when the row count is at least 4. Decode goes back to the stock path. `SPACEMIT_HYBRID=1`.
 
-7.7 GiB RAM, **no swap** → ~5.5 GiB safe model+KV budget. Largest safe fit is **7–7.6B at Q4_0**. ≥13B Q4_0 and 7–8B at Q8_0/fp16 will OOM.
+| Build | Q8_0 prompt | Q8_0 decode |
+| ----- | ----------: | ----------: |
+| IME only | 83.7 | 0.83 |
+| Hybrid | 90.1 | 6.68 |
+| RVV only | 27.0 | 5.11 |
 
-IME accelerates **Q4_0** (and Q8_0 / Q6_K via the fork GEMM path). **Q4_K_M** does not engage `smt.vmadot` today — use the RVV build (see [study 2](#study-2--q4_k_m-17-models-m1gemv-vs-rvv)).
-
-## Building the IME backend (toolchain)
-
-`smt.vmadot` has **no compiler intrinsics**. Mainline support is assembler-only: **LLVM ≥ 22**, **GCC ≥ 16**, **binutils ≥ 2.46** (`xsmtvdot`). EESSI `foss-2025b` is still GCC **14.3** + binutils **2.44**.
-
-On the [`x60-ime-rvv`](https://github.com/opensolvers/llama.cpp/tree/x60-ime-rvv) fork branch those asm/CMake fixes are **already applied**. You still need an assembler that understands `smt.vmadot` — typically a standalone **`binutils-2.46+xsmtvdot`** pointed at GCC via `-B` only for `as` (so linking keeps the toolchain `ld`). Older EasyBuild patches that did the same rename live under [benchmarks/ime](https://github.com/opensolvers/benchmarks/tree/main/ime) for reference.
-
-Raw-`.insn` alternative (no special assembler): [RV2 IME — toolchain support](../boards/RV2.html#toolchain-support-xsmtvdot).
-
-## Headline results (10/10 validated)
-
-Every model **loaded, reported `use_ime1: 1`, and produced coherent finite output.** No OOM.
-
-| Phase | Winner | Pattern |
-| ----- | ------ | ------- |
-| **Prefill (pp)** | **IME** on every model ≥1.1B | up to ~2.5× RVV (Mistral-7B: 5.84 vs 2.35 t/s); only 0.5B favours RVV (IME setup overhead) |
-| **Token-gen (tg)** | **RVV** universally | ~5–8× at small sizes → ~1.9× at 7B; IME tg is roughly half RVV throughout |
-
-**Net:** prompt-heavy / batch → IME build; generation-heavy / interactive → RVV build.
-
-tg scales down with model size as the ~3.85 GB/s memory-bandwidth wall predicts (RVV: 12.18 → 1.38 tg t/s from 0.5B → 7B).
-
-## Measured — IME vs RVV (Orange Pi RV2)
-
-| Model | Params | Q4_0 (MiB) | pp128 IME | tg32 IME | pp128 RVV | tg32 RVV | pp win | tg win |
-| ----- | -----: | ---------: | --------: | -------: | --------: | -------: | :----: | :----: |
-| Qwen2.5-0.5B-Instruct | 0.5B | 408 | 69.03 | 1.47 | 100.60 | 12.18 | RVV | RVV |
-| TinyLlama-1.1B-Chat | 1.1B | 608 | 37.72 | 1.72 | 34.95 | 9.47 | **IME** | RVV |
-| Llama-3.2-1B-Instruct | 1.2B | 737 | 38.87 | 2.00 | 25.27 | 7.74 | **IME** | RVV |
-| Qwen2.5-1.5B-Instruct | 1.5B | 1016 | 27.14 | 1.19 | 22.77 | 6.10 | **IME** | RVV |
-| Gemma-2-2B-it | 2.6B | 1554 | 17.56 | 1.01 | 10.04 | 3.15 | **IME** | RVV |
-| Qwen2.5-3B-Instruct | 3.1B | 1905 | 14.13 | 0.85 | 7.85 | 3.12 | **IME** | RVV |
-| Llama-3.2-3B-Instruct | 3.2B | 1832 | 13.99 | 1.05 | 6.95 | 3.09 | **IME** | RVV |
-| Phi-3.5-mini-instruct | 3.8B | 2081 | 11.37 | 1.11 | 4.59 | 2.02 | **IME** | RVV |
-| Mistral-7B-Instruct-v0.3 | 7.2B | 3922 | 5.84 | 0.73 | 2.35 | 1.38 | **IME** | RVV |
-| Qwen2.5-7B-Instruct | 7.6B | 3798 | 6.06 | 0.73 | 2.52 | 1.38 | **IME** | RVV |
-
-Raw TSV: [`model_validation.tsv`](https://github.com/opensolvers/benchmarks/blob/main/llamacpp/model_validation.tsv). Full model notes and HF sources: [`models.md`](https://github.com/opensolvers/benchmarks/blob/main/llamacpp/models.md). The same ten files on the K3 are in [the IME2 suite](#measured--ime2-banana-pi-sm10-q4_0-suite).
-
-## Measured — IME2 vs RVV (Banana Pi SM10, Q4_0)
-
-The same **Qwen2.5-0.5B-Instruct Q4_0** (403 MiB) as the first RV2 row. Fork `x60-ime-rvv` at `72d1824`, built on the board with Bianbu GCC 15.2 and `GGML_CPU_RISCV64_SPACEMIT=ON`. CMake reported `RISCV64_SPACEMIT_IME2`. Startup: `use_ime2: 1`, `cpu_mask: ff00` (A100 cores 8–15). The binary is started only after `echo $$ > /proc/set_ai_thread`, then `taskset -c 8-15`. Bench: `llama-bench -p 128 -n 32`. A100 at **1.800 GHz**, X100 at **2.000 GHz**. Board notes: [SM10](../boards/SM10.html#llamacpp-q4_0).
-
-| Threads | pp128 IME2 | tg32 IME2 | pp128 X100 RVV | tg32 X100 RVV |
-| ------: | ---------: | --------: | -------------: | ------------: |
-| 1 | 76.43 | 21.90 | 27.69 | 11.72 |
-| 2 | 149.65 | 40.24 | — | — |
-| 4 | 291.12 | **58.67** | — | — |
-| 8 | **525.96** | 38.78 | **193.68** | **41.95** |
-
-Prefill scales through 8 A100 cores (**2.7×** the X100 RVV prefill). Decode peaks at 4 threads (**58.67**), above the X100 RVV decode, and falls at 8. On the RV2 this model at 8 threads was IME 69.03 / 1.47 and RVV 100.60 / 12.18. A short greedy `llama-cli` completion on the IME2 build was coherent.
-
-The stock RVV binary on the A100 is not the control arm. `repack.cpp` has no Q4_0 kernel for VLEN=1024 (`case 1024` is empty), and that run lands at **6.68 / 4.27** (8 threads). The X100 column is the VLEN=256 kernel. Raw note: [`results_sm10_q4_0.md`](https://github.com/opensolvers/benchmarks/blob/main/llamacpp/results_sm10_q4_0.md).
-
-## Measured — IME2 (Banana Pi SM10, Q3_K_M)
-
-Same model, official **Q3_K_M** file (406 MiB), fork `x60-ime-rvv` at `107ead2f2`. The GGUF has **no Q3_K tensors**. The large matmuls are **IQ4_NL** (FFN gate and up, attention Q and K). FFN down is Q4_K, attention output and most attention V are Q5_0, and the `output` weight is one Q8_0 tensor. Prefill expands IQ4_NL into the Q8_0 tile and uses the IME2 int8 vmadot kernel. At 8 threads a generated token dots a packed nibble tail instead of that expanded tile. Bench and launch match the Q4_0 section. Board notes: [SM10](../boards/SM10.html#llamacpp-q3_k_m).
-
-| Threads | pp128 IME2 | tg32 IME2 |
-| ------: | ---------: | --------: |
-| 1 | 69.04 | 19.14 |
-| 4 | 266.35 | 45.56 |
-| 8 | **499.23** | **47.95** |
-
-Eight-thread prefill is **5.1%** below the Q4_0 IME2 result (525.96) and **2.7×** the build where IQ4_NL stayed on RVV (**187.64**). Decode peaks at 8 threads (**47.95**). At `fbcc41c`, before the packed tail, the same file was **502.10 / 46.18**, and decode peaked at 4 threads (46.61). Q4_K, Q8_0, Q5, and the IQ4_NL matmuls use IME2. A greedy completion is the same coherent English sentence as that earlier build.
-
-An RVV build on the A100, 16-lane IQ4 kernel, 8 threads, was **18.25 / 7.67**. Raw note: [`results_sm10_q3_k_m.md`](https://github.com/opensolvers/benchmarks/blob/main/llamacpp/results_sm10_q3_k_m.md).
-
-## Measured — IME2 (Banana Pi SM10, TinyLlama Q2_K)
-
-**TinyLlama 1.1B Chat v1.0 Q2_K** (459 MiB, TheBloke), same fork at `107ead2f2`, same launch and bench. The file is tagged Q2_K. Most of the matmul work is **Q3_K** (FFN, attention output, attention V). Q2_K is attention Q and K. The `output` weight is Q6_K. Q3_K prefill unpacks the 3-bit weights once for four rows and dots them with `vmadot.hp`. A generated token still uses the 1-row kernel. Board notes: [SM10](../boards/SM10.html#llamacpp-tinyllama).
-
-| Threads | pp128 IME2 | tg32 IME2 |
-| ------: | ---------: | --------: |
-| 1 | 35.73 | 10.93 |
-| 4 | 138.25 | 35.13 |
-| 8 | **254.37** | **43.39** |
-
-Eight-thread prefill is **1.24×** the previous integer Q3_K kernel on this file (**205.17**). One thread is **1.30×** (27.43) and four threads are **1.29×** (107.06). Decode stays at **43** t/s. A tile of the new kernel against the integer kernel differed by at most `7.6e-5`. A greedy completion is coherent English. Raw note: [`results_sm10_tinyllama_q2_k.md`](https://github.com/opensolvers/benchmarks/blob/main/llamacpp/results_sm10_tinyllama_q2_k.md).
-
-## Measured — IME2 (Banana Pi SM10, Q4_0 suite)
-
-The ten Q4_0 models from the RV2 table, on the K3 at fork `107ead2f2`. One repeat of `llama-bench -p 128 -n 32 -t 8`. Launch matches the Q4_0 section. Every run logged `use_ime2: 1`. Coherence is a greedy 32-token completion of “Explain what RISC-V vector extensions are, in two short sentences.” Board notes: [SM10](../boards/SM10.html#llamacpp-q4_0-suite).
-
-Nine are coherent. **Qwen2.5-3B-Instruct repeats `G`.** The speed on that row is what the bench printed during the repeat, so it is not a valid result. The same model at Q4_K_M, in the next table, is coherent.
-
-The 0.5B row is one repeat of the file in the thread sweep above. Prefill **540.21** sits next to that sweep’s 8-thread mean (**525.96**, r=3 at `72d1824`). Decode **57.78** sits next to the 4-thread peak of that sweep (**58.67**), not its 8-thread mean (**38.78**).
-
-| Model | MiB | Coherent | pp128 | tg32 |
-| ----- | --: | -------- | ----: | ---: |
-| Qwen2.5-0.5B-Instruct | 408 | yes | 540.21 | 57.78 |
-| TinyLlama-1.1B-Chat | 608 | yes | 279.67 | 35.26 |
-| Llama-3.2-1B-Instruct | 737 | yes | 291.49 | 25.86 |
-| Qwen2.5-1.5B-Instruct | 1016 | yes | 204.11 | 22.83 |
-| Gemma-2-2B-it | 1554 | yes | 114.81 | 10.53 |
-| Qwen2.5-3B-Instruct | 1905 | repeat | 103.75 | 12.32 |
-| Llama-3.2-3B-Instruct | 1832 | yes | 108.70 | 11.72 |
-| Phi-3.5-mini-instruct | 2081 | yes | 78.99 | 10.48 |
-| Mistral-7B-Instruct-v0.3 | 3922 | yes | 45.57 | 5.75 |
-| Qwen2.5-7B-Instruct | 3798 | yes | 48.81 | 5.70 |
-
-Qwen2.5-7B is the two-shard Q4_0 file. Raw note: [`results_sm10_model_suite.md`](https://github.com/opensolvers/benchmarks/blob/main/llamacpp/results_sm10_model_suite.md).
-
-## Measured — IME2 (Banana Pi SM10, Q4_K_M suite)
-
-The seventeen Q4_K_M models from [study 2](#study-2--q4_k_m-17-models-m1gemv-vs-rvv), same fork, same 8-thread launch, `llama-bench -p 128 -n 32 -r 1`. All 17 are coherent, and every run logged `use_ime2: 1`. On this build Q4_K uses the IME2 Q4 kernel. The RV2 study below is a different bench (`-p 512 -n 64`) on IME1, where that kernel does not engage. Board notes: [SM10](../boards/SM10.html#llamacpp-q4_k_m-suite).
-
-`stablelm-2-1.6b` is the StableLM 2 Zephyr 1.6B Q4_K_M file. DeepSeek-Coder answered in English and described RISC-V as an ARM ISA. The DeepSeek-R1 distill opened with a thinking trace.
-
-| Model | MiB | pp128 | tg32 |
-| ----- | --: | ----: | ---: |
-| qwen2.5-0.5b | 468 | 433.34 | 51.44 |
-| llama-3.2-1b | 770 | 219.68 | 24.49 |
-| gemma-3-1b | 768 | 191.69 | 22.63 |
-| deepseek-coder-1.3b | 833 | 172.65 | 25.31 |
-| qwen2.5-1.5b | 1065 | 147.25 | 20.09 |
-| stablelm-2-1.6b | 983 | 167.67 | 21.19 |
-| falcon3-1b | 1008 | 179.10 | 21.78 |
-| smollm2-1.7b | 1006 | 132.45 | 18.90 |
-| deepseek-r1-qwen-1.5b | 1065 | 147.74 | 20.06 |
-| granite-3.1-2b | 1473 | 86.95 | 12.98 |
-| gemma-2-2b | 1629 | 87.09 | 9.07 |
-| qwen2.5-3b | 2007 | 73.31 | 10.69 |
-| falcon3-3b | 1912 | 82.71 | 9.94 |
-| llama-3.2-3b | 1925 | 77.84 | 10.37 |
-| phi-3.5-mini | 2282 | 50.79 | 9.25 |
-| gemma-3-4b | 2374 | 58.17 | 7.48 |
-| phi-4-mini | 2376 | 60.76 | 8.39 |
-
-## Optimizations in detail
-
-### IME1 Q8_0 / Q6_K GEMM ([#1](https://github.com/opensolvers/llama.cpp/pull/1))
-
-Adds an IME1 `smt.vmadot` int8 GEMM fast path for **Q8_0** and **Q6_K** `MUL_MAT` / `MUL_MAT_ID`. The i8i8 path is **prefill-oriented**; token-gen on IME-only stays slow until hybrid (below). On `qwen2.5-0.5b-q8_0.gguf`: **pp64 @ t4 = 62.7 t/s** (i8i8) vs **25.5** (stock `-x60-ime` RVV fallback) vs **56.8** (plain RVV @ t8). Verified on-board: **64 `smt.vmadot`** in `libggml-cpu.so`.
-
-### Hybrid prefill / decode (2026-08-23)
-
-One binary, two paths in `libggml-cpu` ([`apply-hybrid.py`](https://github.com/opensolvers/benchmarks/blob/main/ime/apply-hybrid.py)): weights stored **twice** (native GGUF + IME tiles). `M >= 4` → IME M4; `M < 4` (token-gen) → stock `ggml_compute_forward_mul_mat` on native weights. Env: `SPACEMIT_HYBRID=1` (optional `SPACEMIT_IME_MIN_M=4`); use **`LD_PRELOAD`** on the rebuilt `libggml-cpu.so`.
-
-| build | Q8_0 pp512 @ t4 | Q8_0 tg32 @ t4 |
-| ----- | --------------: | -------------: |
-| IME-only (q8_0) | 83.7 | **0.83** |
-| **Hybrid** | **90.1** | **6.68** |
-| RVV-only | 27.0 | 5.11 |
-
-Hybrid lifts Q8_0 decode ~**8×** vs IME-only while slightly improving pp. Cost: **~2× weight RAM** in spacemit buffers. Q4_0 on stock `~/x60-ime` already has decent tg (~7.3).
-
-Pipelining port (`load`/`smt.vmadot` interleave): kernel **~4–5%**; end-to-end pp512 within noise — synthetic kloop wins do not transfer (llama INNER is only 2 K-steps).
-
-### TCM — leave off on RV2 (2026-09-02)
-
-llama.cpp can stage A/B panels through TCM when `libspine_tcm.so` is present. RV2 has `/dev/tcm` but no vendor `.so`; [`spine_tcm_shim.c`](https://github.com/opensolvers/benchmarks/blob/main/ime/spine_tcm_shim.c) provides a drop-in over the kernel device. End-to-end A/B (Qwen2.5-0.5B) **regresses**:
-
-| config | no TCM | shim TCM | Δ |
-| ------ | -----: | -------: | --: |
-| Q8_0 pp512 @ t4 | 70.1 | 50.4 | **−28%** |
-| Q4_0 pp512 @ t4 | 96.8 | 49.9 | **−48%** |
-
-Synthetic IME TCM wins only when **full offline B fits in 512 KiB**. Real weights do not — staging memcpy each GEMM loses. **Recommendation:** `SPACEMIT_DISABLE_TCM=1` (or do not preload the shim). See [RV2 — how to use IME / TCM](../boards/RV2.html#how-to-use-ime-and-when-not-to-use-tcm).
-
-### IME1 scale-build ([#2](https://github.com/opensolvers/llama.cpp/pull/2))
-
-Replaces the masked `vfmul.vf` scale-combine chain with `LOAD_SCALE_4x16_FP16_OPT` (`vfmul.vv`). Isolated interleaved A/B on RV2: **+4.3%** pp512 (22.50 → 23.47 GOP/s), bit-exact, 30/30 rounds. End-to-end `llama-bench` pp512 on this multi-tenant board sits under ±15–20% noise. Details: [RV2 IME scale-build](../boards/RV2.html#ime1-scale-build-prefill-optimization-llamacpp).
-
-### `xsmtvdot` binutils alignment ([#3](https://github.com/opensolvers/llama.cpp/pull/3))
-
-Inline asm emits `.option arch,+xsmtvdot` + `smt.vmadot` (encoding `0xe241b12b`); CMake only builds IME2 when `xsmtvdotii` is present. Lets EESSI GCC 14 + a standalone binutils 2.46 `as` build the backend — [toolchain notes](../boards/RV2.html#toolchain-support-xsmtvdot).
-
-### RVV SOFT_MAX ([#4](https://github.com/opensolvers/llama.cpp/pull/4))
-
-Vectorized F32 `SOFT_MAX` in the SpaceMiT backend (mask / sinks / ALiBi). Correctness: **212/212** `test-backend-ops`. Perf vs scalar (~0.98 GB/s baseline):
-
-| Shape `ne` | GB/s | Speedup |
-| ---------- | ---: | ------: |
-| **[4096,4096,5]** | **2.09** | **~2.1×** |
-| [1024,1024,10] | 2.15 | ~2.2× |
-| [64,64,20] | 5.15 | ~5.3× |
-| large single-row (≥65536) | 1.08–1.35 | ~1.1–1.4× (bandwidth-bound) |
-
-### RVV M1 int8 GEMV ([#5](https://github.com/opensolvers/llama.cpp/pull/5), open)
-
-Vectorizes the scalar M=1 / remainder-row i8i8 path used in token-gen (`vlse8` + widening `vwmacc` + fused `vfmacc` for bit-exact scales). On **Q8_0**, tg64 for Qwen2.5-0.5B jumps **0.82 → 5.29 t/s (6.45×)**. On **Q4_K_M**, the IME `smt.vmadot` fast path does **not** engage — the m1gemv build is then a **net regression** vs plain RVV (next section).
-
-## Study 2 — Q4_K_M, 17 models (`m1gemv` vs RVV)
-
-Companion to the Q4_0 table above: **17 models** (0.5B–4B), **Q4_K_M**, `llama-bench -p 512 -n 64 -t 8`, IME build with the M1-GEMV-tuned kernel vs the same `~/x60-rvv` control. Source: [results_17model_m1gemv_vs_rvv.md](https://github.com/opensolvers/benchmarks/blob/main/llamacpp/results_17model_m1gemv_vs_rvv.md).
-
-**Finding:** on K-quants, **`m1gemv` is a net regression**.
-
-- **tg64:** RVV wins **17/17**, by **2.9–6.5×** (e.g. Qwen2.5-0.5B: 1.42 IME vs 9.19 RVV).
-- **pp512:** near parity; RVV ahead on most models. IME wins pp on only three (qwen2.5-0.5b, phi-3.5-mini, phi-4-mini).
-
-Why: Q4_K_M's 256-element superblocks / 6-bit scales do **not** map onto the IME `smt.vmadot` tiling that won prefill on Q4_0, so the kernel falls back and still pays m1gemv overhead on decode.
-
-| label | GB | pp512 IME | pp512 RVV | tg64 IME | tg64 RVV |
-| ----- | -: | --------: | --------: | -------: | -------: |
-| qwen2.5-0.5b | 0.37 | 23.92 | 20.73 | 1.42 | **9.19** |
-| llama-3.2-1b | 0.75 | 24.13 | **27.49** | 1.90 | **8.19** |
-| gemma-3-1b | 0.75 | **12.75** | 11.36 | 1.04 | **4.40** |
-| deepseek-coder-1.3b | 0.81 | 16.51 | 16.43 | 1.37 | **6.91** |
-| qwen2.5-1.5b | 0.92 | 18.62 | 18.80 | 1.14 | **6.31** |
-| stablelm-2-1.6b | 0.96 | 16.58 | **20.65** | 1.17 | **6.74** |
-| falcon3-1b | 0.98 | 19.57 | **22.49** | 1.69 | **7.28** |
-| smollm2-1.7b | 0.98 | 13.62 | **15.46** | 1.35 | **5.94** |
-| deepseek-r1-qwen-1.5b | 1.04 | 18.54 | 19.10 | 1.14 | **6.38** |
-| granite-3.1-2b | 1.44 | 9.23 | **10.48** | 0.80 | **4.04** |
-| gemma-2-2b | 1.59 | 11.43 | 12.07 | 0.97 | **3.25** |
-| qwen2.5-3b | 1.80 | 8.25 | 8.93 | 0.79 | **3.43** |
-| falcon3-3b | 1.87 | 10.37 | 10.68 | 1.17 | **3.74** |
-| llama-3.2-3b | 1.88 | 8.59 | 9.14 | 0.96 | **3.30** |
-| phi-3.5-mini | 2.23 | **4.08** | 2.91 | 0.69 | **2.04** |
-| gemma-3-4b | 2.32 | 7.67 | 7.68 | 0.70 | **2.52** |
-| phi-4-mini | 2.32 | **5.33** | 4.14 | 0.76 | **2.17** |
-
-**Default to RVV for Q4_K_M on the RV2.** Keep the IME build for **Q4_0** (and Q8_0 once #5 lands) where `smt.vmadot` actually fires. On the K3 the same files run on IME2; see the [Q4_K_M suite](#measured--ime2-banana-pi-sm10-q4_k_m-suite). Next kernel target on the RV2: engage IME on K-quant superblocks, or gate m1gemv off for K-quants.
-
-## Reproduce
-
-### Study 1 (Q4_0, 10 models)
-
-Requires IME and RVV builds on the board (`~/x60-ime`, `~/x60-rvv`) plus a models directory.
-
-```bash
-./validate_model.sh \
-  "https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF/resolve/main/qwen2.5-1.5b-instruct-q4_0.gguf" \
-  qwen2.5-1.5b.q4_0.gguf qwen2.5-1.5b 1.5B
-
-./run_all.sh
-```
-
-### Study 2 (Q4_K_M, 17 models)
-
-```bash
-./bench_suite.sh       # m1gemv IME arm  → results.md
-./bench_suite_rvv.sh   # RVV control     → results_rvv.md
-```
-
-Harnesses and TSVs: [benchmarks/llamacpp](https://github.com/opensolvers/benchmarks/tree/main/llamacpp).
-
-## Takeaways
-
-1. **Q4_0:** IME wins prefill ≥1.1B (1.2–2.6×); RVV wins token-gen everywhere.
-2. **Q8_0:** i8i8 IME wins prefill; **hybrid** restores decode (~**6.7** tg32 vs **0.83** IME-only) at ~2× weight RAM.
-3. **Q4_K_M on the RV2:** plain RVV wins tg (and usually pp); m1gemv IME regresses until K-quants hit `smt.vmadot`. On the K3, all 17 Q4_K_M models are coherent on IME2.
-4. **Fork kernels:** Q8_0/Q6_K IME GEMM, hybrid split, +4.3% scale-build, RVV softmax (~2×), M1 GEMV (**6.45×** tg on Q8_0 — [#5](https://github.com/opensolvers/llama.cpp/pull/5)).
-5. **7B Q4_0 is the practical ceiling** on 8 GB no-swap; keep ctx modest on ≥3B.
-6. **Pick build by quant + workload** — not “IME always” or “RVV always”.
-7. **TCM off on RV2** — shim enables the path but e2e staging loses; keep `SPACEMIT_DISABLE_TCM=1`.
-8. **K3 Q3_K_M:** the official file is mostly IQ4_NL, not Q3_K. With IQ4_NL and Q5 on IME2 vmadot, and packed nibbles on 8-thread decode, 8 A100 threads is **499 / 48** t/s. Prefill is **5.1%** below Q4_0. Decode peaks at 8 threads.
-9. **K3 TinyLlama:** the Q2_K file’s matmuls are mostly Q3_K. A 4-row `vmadot.hp` prefill kernel is **254** t/s at 8 threads, **1.24×** the integer Q3_K kernel. Decode stays at **43** t/s.
-10. **K3 model suite:** 9 of 10 Q4_0 models are coherent on IME2. Qwen2.5-3B Q4_0 repeats one character. All 17 Q4_K_M models are coherent. Speeds are one repeat at 8 threads.
+**TCM off on the RV2.** Staging panels through TCM slows the real model: Q8_0 prompt 70.1 → 50.4, Q4_0 prompt 96.8 → 49.9. Keep `SPACEMIT_DISABLE_TCM=1`. Details: [RV2](../boards/RV2.html#how-to-use-ime-and-when-not-to-use-tcm).

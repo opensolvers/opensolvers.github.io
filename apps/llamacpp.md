@@ -7,7 +7,7 @@ description: llama.cpp on RISC-V. K3 IME2 prompt 526 t/s on Qwen2.5-0.5B Q4_0. R
 
 [llama.cpp](https://github.com/ggml-org/llama.cpp) runs local GGUF models. We measure it on the [Orange Pi RV2](../boards/RV2.html) (X60, IME1) and the [Banana Pi SM10](../boards/SM10.html) (K3, IME2). Fork: [`opensolvers/llama.cpp`](https://github.com/opensolvers/llama.cpp) branch [`x60-ime-rvv`](https://github.com/opensolvers/llama.cpp/tree/x60-ime-rvv). Raw notes: [benchmarks/llamacpp](https://github.com/opensolvers/benchmarks/tree/main/llamacpp).
 
-**Prompt** is tokens/s for 128 prompt tokens. **Decode** is tokens/s for 32 generated tokens. Both come from `llama-bench -p 128 -n 32`.
+**Prompt** and **decode** are tokens/s. Unless a column says otherwise, that is 128 prompt tokens and 32 generated tokens (`llama-bench -p 128 -n 32`).
 
 ## K3 — Banana Pi SM10
 
@@ -31,105 +31,60 @@ Q4_0 decode peaks at 4 cores. Q3_K_M and TinyLlama peak at 8. The same Q4_0 file
 
 The Q3_K_M file is mostly IQ4_NL, not Q3_K. Its 8-core prompt is 5% under Q4_0. TinyLlama is tagged Q2_K; most of its matmuls are Q3_K, and this prompt rate is **1.24×** the previous kernel (205.17). Stock RVV on the A100 has no VLEN=1024 Q4_0 kernel and lands at 6.68 / 4.27. Notes: [Q4_0](https://github.com/opensolvers/benchmarks/blob/main/llamacpp/results_sm10_q4_0.md), [Q3_K_M](https://github.com/opensolvers/benchmarks/blob/main/llamacpp/results_sm10_q3_k_m.md), [TinyLlama](https://github.com/opensolvers/benchmarks/blob/main/llamacpp/results_sm10_tinyllama_q2_k.md).
 
-### Ten Q4_0 models
+## Ten Q4_0 models
 
 <a id="measured--ime2-banana-pi-sm10-q4_0-suite"></a>
-
-One repeat, 8 cores, fork `107ead2f2`. Nine completions are coherent English. **Qwen2.5 3B repeated the character G**, so that row is a failed run.
-
-The 0.5B row is a single repeat of the file in the table above. Its prompt (540.21) sits next to the r=3 mean (525.96). Its decode (57.78) sits next to the 4-core peak (58.67).
-
-| Model | Prompt | Decode |
-| ----- | -----: | -----: |
-| Qwen2.5 0.5B | 540.21 | 57.78 |
-| TinyLlama 1.1B | 279.67 | 35.26 |
-| Llama 3.2 1B | 291.49 | 25.86 |
-| Qwen2.5 1.5B | 204.11 | 22.83 |
-| Gemma 2 2B | 114.81 | 10.53 |
-| Qwen2.5 3B (failed) | 103.75 | 12.32 |
-| Llama 3.2 3B | 108.70 | 11.72 |
-| Phi-3.5 mini | 78.99 | 10.48 |
-| Mistral 7B | 45.57 | 5.75 |
-| Qwen2.5 7B | 48.81 | 5.70 |
-
-Qwen2.5 7B is the two-shard file. The same 3B model at Q4_K_M, below, is coherent.
-
-### Seventeen Q4_K_M models
-
-<a id="measured--ime2-banana-pi-sm10-q4_k_m-suite"></a>
-
-Same launch, one repeat. All 17 are coherent. On this board Q4_K uses the IME2 Q4 kernel. StableLM 2 1.6B is the Zephyr GGUF. DeepSeek Coder described RISC-V as an ARM ISA, and the DeepSeek-R1 distill opened with a thinking trace.
-
-| Model | Prompt | Decode |
-| ----- | -----: | -----: |
-| Qwen2.5 0.5B | 433.34 | 51.44 |
-| Llama 3.2 1B | 219.68 | 24.49 |
-| Gemma 3 1B | 191.69 | 22.63 |
-| DeepSeek Coder 1.3B | 172.65 | 25.31 |
-| Qwen2.5 1.5B | 147.25 | 20.09 |
-| StableLM 2 Zephyr 1.6B | 167.67 | 21.19 |
-| Falcon 3 1B | 179.10 | 21.78 |
-| SmolLM2 1.7B | 132.45 | 18.90 |
-| DeepSeek R1 Qwen 1.5B | 147.74 | 20.06 |
-| Granite 3.1 2B | 86.95 | 12.98 |
-| Gemma 2 2B | 87.09 | 9.07 |
-| Qwen2.5 3B | 73.31 | 10.69 |
-| Falcon 3 3B | 82.71 | 9.94 |
-| Llama 3.2 3B | 77.84 | 10.37 |
-| Phi-3.5 mini | 50.79 | 9.25 |
-| Gemma 3 4B | 58.17 | 7.48 |
-| Phi-4 mini | 60.76 | 8.39 |
-
-Raw rows: [results_sm10_model_suite.md](https://github.com/opensolvers/benchmarks/blob/main/llamacpp/results_sm10_model_suite.md). The BXM-4-64 GPU is still unmeasured.
-
-## RV2 — Orange Pi
-
 <a id="measured--ime-vs-rvv-orange-pi-rv2"></a>
 
-Eight X60 cores, IME1 against plain RVV. IME wins prompt from 1.1B up (up to about 2.5×). RVV wins decode on every model. The board has 7.7 GiB and no swap, so 7B Q4_0 is the practical ceiling.
+Eight cores on both boards, same bench. RV2 is the X60 (IME1 and RVV). SM10 is the K3 A100 (IME2), one repeat at fork `107ead2f2`. **×** is the SM10 result divided by the faster RV2 result on that row. Prompt is about **5–8×**. Decode is about **3–5×**.
 
-| Model | Prompt IME | Prompt RVV | Decode IME | Decode RVV |
-| ----- | ---------: | ---------: | ---------: | ---------: |
-| Qwen2.5 0.5B | 69.03 | 100.60 | 1.47 | 12.18 |
-| TinyLlama 1.1B | 37.72 | 34.95 | 1.72 | 9.47 |
-| Llama 3.2 1B | 38.87 | 25.27 | 2.00 | 7.74 |
-| Qwen2.5 1.5B | 27.14 | 22.77 | 1.19 | 6.10 |
-| Gemma 2 2B | 17.56 | 10.04 | 1.01 | 3.15 |
-| Qwen2.5 3B | 14.13 | 7.85 | 0.85 | 3.12 |
-| Llama 3.2 3B | 13.99 | 6.95 | 1.05 | 3.09 |
-| Phi-3.5 mini | 11.37 | 4.59 | 1.11 | 2.02 |
-| Mistral 7B | 5.84 | 2.35 | 0.73 | 1.38 |
-| Qwen2.5 7B | 6.06 | 2.52 | 0.73 | 1.38 |
+On the RV2, IME wins prompt from 1.1B up and RVV wins every decode, so the prompt × uses IME except on the 0.5B, and every decode × uses RVV. The RV2 has 7.7 GiB and no swap, so 7B is the practical ceiling there. **Qwen2.5 3B on the SM10 repeated G**, so that row is a failed run. Qwen2.5 7B is the two-shard file. The same 3B model at Q4_K_M is coherent.
 
-Source: [model_validation.tsv](https://github.com/opensolvers/benchmarks/blob/main/llamacpp/model_validation.tsv), [models.md](https://github.com/opensolvers/benchmarks/blob/main/llamacpp/models.md).
+The 0.5B SM10 cells are one repeat. The r=3 mean for that file is prompt 525.96 and decode 38.78 at 8 cores, with decode peaking at 58.67 on 4 cores.
 
-### Q4_K_M on the RV2
+| Model | Prompt RV2 IME | Prompt RV2 RVV | Prompt SM10 | × | Decode RV2 IME | Decode RV2 RVV | Decode SM10 | × |
+| ----- | -------------: | -------------: | ----------: | -: | -------------: | -------------: | ----------: | -: |
+| Qwen2.5 0.5B | 69.03 | 100.60 | 540.21 | 5.4× | 1.47 | 12.18 | 57.78 | 4.7× |
+| TinyLlama 1.1B | 37.72 | 34.95 | 279.67 | 7.4× | 1.72 | 9.47 | 35.26 | 3.7× |
+| Llama 3.2 1B | 38.87 | 25.27 | 291.49 | 7.5× | 2.00 | 7.74 | 25.86 | 3.3× |
+| Qwen2.5 1.5B | 27.14 | 22.77 | 204.11 | 7.5× | 1.19 | 6.10 | 22.83 | 3.7× |
+| Gemma 2 2B | 17.56 | 10.04 | 114.81 | 6.5× | 1.01 | 3.15 | 10.53 | 3.3× |
+| Qwen2.5 3B (failed) | 14.13 | 7.85 | 103.75 | 7.3× | 0.85 | 3.12 | 12.32 | 3.9× |
+| Llama 3.2 3B | 13.99 | 6.95 | 108.70 | 7.8× | 1.05 | 3.09 | 11.72 | 3.8× |
+| Phi-3.5 mini | 11.37 | 4.59 | 78.99 | 6.9× | 1.11 | 2.02 | 10.48 | 5.2× |
+| Mistral 7B | 5.84 | 2.35 | 45.57 | 7.8× | 0.73 | 1.38 | 5.75 | 4.2× |
+| Qwen2.5 7B | 6.06 | 2.52 | 48.81 | 8.1× | 0.73 | 1.38 | 5.70 | 4.1× |
 
+Sources: [model_validation.tsv](https://github.com/opensolvers/benchmarks/blob/main/llamacpp/model_validation.tsv), [results_sm10_model_suite.md](https://github.com/opensolvers/benchmarks/blob/main/llamacpp/results_sm10_model_suite.md).
+
+## Seventeen Q4_K_M models
+
+<a id="measured--ime2-banana-pi-sm10-q4_k_m-suite"></a>
 <a id="study-2--q4_k_m-17-models-m1gemv-vs-rvv"></a>
 
-Different bench: 512 prompt tokens and 64 generated tokens, IME build with the M1 GEMV kernel. **RVV wins decode on all 17 models**, by about 3–6×. Prompt is close. Q4_K_M does not engage `smt.vmadot` on this build. Use the RVV build for Q4_K_M on the RV2. The K3 table above is the IME2 result for these files.
+Same files, two benches. RV2 columns are **512** prompt tokens and **64** generated tokens (IME1 `m1gemv` vs RVV). SM10 columns are **128** and **32** (IME2, one repeat). The lengths differ, so this table has no ×. On the RV2, RVV wins every decode and prompt is close; Q4_K does not engage `smt.vmadot` there. On the SM10, Q4_K uses the IME2 Q4 kernel and all 17 completions are coherent. StableLM 2 1.6B is the Zephyr GGUF. DeepSeek Coder described RISC-V as an ARM ISA, and the DeepSeek-R1 distill opened with a thinking trace.
 
-| Model | Prompt IME | Prompt RVV | Decode IME | Decode RVV |
-| ----- | ---------: | ---------: | ---------: | ---------: |
-| Qwen2.5 0.5B | 23.92 | 20.73 | 1.42 | 9.19 |
-| Llama 3.2 1B | 24.13 | 27.49 | 1.90 | 8.19 |
-| Gemma 3 1B | 12.75 | 11.36 | 1.04 | 4.40 |
-| DeepSeek Coder 1.3B | 16.51 | 16.43 | 1.37 | 6.91 |
-| Qwen2.5 1.5B | 18.62 | 18.80 | 1.14 | 6.31 |
-| StableLM 2 1.6B | 16.58 | 20.65 | 1.17 | 6.74 |
-| Falcon 3 1B | 19.57 | 22.49 | 1.69 | 7.28 |
-| SmolLM2 1.7B | 13.62 | 15.46 | 1.35 | 5.94 |
-| DeepSeek R1 Qwen 1.5B | 18.54 | 19.10 | 1.14 | 6.38 |
-| Granite 3.1 2B | 9.23 | 10.48 | 0.80 | 4.04 |
-| Gemma 2 2B | 11.43 | 12.07 | 0.97 | 3.25 |
-| Qwen2.5 3B | 8.25 | 8.93 | 0.79 | 3.43 |
-| Falcon 3 3B | 10.37 | 10.68 | 1.17 | 3.74 |
-| Llama 3.2 3B | 8.59 | 9.14 | 0.96 | 3.30 |
-| Phi-3.5 mini | 4.08 | 2.91 | 0.69 | 2.04 |
-| Gemma 3 4B | 7.67 | 7.68 | 0.70 | 2.52 |
-| Phi-4 mini | 5.33 | 4.14 | 0.76 | 2.17 |
+| Model | Prompt RV2 IME | Prompt RV2 RVV | Prompt SM10 | Decode RV2 IME | Decode RV2 RVV | Decode SM10 |
+| ----- | -------------: | -------------: | ----------: | -------------: | -------------: | ----------: |
+| Qwen2.5 0.5B | 23.92 | 20.73 | 433.34 | 1.42 | 9.19 | 51.44 |
+| Llama 3.2 1B | 24.13 | 27.49 | 219.68 | 1.90 | 8.19 | 24.49 |
+| Gemma 3 1B | 12.75 | 11.36 | 191.69 | 1.04 | 4.40 | 22.63 |
+| DeepSeek Coder 1.3B | 16.51 | 16.43 | 172.65 | 1.37 | 6.91 | 25.31 |
+| Qwen2.5 1.5B | 18.62 | 18.80 | 147.25 | 1.14 | 6.31 | 20.09 |
+| StableLM 2 Zephyr 1.6B | 16.58 | 20.65 | 167.67 | 1.17 | 6.74 | 21.19 |
+| Falcon 3 1B | 19.57 | 22.49 | 179.10 | 1.69 | 7.28 | 21.78 |
+| SmolLM2 1.7B | 13.62 | 15.46 | 132.45 | 1.35 | 5.94 | 18.90 |
+| DeepSeek R1 Qwen 1.5B | 18.54 | 19.10 | 147.74 | 1.14 | 6.38 | 20.06 |
+| Granite 3.1 2B | 9.23 | 10.48 | 86.95 | 0.80 | 4.04 | 12.98 |
+| Gemma 2 2B | 11.43 | 12.07 | 87.09 | 0.97 | 3.25 | 9.07 |
+| Qwen2.5 3B | 8.25 | 8.93 | 73.31 | 0.79 | 3.43 | 10.69 |
+| Falcon 3 3B | 10.37 | 10.68 | 82.71 | 1.17 | 3.74 | 9.94 |
+| Llama 3.2 3B | 8.59 | 9.14 | 77.84 | 0.96 | 3.30 | 10.37 |
+| Phi-3.5 mini | 4.08 | 2.91 | 50.79 | 0.69 | 2.04 | 9.25 |
+| Gemma 3 4B | 7.67 | 7.68 | 58.17 | 0.70 | 2.52 | 7.48 |
+| Phi-4 mini | 5.33 | 4.14 | 60.76 | 0.76 | 2.17 | 8.39 |
 
-Source: [results_17model_m1gemv_vs_rvv.md](https://github.com/opensolvers/benchmarks/blob/main/llamacpp/results_17model_m1gemv_vs_rvv.md).
+Sources: [results_17model_m1gemv_vs_rvv.md](https://github.com/opensolvers/benchmarks/blob/main/llamacpp/results_17model_m1gemv_vs_rvv.md), [results_sm10_model_suite.md](https://github.com/opensolvers/benchmarks/blob/main/llamacpp/results_sm10_model_suite.md). The BXM-4-64 GPU is still unmeasured.
 
 ## Build
 

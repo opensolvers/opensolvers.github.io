@@ -62,27 +62,27 @@ Sources: [model_validation.tsv](https://github.com/opensolvers/benchmarks/blob/m
 <a id="measured--ime2-banana-pi-sm10-q4_k_m-suite"></a>
 <a id="study-2--q4_k_m-17-models-m1gemv-vs-rvv"></a>
 
-Same files, two benches. RV2 columns are **512** prompt tokens and **64** generated tokens (IME1 `m1gemv` vs RVV). SM10 columns are **128** and **32** (IME2, one repeat). The lengths differ, so this table has no ×. On the RV2, RVV wins every decode and prompt is close; Q4_K does not engage `smt.vmadot` there. On the SM10, Q4_K uses the IME2 Q4 kernel and all 17 completions are coherent. StableLM 2 1.6B is the Zephyr GGUF. DeepSeek Coder described RISC-V as an ARM ISA, and the DeepSeek-R1 distill opened with a thinking trace.
+Same files. **×** is the SM10 result divided by the faster RV2 result on that row, as in the table above. RV2 columns are **512** prompt tokens and **64** generated tokens (IME1 `m1gemv` vs RVV). SM10 columns are **128** and **32** (IME2, one repeat). Prompt × is about **7–18×** and decode × is about **3–6×**. The prompt factor is larger because the RV2 prompt is the longer one. On the RV2, RVV wins every decode and prompt is close; Q4_K does not engage `smt.vmadot` there. On the SM10, Q4_K uses the IME2 Q4 kernel and all 17 completions are coherent. StableLM 2 1.6B is the Zephyr GGUF. DeepSeek Coder described RISC-V as an ARM ISA, and the DeepSeek-R1 distill opened with a thinking trace.
 
-| Model | Prompt RV2 IME | Prompt RV2 RVV | Prompt SM10 | Decode RV2 IME | Decode RV2 RVV | Decode SM10 |
-| ----- | -------------: | -------------: | ----------: | -------------: | -------------: | ----------: |
-| Qwen2.5 0.5B | 23.92 | 20.73 | 433.34 | 1.42 | 9.19 | 51.44 |
-| Llama 3.2 1B | 24.13 | 27.49 | 219.68 | 1.90 | 8.19 | 24.49 |
-| Gemma 3 1B | 12.75 | 11.36 | 191.69 | 1.04 | 4.40 | 22.63 |
-| DeepSeek Coder 1.3B | 16.51 | 16.43 | 172.65 | 1.37 | 6.91 | 25.31 |
-| Qwen2.5 1.5B | 18.62 | 18.80 | 147.25 | 1.14 | 6.31 | 20.09 |
-| StableLM 2 Zephyr 1.6B | 16.58 | 20.65 | 167.67 | 1.17 | 6.74 | 21.19 |
-| Falcon 3 1B | 19.57 | 22.49 | 179.10 | 1.69 | 7.28 | 21.78 |
-| SmolLM2 1.7B | 13.62 | 15.46 | 132.45 | 1.35 | 5.94 | 18.90 |
-| DeepSeek R1 Qwen 1.5B | 18.54 | 19.10 | 147.74 | 1.14 | 6.38 | 20.06 |
-| Granite 3.1 2B | 9.23 | 10.48 | 86.95 | 0.80 | 4.04 | 12.98 |
-| Gemma 2 2B | 11.43 | 12.07 | 87.09 | 0.97 | 3.25 | 9.07 |
-| Qwen2.5 3B | 8.25 | 8.93 | 73.31 | 0.79 | 3.43 | 10.69 |
-| Falcon 3 3B | 10.37 | 10.68 | 82.71 | 1.17 | 3.74 | 9.94 |
-| Llama 3.2 3B | 8.59 | 9.14 | 77.84 | 0.96 | 3.30 | 10.37 |
-| Phi-3.5 mini | 4.08 | 2.91 | 50.79 | 0.69 | 2.04 | 9.25 |
-| Gemma 3 4B | 7.67 | 7.68 | 58.17 | 0.70 | 2.52 | 7.48 |
-| Phi-4 mini | 5.33 | 4.14 | 60.76 | 0.76 | 2.17 | 8.39 |
+| Model | Prompt RV2 IME | Prompt RV2 RVV | Prompt SM10 | × | Decode RV2 IME | Decode RV2 RVV | Decode SM10 | × |
+| ----- | -------------: | -------------: | ----------: | -: | -------------: | -------------: | ----------: | -: |
+| Qwen2.5 0.5B | 23.92 | 20.73 | 433.34 | 18.1× | 1.42 | 9.19 | 51.44 | 5.6× |
+| Llama 3.2 1B | 24.13 | 27.49 | 219.68 | 8.0× | 1.90 | 8.19 | 24.49 | 3.0× |
+| Gemma 3 1B | 12.75 | 11.36 | 191.69 | 15.0× | 1.04 | 4.40 | 22.63 | 5.1× |
+| DeepSeek Coder 1.3B | 16.51 | 16.43 | 172.65 | 10.5× | 1.37 | 6.91 | 25.31 | 3.7× |
+| Qwen2.5 1.5B | 18.62 | 18.80 | 147.25 | 7.8× | 1.14 | 6.31 | 20.09 | 3.2× |
+| StableLM 2 Zephyr 1.6B | 16.58 | 20.65 | 167.67 | 8.1× | 1.17 | 6.74 | 21.19 | 3.1× |
+| Falcon 3 1B | 19.57 | 22.49 | 179.10 | 8.0× | 1.69 | 7.28 | 21.78 | 3.0× |
+| SmolLM2 1.7B | 13.62 | 15.46 | 132.45 | 8.6× | 1.35 | 5.94 | 18.90 | 3.2× |
+| DeepSeek R1 Qwen 1.5B | 18.54 | 19.10 | 147.74 | 7.7× | 1.14 | 6.38 | 20.06 | 3.1× |
+| Granite 3.1 2B | 9.23 | 10.48 | 86.95 | 8.3× | 0.80 | 4.04 | 12.98 | 3.2× |
+| Gemma 2 2B | 11.43 | 12.07 | 87.09 | 7.2× | 0.97 | 3.25 | 9.07 | 2.8× |
+| Qwen2.5 3B | 8.25 | 8.93 | 73.31 | 8.2× | 0.79 | 3.43 | 10.69 | 3.1× |
+| Falcon 3 3B | 10.37 | 10.68 | 82.71 | 7.7× | 1.17 | 3.74 | 9.94 | 2.7× |
+| Llama 3.2 3B | 8.59 | 9.14 | 77.84 | 8.5× | 0.96 | 3.30 | 10.37 | 3.1× |
+| Phi-3.5 mini | 4.08 | 2.91 | 50.79 | 12.4× | 0.69 | 2.04 | 9.25 | 4.5× |
+| Gemma 3 4B | 7.67 | 7.68 | 58.17 | 7.6× | 0.70 | 2.52 | 7.48 | 3.0× |
+| Phi-4 mini | 5.33 | 4.14 | 60.76 | 11.4× | 0.76 | 2.17 | 8.39 | 3.9× |
 
 Sources: [results_17model_m1gemv_vs_rvv.md](https://github.com/opensolvers/benchmarks/blob/main/llamacpp/results_17model_m1gemv_vs_rvv.md), [results_sm10_model_suite.md](https://github.com/opensolvers/benchmarks/blob/main/llamacpp/results_sm10_model_suite.md). The BXM-4-64 GPU is still unmeasured.
 

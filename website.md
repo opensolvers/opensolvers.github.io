@@ -66,6 +66,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 
 | Date | Decision |
 |------|----------|
+| 2026-11-04 | [llama.cpp](apps/llamacpp.html): the 17 Q4_K_M table now has the same × column, SM10 over the faster RV2 result. Prompt is about 7–18× and decode about 3–6×. The RV2 bench is the longer one (512/64 vs 128/32) |
 | 2026-11-03 | [llama.cpp](apps/llamacpp.html): the 10 Q4_0 models and the 17 Q4_K_M models each have one table with the RV2 and SM10 columns. The Q4_0 × is SM10 over the faster RV2 result (prompt about 5–8×, decode about 3–5×). The Q4_K_M benches use different token counts, so that table has no multiplier |
 | 2026-11-02 | [llama.cpp](apps/llamacpp.html) / [SM10](boards/SM10.html): results lead the page. One K3 thread table, then the 10- and 17-model lists. The SM10 board page keeps the headline row and links to the full tables |
 | 2026-10-31 | [SM10](boards/SM10.html) / [llama.cpp](apps/llamacpp.html): the 10 Q4_0 models and the 17 Q4_K_M models on A100 IME2 (`107ead2f2`), one repeat at 8 threads. Nine Q4_0 models are coherent. Qwen2.5-3B Q4_0 repeats one character. All 17 Q4_K_M models are coherent. BXM GPU still open |

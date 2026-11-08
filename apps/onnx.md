@@ -1,17 +1,32 @@
 ---
-title: ONNX Runtime on X60 — real LLM decode via IME MatMulNBits
-description: Orange Pi RV2 story — Qwen, SmolLM2, and TinyLlama int4/int8 decode through ORT MLAS CompInt8; from accuracy_level=4 to Q4×16 and SQ8 Q8×16 panels.
+title: ONNX Runtime on RISC-V — X60 IME and K3 A100 IME2
+description: Qwen2.5-0.5B int4 on the Banana Pi SM10 A100 is 391 / 34 t/s. The X60 page keeps the RV2 CompInt8 decode story.
 ---
 
 # ONNX Runtime
 
 **Video (part 1):** [10× ONNX on RISC-V: One Missing Attribute Unlocks X60 IME](https://www.youtube.com/watch?v=IV3TV57eGAs) — [all videos](../videos.html)
 
-[ONNX Runtime](https://onnxruntime.ai/) runs ONNX graphs end-to-end. On the SpaceMiT X60 we care about quantized LLM layers: Microsoft **`MatMulNBits`** through MLAS `SQNBit`, driven by the X60 **IME** (`smt.vmadot`).
+[ONNX Runtime](https://onnxruntime.ai/) runs ONNX graphs end-to-end. Quantized LLM layers are Microsoft **`MatMulNBits`** through MLAS `SQNBit`. On the X60 that is IME1 (`smt.vmadot`). On the K3 A100 it is IME2 (`vmadot.hp`).
 
-Benchmark source: [opensolvers/benchmarks/onnx](https://github.com/opensolvers/benchmarks/tree/main/onnx) — m1pack IME patches, `run_real_llm_ort.cpp`, and model harnesses. Kernel microbench: [MLAS](../scientific-libs/mlas.html). Raw IME: [RV2](../boards/RV2.html#ime-integer-matrix-extension). Same silicon in GGML: [llama.cpp](llamacpp.html).
+Fork: [`opensolvers/onnxruntime`](https://github.com/opensolvers/onnxruntime) branch [`k3-a100-ime2`](https://github.com/opensolvers/onnxruntime/tree/k3-a100-ime2). Benchmark notes: [opensolvers/benchmarks/onnx](https://github.com/opensolvers/benchmarks/tree/main/onnx). Kernel microbench: [MLAS](../scientific-libs/mlas.html). Boards: [SM10](../boards/SM10.html), [RV2](../boards/RV2.html#ime-integer-matrix-extension). GGML on the same chips: [llama.cpp](llamacpp.html).
 
----
+## K3 — Banana Pi SM10
+
+<a id="k3-a100"></a>
+
+Eight A100 cores at 1.8 GHz. The branch is one commit on ONNX Runtime `361184e` (10 July 2026). `vmadot.hp` runs when VLEN is 1024 and the block length is 32. Decode attention keeps eight running lanes so the sum stays in the same order as the scalar tree.
+
+Qwen2.5-0.5B, `accuracy_level=4`, last-token graph. The prompt is 128 copies of token 151644 and the run generates 32 tokens. Prompt and decode are tokens/s.
+
+| | 4 cores | 8 cores |
+| --- | -----: | -----: |
+| Prompt | 235.94 | **390.72** |
+| Decode | **34.09** | 33.77 |
+
+One A100 core, K=4096 N=11008: M=1 **35** GOP/s, M=4 **85.6**, M=128 **86**. The 44-id Qwen prompt still produces the known suffix. Fourteen of the fifteen int4 models answer the same English prompt in ordinary text. DeepSeek Coder 1.3B emits blank lines.
+
+llama.cpp Q4_0 on this board is a different kernel. Its published 8-core Qwen rate is prompt 526 and decode 39.
 
 ## Results first — real decode on the Orange Pi RV2
 

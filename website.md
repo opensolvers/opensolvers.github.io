@@ -51,6 +51,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 |--------|----------|
 | [opensolvers/benchmarks](https://github.com/opensolvers/benchmarks) | OpenBLAS, BLIS, HPL, ELPA/ScaLAPACK, QE/FFTW, GROMACS, LAMMPS/Kokkos, OpenFOAM, waLBerla, GCC, PETSc, **PLUMED**, **ESPResSo**, **MetalWalls**, **MODFLOW**, **ScaFaCoS**, **Voro++**, **OSU**, **Armadillo**, **R**, **scikit-learn**, ONNX/MLAS, llama.cpp, NumPy, IME, GPU |
 | [opensolvers/llama.cpp](https://github.com/opensolvers/llama.cpp) (`x60-ime-rvv`) | SpaceMiT X60 IME/RVV staging fork — kernels + how-to on [apps/llamacpp](apps/llamacpp.html) |
+| [opensolvers/onnxruntime](https://github.com/opensolvers/onnxruntime) (`k3-a100-ime2`) | A100 `vmadot.hp` int4 GEMM and decode attention — [apps/onnx](apps/onnx.html), [MLAS](scientific-libs/mlas.html) |
 | [EESSI/docs#818](https://github.com/EESSI/docs/pull/818) | VisionFive 2 / U74 OpenBLAS + HPL |
 | [EESSI blog — X60 OpenBLAS / HPL](https://www.eessi.io/docs/blog/2026/07/12/risc-v-x60-openblas-hpl/) | Orange Pi RV2 / X60 RVV `gemv_n` fix + HPL (published from [docs#819](https://github.com/EESSI/docs/pull/819)) |
 | [easyconfigs#26436](https://github.com/easybuilders/easybuild-easyconfigs/pull/26436) | U74 OpenBLAS package |
@@ -66,6 +67,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 
 | Date | Decision |
 |------|----------|
+| 2026-11-08 | [ONNX](apps/onnx.html) / [MLAS](scientific-libs/mlas.html) / [SM10](boards/SM10.html): A100 `vmadot.hp` on [`k3-a100-ime2`](https://github.com/opensolvers/onnxruntime/tree/k3-a100-ime2). Qwen2.5-0.5B prompt **390.72** / decode **33.77** t/s at 8 cores. One core, K=4096 N=11008: M=1 **35** GOP/s, M=4 **85.6** |
 | 2026-11-04 | [llama.cpp](apps/llamacpp.html): the 17 Q4_K_M table now has the same × column, SM10 over the faster RV2 result. Prompt is about 7–18× and decode about 3–6×. The RV2 bench is the longer one (512/64 vs 128/32) |
 | 2026-11-03 | [llama.cpp](apps/llamacpp.html): the 10 Q4_0 models and the 17 Q4_K_M models each have one table with the RV2 and SM10 columns. The Q4_0 × is SM10 over the faster RV2 result (prompt about 5–8×, decode about 3–5×). The Q4_K_M benches use different token counts, so that table has no multiplier |
 | 2026-11-02 | [llama.cpp](apps/llamacpp.html) / [SM10](boards/SM10.html): results lead the page. One K3 thread table, then the 10- and 17-model lists. The SM10 board page keeps the headline row and links to the full tables |

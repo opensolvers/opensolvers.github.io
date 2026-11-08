@@ -1,6 +1,6 @@
 # MLAS
 
-[MLAS](https://github.com/microsoft/onnxruntime/tree/main/onnxruntime/core/mlas) (Microsoft Linear Algebra Subprograms) is ONNX Runtime's in-tree linear-algebra layer. On RISC-V SpaceMiT X60 it exposes an **IME** (`smt.vmadot`) backend for int4 / int8 **QNBit** GEMM — the kernel behind ONNX Runtime's `MatMulNBits` nodes (Q4×16 and SQ8 / Q8×16 m1pack paths).
+[MLAS](https://github.com/microsoft/onnxruntime/tree/main/onnxruntime/core/mlas) (Microsoft Linear Algebra Subprograms) is ONNX Runtime's in-tree linear-algebra layer. On the SpaceMiT X60 it exposes an **IME** (`smt.vmadot`) backend for int4 / int8 **QNBit** GEMM. On the K3 A100 the same entry point uses **IME2** (`vmadot.hp`) when VLEN is 1024 and the block length is 32. Fork: [`opensolvers/onnxruntime`](https://github.com/opensolvers/onnxruntime) branch [`k3-a100-ime2`](https://github.com/opensolvers/onnxruntime/tree/k3-a100-ime2).
 
 Benchmark source: [opensolvers/benchmarks/onnx](https://github.com/opensolvers/benchmarks/tree/main/onnx) — [`bench_qnbit_mlas.cpp`](https://github.com/opensolvers/benchmarks/blob/main/onnx/bench_qnbit_mlas.cpp) links directly against `libonnxruntime_mlas.a` and calls the same entry points as ORT's `matmul_nbits.cc`.
 
@@ -16,6 +16,16 @@ The harness calls:
 - `MlasQNBitGemmBatch<float>` — run the GEMM,
 
 with `thread_pool=nullptr` so results are **single-thread kernel rates**, not ORT graph throughput.
+
+## A100, one core (K3)
+
+`vmadot.hp`, BlkLen=32, K=4096, N=11008, userspace 1.8 GHz. End-to-end Qwen numbers are on the [ONNX page](../apps/onnx.html#k3-a100).
+
+| M | GOP/s |
+| -: | ----: |
+| 1 | **35** |
+| 4 | **85.6** |
+| 128 | **86** |
 
 ## Single-thread kernel rates (X60, one core)
 

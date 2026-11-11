@@ -1,10 +1,10 @@
 ---
 title: OpenSolvers — RISC-V scientific software benchmarks
-description: Benchmark notes for open-source scientific libraries, applications, and AI inference engines on consumer RISC-V boards — HPL, BLAS, Quantum ESPRESSO, llama.cpp, GROMACS, LAMMPS, OpenFOAM, waLBerla, PETSc, EESSI, and FlexiBLAS.
+description: Benchmark notes for open-source scientific libraries, applications, and AI inference engines on consumer RISC-V boards — HPL, BLAS, Quantum ESPRESSO, llama.cpp, vLLM, GROMACS, LAMMPS, OpenFOAM, waLBerla, PETSc, EESSI, and FlexiBLAS.
 permalink: /
 ---
 
-OpenSolvers explores how open-source scientific software runs on real hardware — starting with **RISC-V** boards and the tools that make that practical ([EESSI](eessi.html), OpenBLAS, and friends). We also tune **AI inference** ([llama.cpp](apps/llamacpp.html), [ONNX Runtime](apps/onnx.html)) on the same cores (RVV, IME). If the work is useful, [sponsor OpenSolvers on GitHub](https://github.com/sponsors/opensolvers).
+OpenSolvers explores how open-source scientific software runs on real hardware — starting with **RISC-V** boards and the tools that make that practical ([EESSI](eessi.html), OpenBLAS, and friends). We also tune **AI inference** ([llama.cpp](apps/llamacpp.html), [ONNX Runtime](apps/onnx.html), [vLLM](apps/vllm.html)) on the same cores (RVV, IME). If the work is useful, [sponsor OpenSolvers on GitHub](https://github.com/sponsors/opensolvers).
 
 ## Why single-board computers?
 
@@ -16,6 +16,7 @@ The improvements we chase live at the **core** of the stack — BLAS kernels, ve
 - **IME on X60** — ~42–48 GOP/s full GEMM, **68** with TCM when B fits; **TCM off** for LLM e2e ([RV2](boards/RV2.html#best-ime-results-step-2-panel--memory-2026-09-02))
 - **IME2 on A100** — one K3 core, **103 GOP/s** full int8 GEMM at 768×768×512, **13.7×** that core’s RVV ([SM10](boards/SM10.html#ime2-int8-gemm))
 - **ONNX / llama.cpp** — A100 int4 Qwen prompt **391** t/s and decode **34** t/s ([ONNX](apps/onnx.html)); on the X60, Q4_0 IME wins prefill and RVV wins token-gen
+- **vLLM on the K3** — stock X100 CPU backend, SmolLM2 135M prompt **1.95** t/s and decode **1.27** t/s on seven worker threads. The A100 IME2 int4 GEMM on the larger FFN shapes is about **37** GOP/s at M=1 and **93–95** at M=4 ([vLLM](apps/vllm.html))
 - **GROMACS** — hand RVV `Force` **3.31×** whole-app; FFT micro wins alone do not move the needle
 - **FFTW / QE** — RVV FFT **1.06–1.60×** in isolation, **~0%** drop-in under `FFTW_ESTIMATE`
 
@@ -49,7 +50,7 @@ Stack probes that call into the kernels above (FlexiBLAS / FFT / portable parall
 ## Apps
 
 - [HPL](apps/hpl.html) · [Quantum ESPRESSO](apps/qe.html) · [GROMACS](apps/gromacs.html) · [LAMMPS](apps/lammps.html)
-- [ONNX Runtime](apps/onnx.html) · [llama.cpp](apps/llamacpp.html)
+- [ONNX Runtime](apps/onnx.html) · [llama.cpp](apps/llamacpp.html) · [vLLM](apps/vllm.html)
 - [OpenFOAM](apps/openfoam.html) · [waLBerla](apps/walberla.html) · [ESPResSo](apps/espresso.html)
 - [MetalWalls](apps/metalwalls.html) · [MODFLOW](apps/modflow.html) · [GCC](scientific-libs/gcc.html)
 
@@ -59,7 +60,7 @@ Stack probes that call into the kernels above (FlexiBLAS / FFT / portable parall
 - **[BeagleV-Ahead](boards/Ahead.html)** — 4× **C910** (`xtheadvector`); DGEMM **7.42** / SGEMM **16.58** GFLOP/s at 4 cores
 - **[Orange Pi RV2](boards/RV2.html)** — 8× **X60** (RVV + IME); HPL **nan → 10.53**; IME / LLM notes
 - **[Banana Pi F3](boards/F3.html)** — same **X60** / K1, 3.7 GB RAM; HPL **11.52**; IME **~45 GOP/s**
-- **[Banana Pi SM10](boards/SM10.html)** — **X100** + A100 (K3); HPL **57.5**; IME2 **103 GOP/s**; Q4_0 llama prefill **526** t/s; Q3_K_M **499** t/s; TinyLlama Q3_K prefill **254** t/s; ONNX Qwen **391** / **34** t/s
+- **[Banana Pi SM10](boards/SM10.html)** — **X100** + A100 (K3); HPL **57.5**; IME2 **103 GOP/s**; Q4_0 llama prefill **526** t/s; Q3_K_M **499** t/s; TinyLlama Q3_K prefill **254** t/s; ONNX Qwen **391** / **34** t/s; vLLM SmolLM2 135M **1.95** / **1.27** t/s
 
 Use the menu for full pages. Benchmarks live in [opensolvers/benchmarks](https://github.com/opensolvers/benchmarks).
 

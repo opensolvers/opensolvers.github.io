@@ -13,7 +13,26 @@ description: vLLM on the Banana Pi SM10. Stock X100 CPU backend for ten small mo
 
 X100 cores, bfloat16, eager mode, `max_model_len=192`. The prompt is 128 token ids of the sentence “The capital of France is”, decoded to text, then 32 new tokens at temperature 0. Prompt tokens/s is the prompt length over the time to the first new token. Decode tokens/s is the remaining 31 tokens over the time after that. vLLM keeps one X100 core for the scheduler and binds the worker to the other seven. TinyLlama’s tokenizer counted 129 prompt tokens after that decode-and-encode; its rate uses 129.
 
-These runs use the stock RISC-V CPU kernels (VLEN 256). The IME2 op is a separate GEMM, measured in the next section.
+These runs use the stock RISC-V CPU kernels (VLEN 256).
+
+## IME2 generation
+
+<a id="ime2-generate"></a>
+
+Same prompt, with the bf16 weights quantized to the int4 tile. Each matrix is packed once. Every linear layer calls `Ime2HpGemm` on eight A100 cores, one core per slice of the N tiles. Norms, RoPE and attention sit beside that call. TinyLlama again counted 129 prompt tokens.
+
+| Model | Prompt | Decode |
+| ----- | -----: | -----: |
+| SmolLM2 135M | 87.11 | 11.14 |
+| SmolLM2 360M | 49.80 | 8.44 |
+| Qwen2.5 0.5B | 48.88 | 9.57 |
+| TinyLlama 1.1B | 30.09 | 7.38 |
+| Qwen2.5 1.5B | 24.98 | 6.11 |
+| DeepSeek R1 distill Qwen 1.5B | 24.79 | 6.25 |
+| StableLM 2 Zephyr 1.6B | 21.02 | 5.04 |
+| SmolLM2 1.7B | 17.10 | 4.74 |
+| Phi-2 | 14.77 | 3.66 |
+| Qwen2.5 3B | 14.47 | 3.86 |
 
 | Model | Prompt | Decode |
 | ----- | -----: | -----: |
@@ -114,4 +133,4 @@ os.sched_setaffinity(0, set(range(8, 16)))
 y = torch.ops._C.ime2_hp_gemm_cpu(a, qweight, scales)
 ```
 
-See [SM10](../boards/SM10.html#getting-onto-a100-procset_ai_thread) for the core fence. The op is not wired into vLLM’s `int4_scaled_mm_cpu` path. That path unpacks int4 and runs a VLEN-256 GEMM, and its weight layout is different.
+See [SM10](../boards/SM10.html#getting-onto-a100-procset_ai_thread) for the core fence. The generation table packs each weight once and splits the N tiles across the eight A100 cores. The torch op still packs on every call. vLLM’s `int4_scaled_mm_cpu` path unpacks int4 and runs a VLEN-256 GEMM, and its weight layout is different.

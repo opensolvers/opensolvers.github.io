@@ -68,6 +68,7 @@ Catalog: `_data/videos.yml` (newest first). Rendered by `_includes/video-grid.ht
 
 | Date | Decision |
 |------|----------|
+| 2026-11-11 | [vLLM](apps/vllm.html): the ten models again, int4 linears through `Ime2HpGemm` on eight A100 cores. SmolLM2 135M prompt **87.11** / decode **11.14** t/s. Qwen2.5 3B **14.47** / **3.86** |
 | 2026-11-11 | [vLLM](apps/vllm.html) / [SM10](boards/SM10.html): CPU backend on X100 for ten small models, plus an A100 `vmadot.hp` int4 GEMM on [`k3-a100-ime2`](https://github.com/opensolvers/vllm/tree/k3-a100-ime2). SmolLM2 135M prompt **1.95** / decode **1.27** t/s on seven worker threads. Larger FFN shapes, one A100 core: M=1 about **37** GOP/s, M=4 **93–95** |
 | 2026-11-08 | [ONNX](apps/onnx.html) / [MLAS](scientific-libs/mlas.html) / [SM10](boards/SM10.html): A100 `vmadot.hp` on [`k3-a100-ime2`](https://github.com/opensolvers/onnxruntime/tree/k3-a100-ime2). Qwen2.5-0.5B prompt **390.72** / decode **33.77** t/s at 8 cores. One core, K=4096 N=11008: M=1 **35** GOP/s, M=4 **85.6** |
 | 2026-11-04 | [llama.cpp](apps/llamacpp.html): the 17 Q4_K_M table now has the same × column, SM10 over the faster RV2 result. Prompt is about 7–18× and decode about 3–6×. The RV2 bench is the longer one (512/64 vs 128/32) |
